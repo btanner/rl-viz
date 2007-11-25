@@ -6,21 +6,19 @@
 
     <target name="compile">
         <mkdir dir="build/classes"/>
-        <javac srcdir="src" destdir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes" classpath="externalLibs/RL-Glue.jar" verbose="no" />
     </target>
 
     <target name="jar">
-        <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/HelloWorld.jar" basedir="build/classes">
+		<unjar src="externalLibs/RL-Glue.jar" dest="build/classes"/>
+        <mkdir dir="dist"/>
+        <jar destfile="dist/RLVizLib.jar" basedir="build/classes" >
             <manifest>
-                <attribute name="Main-Class" value="oata.HelloWorld"/>
             </manifest>
         </jar>
+        <copy file="dist/RLVizLib.jar" todir="../../dist/" />
     </target>
 
-    <target name="run">
-        <java jar="build/jar/HelloWorld.jar" fork="true"/>
-    </target>
 
 </project>
 
