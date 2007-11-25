@@ -5,7 +5,7 @@
     <property name="build.dir"   value="build"/>
     <property name="dist.dir"   value="dist"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
-	<property name="rlglue.jar" value="externalLibs/RL-Glue.jar" />
+	<property name="rlglue.jar" value="libs/RL-Glue.jar" />
 	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
 	
 	<path id="application" location="${jar.result}"/>
