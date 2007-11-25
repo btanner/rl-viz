@@ -1,23 +1,49 @@
-<project>
+<project name="RLVizLib" basedir="." >
+
+    <property name="src.dir"     value="src"/>
+
+    <property name="build.dir"   value="build"/>
+    <property name="dist.dir"   value="dist"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+	<property name="rlglue.jar" value="externalLibs/RL-Glue.jar" />
+	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
+	
+	<path id="application" location="${jar.result}"/>
+	<path id="classpath" location="${rlglue.jar}"/>
+ 	
 
     <target name="clean">
-        <delete dir="build"/>
+ 		<delete dir="${build.dir}"/>
     </target>
 
     <target name="compile">
-        <mkdir dir="build/classes"/>
-        <javac srcdir="src" destdir="build/classes" classpath="externalLibs/RL-Glue.jar" verbose="no" />
+       <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
     </target>
 
-    <target name="jar">
-		<unjar src="externalLibs/RL-Glue.jar" dest="build/classes"/>
-        <mkdir dir="dist"/>
-        <jar destfile="dist/RLVizLib.jar" basedir="build/classes" >
+    <target name="jar" depends="compile" >
+		<unjar src="${rlglue.jar}" dest="${classes.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
             </manifest>
         </jar>
-        <copy file="dist/RLVizLib.jar" todir="../../dist/" />
+        <copy file="${jar.result}" todir="../../dist/" />
     </target>
+
+   <target name="clean-build" depends="clean,jar"/>
+
+<target name="junit" depends="jar">
+     <junit printsummary="yes"  >
+         <classpath>
+              <path refid="application"/>
+          </classpath>
+
+         <batchtest fork="yes">
+             <fileset dir="${src.dir}" includes="**/*Test.java"/>
+         </batchtest>
+     </junit>
+ </target>
 
 
 </project>
