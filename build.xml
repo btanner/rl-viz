@@ -11,13 +11,18 @@
    <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean-build"/>
 </target>
 
-<target name="all" description="Build RLVizLib, and the agent and environment shells" depends="RLVizLib,envShell,agentShell">
+<target name="rlVizApp" description="Build the Application" depends="RLVizLib,agentShell,envShell">
+   <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean-build"/>
+</target>
+
+<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp">
 </target>	
 	
 <target name="clean" description="Clean everything">
    <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean"/>
+   <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean"/>
 </target>
 
 </project>
