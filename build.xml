@@ -15,14 +15,23 @@
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean-build"/>
 </target>
 
-<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp">
+<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
 </target>	
-	
+
+<target name="rl-glue" description="Build RL-Glue executable">
+	  <exec executable="make" dir="projects/rl-glue">
+		<arg value="rl-glue"/>
+	</exec>
+</target>
+
 <target name="clean" description="Clean everything">
    <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean"/>
+	  <exec executable="make" dir="projects/rl-glue">
+		<arg value="clean"/>
+	</exec>
 </target>
 
 </project>

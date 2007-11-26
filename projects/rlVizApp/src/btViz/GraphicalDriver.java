@@ -24,6 +24,7 @@ import rlVizLib.glueProxy.RLGlueProxy;
 public class GraphicalDriver {
 
 	public static void main(String [] args) throws IOException {
+		
 		RLGlueProxy.useNetGlue();
             //Setup what loaders we want
 		RLVizPreferences.getInstance().setDynamicAgentLoading(false);
