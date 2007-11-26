@@ -1,19 +1,20 @@
-<project name="RLVizLib" basedir="." >
+<project name="environmentShell" basedir="." >
 
     <property name="src.dir"     value="src"/>
 
     <property name="build.dir"   value="build"/>
     <property name="dist.dir"   value="dist"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
-	<property name="rlglue.jar" value="libs/RL-Glue.jar" />
+	<property name="RLVizLib.jar" value="../../dist/RLVizLib.jar" />
 	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
 	
 	<path id="application" location="${jar.result}"/>
-	<path id="classpath" location="${rlglue.jar}"/>
+	<path id="classpath" location="${RLVizLib.jar}"/>
  	
 
     <target name="clean">
  		<delete dir="${build.dir}"/>
+		<delete file="${jar.result}"/>
     </target>
 
     <target name="compile">
@@ -22,7 +23,6 @@
     </target>
 
     <target name="jar" depends="compile" >
-		<unjar src="${rlglue.jar}" dest="${classes.dir}" />
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
