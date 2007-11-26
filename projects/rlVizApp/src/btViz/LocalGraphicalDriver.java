@@ -24,7 +24,6 @@ import rlVizLib.glueProxy.RLGlueProxy;
 import agentShell.AgentShell;
 
 import environmentShell.EnvironmentShell;
-import javax.swing.UIManager;
 
 public class LocalGraphicalDriver {
 
