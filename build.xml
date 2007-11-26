@@ -1,15 +1,20 @@
 <project name="RLVizProject" basedir="." >
-<target name="library" description="RLVizLib">
+<target name="RLVizLib" description="RLVizLib">
    <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean-build"/>
  </target>
 
-<target name="envShell" description="RLVizLib" depends="library">
+<target name="envShell" description="Build the Environment Shell Jar" depends="RLVizLib">
    <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean-build"/>
+</target>
+
+<target name="agentShell" description="Build the Agent Shell Jar" depends="RLVizLib">
+   <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean-build"/>
 </target>
 
 <target name="clean" description="Clean everything">
    <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean"/>
+   <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean"/>
 </target>
 
 </project>
