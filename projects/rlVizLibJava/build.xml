@@ -1,6 +1,7 @@
 <project name="RLVizLib" basedir="." >
 
     <property name="src.dir"     value="src"/>
+    <property name="docs.dir"     value="javadocs"/>
 
     <property name="build.dir"   value="build"/>
     <property name="dist.dir"   value="dist"/>
@@ -46,6 +47,10 @@
      </junit>
  </target>
 
+<target name="javadoc">
+	<mkdir dir="${docs.dir}"/>
+	<javadoc sourcepath="${src.dir}" destdir="${docs.dir}" classpathref="classpath"/>
+</target>
 
 </project>
 
