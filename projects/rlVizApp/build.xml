@@ -14,8 +14,14 @@
  	
 
 <path id="classpath">
-    <fileset dir="${privateLib.dir}" includes="**/*.jar"/>
-    <fileset dir="${projectLib.dir}" includes="**/*.jar"/>
+	<fileset dir="${privateLib.dir}" >
+	    <include name="forms-1.1.0.jar"/>
+	</fileset>
+	<fileset dir="${projectLib.dir}" >
+	    <include name="RLVizLib.jar"/>
+	    <include name="environmentShell.jar"/>
+	    <include name="agentShell.jar"/>
+	</fileset>
 </path>
 
 
@@ -30,7 +36,22 @@
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
     </target>
 
+<!-- For Now, we're actually going to put all of the classes from all of the related project into one big jar.
+ 	NOTE: This is a poor implementation, because we've already specified all of these jars above for the classpath.  
+	I'm new to ant and couldn't figure out exactly how to reuse those filesets
+-->
     <target name="jar" depends="compile" >
+		<unjar dest="${classes.dir}">
+			<fileset dir="${privateLib.dir}" >
+			    <include name="forms-1.1.0.jar"/>
+			</fileset>
+			<fileset dir="${projectLib.dir}" >
+			    <include name="RLVizLib.jar"/>
+			    <include name="environmentShell.jar"/>
+			    <include name="agentShell.jar"/>
+			</fileset>
+		</unjar>
+
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
