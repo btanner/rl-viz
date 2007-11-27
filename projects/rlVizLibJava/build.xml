@@ -35,7 +35,7 @@
 
    <target name="clean-build" depends="clean,jar"/>
 
-<target name="junit" depends="jar">
+<!--<target name="junit" depends="jar">
      <junit printsummary="yes"  >
          <classpath>
               <path refid="application"/>
@@ -45,7 +45,7 @@
              <fileset dir="${src.dir}" includes="**/*Test.java"/>
          </batchtest>
      </junit>
- </target>
+ </target> -->
 
 <target name="javadoc">
 	<mkdir dir="${docs.dir}"/>
