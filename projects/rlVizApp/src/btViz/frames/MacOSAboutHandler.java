@@ -11,13 +11,11 @@ public class MacOSAboutHandler extends Application {
     }
 
     class AboutBoxHandler extends ApplicationAdapter {
-        @Override
         public void handleAbout(ApplicationEvent event) {
             GenericVizFrame.showAboutBox();
             event.setHandled(true);
         }
         
-        @Override
           public void handleQuit(ApplicationEvent ae) {
               ae.setHandled(true);
          }
