@@ -76,7 +76,6 @@ public class EpisodeSummaryResponse extends AbstractResponse {
                 MessageValueType.kStringList.id(),
                 thePayLoadBuffer.toString());
 
-        System.out.println("Sending response: "+theResponse);
         return theResponse;
 
     }

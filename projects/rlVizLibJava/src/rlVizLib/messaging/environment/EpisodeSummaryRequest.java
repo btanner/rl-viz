@@ -33,7 +33,7 @@ public class EpisodeSummaryRequest extends EnvironmentMessages{
 		super(theMessageObject);
 	}
 
-	public static EpisodeSummaryResponse Execute(){
+	public static String makeRequest(){
 		String theRequest=AbstractMessage.makeMessage(
 				MessageUser.kEnv.id(),
 				MessageUser.kBenchmark.id(),
@@ -41,6 +41,10 @@ public class EpisodeSummaryRequest extends EnvironmentMessages{
 				MessageValueType.kNone.id(),
 				"NULL");
 
+		return theRequest;
+	}
+	public static EpisodeSummaryResponse Execute(){
+		String theRequest=makeRequest();
 		String responseMessage=RLGlueProxy.RL_env_message(theRequest);
 
 		EpisodeSummaryResponse theResponse;
@@ -65,5 +69,7 @@ public class EpisodeSummaryRequest extends EnvironmentMessages{
 		return (theEnvironment instanceof ProvidesEpisodeSummariesInterface);
 	}
 	
-	
+	public static void main(String[] args){
+		System.out.println("A rlVizLib.messaging.environment.EpisodeSummaryRequest looks like: "+EpisodeSummaryRequest.makeRequest());
+	}
 }

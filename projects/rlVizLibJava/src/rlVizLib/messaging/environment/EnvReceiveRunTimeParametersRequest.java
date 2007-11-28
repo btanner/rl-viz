@@ -25,7 +25,6 @@ import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.ReceivesRunTimeParameterHolderInterface;
-import rlglue.RLGlue;
 import rlglue.environment.Environment;
 
 public class EnvReceiveRunTimeParametersRequest extends EnvironmentMessages{

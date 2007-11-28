@@ -28,7 +28,6 @@ import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.getEnvObsForStateInterface;
 import rlVizLib.utilities.UtilityShop;
-import rlglue.RLGlue;
 import rlglue.environment.Environment;
 import rlglue.types.Observation;
 
