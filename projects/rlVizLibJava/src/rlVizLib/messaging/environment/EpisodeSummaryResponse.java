@@ -47,8 +47,8 @@ public class EpisodeSummaryResponse extends AbstractResponse {
         int numElements = Integer.parseInt(T.nextToken());
 
         for (int i = 0; i < numElements; i++) {
-            String thisToken=T.nextToken();
-            theEpisodeSummaries.add(thisToken);
+			String thisToken=T.nextToken();
+			theEpisodeSummaries.add(thisToken);
         }
     }
 

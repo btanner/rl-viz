@@ -47,7 +47,7 @@ public class AgentShell implements Agent{
 	public void agent_cleanup() {
 		theAgent.agent_cleanup();
 	}
-	
+
 	public AgentShell(){
                 String libraryPath = System.getProperty("RLVIZ_LIB_PATH");
                 if(libraryPath==null)   
