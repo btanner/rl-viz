@@ -18,6 +18,14 @@
 <target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
 </target>	
 
+<target name="matt" description="build everything and put it into the right spots for matt" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
+    <copy file="projects/rlVizLibJava/dist/rlVizLib.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="projects/rlVizLibJava/dist/rlVizLib.jar" todir="../rlcomplibrary/Proving/lib" />
+    <copy file="projects/environmentShell/dist/environmentShell.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="projects/agentShell/dist/agentShell.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="projects/rlVizApp/dist/rlVizApp.jar" todir="../rlcomplibrary/libraries" />
+</target>
+
 <target name="rl-glue" description="Build RL-Glue executable">
 	  <exec executable="make" dir="projects/rl-glue">
 		<arg value="rl-glue"/>
@@ -33,6 +41,19 @@
 	 <copy file="dist/RLVizApp.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/trainers/guiTrainerJava/bin/" />
 	 <copy file="dist/RLVizApp.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
 </target>	
+
+
+<target name="matt" description="build everything and put it into the right spots for matt" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
+    <copy file="dist/rlVizLib.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="dist/rlVizLib.jar" todir="../rl-competition/system/libraries" />
+    <copy file="dist/rlVizLib.jar" todir="../rl-competition/proving/bin/lib" />
+    <copy file="dist/environmentShell.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="dist/environmentShell.jar" todir="../rl-competition/system/libraries" />    
+    <copy file="dist/agentShell.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="dist/agentShell.jar" todir="../rl-competition/system/libraries" />
+    <copy file="dist/rlVizApp.jar" todir="../rl-competition/trainers/guiTrainerJava/bin" />
+    <copy file="dist/rlVizApp.jar" todir="../rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
+</target>
 	
 
 <target name="clean" description="Clean everything">
