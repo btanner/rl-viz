@@ -18,14 +18,6 @@
 <target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
 </target>	
 
-<target name="matt" description="build everything and put it into the right spots for matt" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
-    <copy file="projects/rlVizLibJava/dist/rlVizLib.jar" todir="../rlcomplibrary/libraries" />
-    <copy file="projects/rlVizLibJava/dist/rlVizLib.jar" todir="../rlcomplibrary/Proving/lib" />
-    <copy file="projects/environmentShell/dist/environmentShell.jar" todir="../rlcomplibrary/libraries" />
-    <copy file="projects/agentShell/dist/agentShell.jar" todir="../rlcomplibrary/libraries" />
-    <copy file="projects/rlVizApp/dist/rlVizApp.jar" todir="../rlcomplibrary/libraries" />
-</target>
-
 <target name="rl-glue" description="Build RL-Glue executable">
 	  <exec executable="make" dir="projects/rl-glue">
 		<arg value="rl-glue"/>
