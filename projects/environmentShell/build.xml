@@ -1,4 +1,4 @@
-<project name="environmentShell" basedir="." >
+<project name="EnvironmentShell" basedir="." >
 
     <property name="src.dir"     value="src"/>
 

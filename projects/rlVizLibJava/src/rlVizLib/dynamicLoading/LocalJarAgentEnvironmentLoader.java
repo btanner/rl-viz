@@ -126,11 +126,11 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     private Object loadFromClass(Class<?> theClass, ParameterHolder theParams) {
         Object theModule = null;
 
+//Try to load a constructor that takes a parameterholder
         try {
             Constructor<?> paramBasedConstructor = theClass.getConstructor(ParameterHolder.class);
             theModule = (Object)paramBasedConstructor.newInstance(theParams);
         } catch (Exception paramBasedE) {
-            System.out.println("No paramBased Constructor... exception is: "+paramBasedE+" \n caused by: "+paramBasedE.getCause());
             //There is no ParameterHolder constructor
             if (theParams != null) {
                 if (!theParams.isNull()) {
@@ -141,7 +141,7 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
                 Constructor<?> emptyConstructor = theClass.getConstructor();
                 theModule =  (Object)emptyConstructor.newInstance();
             } catch (Exception noParamsE) {
-                System.err.println("Could't load instance of: " + theClass.getName() + " even with parameters or without");
+                System.err.println("Could't load instance of: " + theClass.getName() + " with parameters or without");
                 System.err.println(noParamsE);
             }
 

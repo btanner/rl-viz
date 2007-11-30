@@ -19,8 +19,8 @@
 	</fileset>
 	<fileset dir="${projectLib.dir}" >
 	    <include name="RLVizLib.jar"/>
-	    <include name="environmentShell.jar"/>
-	    <include name="agentShell.jar"/>
+	    <include name="EnvironmentShell.jar"/>
+	    <include name="AgentShell.jar"/>
 	</fileset>
 </path>
 
@@ -47,8 +47,8 @@
 			</fileset>
 			<fileset dir="${projectLib.dir}" >
 			    <include name="RLVizLib.jar"/>
-			    <include name="environmentShell.jar"/>
-			    <include name="agentShell.jar"/>
+			    <include name="EnvironmentShell.jar"/>
+			    <include name="AgentShell.jar"/>
 			</fileset>
 		</unjar>
 

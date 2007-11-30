@@ -1,4 +1,4 @@
-<project name="agentShell" basedir="." >
+<project name="AgentShell" basedir="." >
 
     <property name="src.dir"     value="src"/>
 
