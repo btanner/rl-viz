@@ -1,16 +1,19 @@
 <project name="RLVizLib" basedir="." >
 
     <property name="src.dir"     value="src"/>
+		<property name="test.dir"			value="tests"/>
     <property name="docs.dir"     value="javadocs"/>
 
     <property name="build.dir"   value="build"/>
     <property name="dist.dir"   value="dist"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
 	<property name="rlglue.jar" value="libs/RL-Glue.jar" />
+	<property name="junit.jar" value="libs/junit-4.4.jar" />
 	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
 	
 	<path id="application" location="${jar.result}"/>
 	<path id="classpath" location="${rlglue.jar}"/>
+	<path id="junit" location="${junit.jar}"/>
  	
 
     <target name="clean">
@@ -35,17 +38,24 @@
 
    <target name="clean-build" depends="clean,jar"/>
 
-<!--<target name="junit" depends="jar">
-     <junit printsummary="yes"  >
+
+   <target name="compile-tests" depends="compile">
+      <mkdir dir="${classes.dir}"/>
+       <javac srcdir="${test.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
+   </target>
+
+<target name="junit" depends="clean,compile-tests,jar">
+     <junit printsummary="withOutAndErr" showoutput="yes" >
          <classpath>
               <path refid="application"/>
+							<path refid="junit" />
           </classpath>
 
          <batchtest fork="yes">
-             <fileset dir="${src.dir}" includes="**/*Test.java"/>
+ 						 <fileset dir="${classes.dir}" includes="**/*Test.class"/>
          </batchtest>
      </junit>
- </target> -->
+ </target> 
 
 <target name="javadoc">
 	<mkdir dir="${docs.dir}"/>
