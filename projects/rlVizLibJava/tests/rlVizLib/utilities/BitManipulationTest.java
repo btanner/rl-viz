@@ -173,7 +173,9 @@ public class BitManipulationTest {
 		
 		exception = false;
 		try {
+			System.err.println("calling with bad params");
 			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
+			System.err.println("back from call with bad params");
 		} catch (Exception e) {
 			exception = true;
 		} finally {

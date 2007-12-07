@@ -199,15 +199,15 @@ public class UtilityShop {
 	public static int putSomeBitsFromIntIntoInt(int A, int B, int amount,
 			int offset) throws Exception {
 		if (A < 0)
-			throw new Exception();
+			throw new IllegalArgumentException("A should be non-negative");
 		if (B < 0)
-			throw new Exception();
+			throw new IllegalArgumentException("B should be non-negative");
 		if (amount < 0)
-			throw new Exception();
+			throw new IllegalArgumentException("amount should be non-negative");
 		if (offset < 0)
-			throw new Exception();
+			throw new IllegalArgumentException("offset should be non-negative");
 		if (amount + offset >= 32)
-			throw new Exception();
+			throw new IllegalArgumentException("amount + offset should not be larger than 31");
 
 		if (amount == 0)
 			return B;
@@ -235,17 +235,16 @@ public class UtilityShop {
 	 * @author Brian Tanner
 	 */
 	public static int extractSomeBitsAsIntFromInt(int B, int amount,
-			int offset) throws Exception {
+			int offset){
 		int A=0;
 		if (B < 0)
-			throw new Exception();
+			throw new IllegalArgumentException("B should be non-negative");
 		if (amount < 0)
-			throw new Exception();
+			throw new IllegalArgumentException("amount should be non-negative");
 		if (offset < 0)
-			throw new Exception();
+			throw new IllegalArgumentException("offset should be non-negative");
 		if (amount + offset >= 32)
-			throw new Exception();
-
+			throw new IllegalArgumentException("amount + offset should not be larger than 31");
 		if (amount == 0)
 			return A;
 		// shift down B
