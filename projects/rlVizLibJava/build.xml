@@ -10,6 +10,8 @@
 	<property name="rlglue.jar" value="libs/RL-Glue.jar" />
 	<property name="junit.jar" value="libs/junit-4.4.jar" />
 	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
+	
+ 	<property file="version.properties"/>
 
     <property name="test.reports"   value="reports"/>
     <property name="test.raw"   value="reports/raw"/>
@@ -34,7 +36,15 @@
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
-            	<attribute name="RLVizLib-Version" value="1.0"/>
+			   <attribute name="Built-By" value="${user.name}"/>
+			    <section name="rlVizLib/">
+			      <attribute name="Specification-Title" value="rlVizLib"/>
+			      <attribute name="Specification-Version" value="${rlVizLib.version}"/>
+			      <attribute name="Specification-Vendor" value="RLAI"/>
+			      <attribute name="Implementation-Title" value="rlVizLib"/>
+			      <attribute name="Implementation-Version" value="${rlVizLib.version}"/> 
+			      <attribute name="Implementation-Vendor" value="Brian Tanner"/>
+			    </section>
             </manifest>
         </jar>
         <copy file="${jar.result}" todir="../../dist/" />

@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
-
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
@@ -37,6 +36,18 @@ import rlglue.types.Observation;
 
 
 public class AgentShell implements Agent{
+	static{
+		String rlVizVersion=rlVizLib.rlVizCore.getVersion();
+		String ourVersion=rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(AgentShell.class);
+		
+		if(!rlVizVersion.equals(ourVersion)){
+			System.err.println("Warning :: Possible RLVizLib Incompatibility");
+			System.err.println("Warning :: Runtime version used by AgentShell is:  "+rlVizVersion);
+			System.err.println("Warning :: Compile version used to build AgentShell is:  "+ourVersion);
+		}
+	}
+
+	
 	private Agent theAgent = null;
 	
 	Map<String, AgentLoaderInterface> mapFromUniqueNameToLoader = new TreeMap<String, AgentLoaderInterface>();

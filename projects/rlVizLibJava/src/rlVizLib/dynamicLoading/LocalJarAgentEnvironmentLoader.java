@@ -25,6 +25,14 @@ import java.util.Vector;
 
 import rlVizLib.general.ParameterHolder;
 
+/**
+ * @author btanner
+ *
+ */
+/**
+ * @author btanner
+ *
+ */
 public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     private boolean debugClassLoading=false;
 
@@ -123,7 +131,21 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         return theParamHolder;
     }
 
+
+    /**
+     * Creates an object of type theClass using theParams if possible.  Also checks to see if the version of RLVizLib
+     * that was used to compile theClass is the same as the current runtime version.  For now, doesn't do anything except 
+     * print a warning if they don't match.
+     * @param theClass Class to instantiate
+     * @param theParams ParameterHolder to initialize the new object with
+     * @return newly instantiated class of type theClass
+     */
     private Object loadFromClass(Class<?> theClass, ParameterHolder theParams) {
+    	//before we do this, lets check compatibility
+    	boolean goodVersion=checkVersions(theClass);
+  
+
+    	
         Object theModule = null;
 
 //Try to load a constructor that takes a parameterholder
@@ -152,7 +174,20 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     }
 
 
-    public String getTypeSuffix() {
+    private boolean checkVersions(Class<?> theClass) {
+  		String rlVizVersion=rlVizLib.rlVizCore.getVersion();
+		String thisClassVersion=rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(theClass);
+		
+		if(!rlVizVersion.equals(thisClassVersion)){
+			System.err.println("Warning :: Possible RLVizLib Incompatibility");
+			System.err.println("Warning :: Runtime version used by the Loader is:  "+rlVizVersion);
+			System.err.println("Warning :: Compile version used to build "+theClass+" is:  "+thisClassVersion);
+			return false;
+		}
+		return true;
+}
+
+	public String getTypeSuffix() {
         return "- Java";
     }
 

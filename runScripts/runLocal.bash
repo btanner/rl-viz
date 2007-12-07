@@ -1,2 +1,2 @@
 #/bin/bash
-java -Xmx1024M  -DRLVIZ_LIB_PATH=../../../netBeans/libraries/ -classpath ../dist/rlVizApp.jar btViz.LocalGraphicalDriver
+java -Xmx1024M  -DRLVIZ_LIB_PATH=../../../netBeans/libraries/ -classpath ../dist/rlVizApp.jar:../dist/rlVizLib.jar:../dist/rlVizApp.jar:../dist/EnvironmentShell.jar:../dist/AgentShell.jar btViz.LocalGraphicalDriver

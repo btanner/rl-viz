@@ -9,9 +9,10 @@
 
 	<property name="privateLib.dir"     value="libs"/>
 	<property name="projectLib.dir"     value="../../dist"/>
+
+	<property file="../rlVizLibJava/version.properties"/>
 	
 	<path id="application" location="${jar.result}"/>
- 	
 
 <path id="classpath">
 	<fileset dir="${privateLib.dir}" >
@@ -36,25 +37,26 @@
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
     </target>
 
-<!-- For Now, we're actually going to put all of the classes from all of the related project into one big jar.
- 	NOTE: This is a poor implementation, because we've already specified all of these jars above for the classpath.  
-	I'm new to ant and couldn't figure out exactly how to reuse those filesets
--->
     <target name="jar" depends="compile" >
 		<unjar dest="${classes.dir}">
 			<fileset dir="${privateLib.dir}" >
 			    <include name="forms-1.1.0.jar"/>
-			</fileset>
-			<fileset dir="${projectLib.dir}" >
-			    <include name="RLVizLib.jar"/>
-			    <include name="EnvironmentShell.jar"/>
-			    <include name="AgentShell.jar"/>
 			</fileset>
 		</unjar>
 
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
+			   <attribute name="Built-By" value="${user.name}"/>
+			<attribute name="RLVizLib-Link-Version" value="${rlVizLib.version}"/>
+			    <section name="btViz/">
+			      <attribute name="Specification-Title" value="RLViz Application"/>
+			      <attribute name="Specification-Version" value="1.0"/>
+			      <attribute name="Specification-Vendor" value="Reinforement Learning and Artificial Intelligence Laboratory (RLAI)"/>
+			      <attribute name="Implementation-Title" value="RLViz Application"/>
+			      <attribute name="Implementation-Version" value="1.0"/> 
+			      <attribute name="Implementation-Vendor" value="Brian Tanner"/>
+			    </section>
             </manifest>
         </jar>
         <copy file="${jar.result}" todir="../../dist/" />
@@ -64,12 +66,13 @@
 
 <target name="junit" depends="jar">
      <junit printsummary="yes"  >
+ <formatter type="plain"/>
          <classpath>
               <path refid="application"/>
 			  <path refid="classpath"/>
           </classpath>
 
-         <batchtest fork="yes">
+         <batchtest fork="yes" todir="$reports/raw/">
              <fileset dir="${src.dir}" includes="**/*Test.java"/>
          </batchtest>
      </junit>

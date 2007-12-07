@@ -22,6 +22,7 @@ import rlglue.types.Reward_observation;
 
 
 public abstract class EnvironmentBase implements Environment {
+
 	abstract protected Observation makeObservation();
 	
 	protected Reward_observation makeRewardObservation(double reward, boolean isTerminal){
