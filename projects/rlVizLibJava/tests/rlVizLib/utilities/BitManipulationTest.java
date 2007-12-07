@@ -31,7 +31,7 @@ public class BitManipulationTest {
 		offset = 10;
 		try {
 			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
-			unpacked = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			unpacked = UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -86,7 +86,7 @@ public class BitManipulationTest {
 		amount = 8;
 		offset = 0;
 		try {
-			A1_out = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			A1_out = UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -95,7 +95,7 @@ public class BitManipulationTest {
 		amount = 4;
 		offset = 8;
 		try {
-			A2_out = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			A2_out = UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -104,7 +104,7 @@ public class BitManipulationTest {
 		amount = 3;
 		offset = 12;
 		try {
-			A3_out = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			A3_out = UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -158,7 +158,7 @@ public class BitManipulationTest {
 	}
 	
 	@Test
-	public void testAssertionFailureOnInvalidInput() {
+	public void testAssertionFailureOnInvalidInput1() {
 		int A = 0;
 		int B = 0;
 		int amount = 0;
@@ -179,16 +179,19 @@ public class BitManipulationTest {
 		} finally {
 			assertTrue(exception);
 		}
-		exception = false;
-		try {
-			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
-		} catch (Exception e) {
-			exception = true;
-		} finally {
-			assertTrue(exception);
-		}
+	}
+
 		
-		A = 5;
+		@Test
+		public void testAssertionFailureOnInvalidInput3() {
+			int A = 0;
+			int B = 0;
+			int amount = 0;
+			int offset = 0;
+			int packed = 0;
+			int unpacked = 0;
+			boolean exception;	
+				A = 5;
 		B = -7;
 		amount = 3;
 		offset = 10;
@@ -201,10 +204,21 @@ public class BitManipulationTest {
 		} finally {
 			assertTrue(exception);
 		}
-		packed = -7;
+	}
+	
+	@Test
+	public void testAssertionFailureOnInvalidInput4() {
+		int A = 0;
+		int B = 0;
+		int amount = 0;
+		int offset = 0;
+		int packed = 0;
+		int unpacked = 0;
+		boolean exception;
+			packed = -7;
 		exception = false;
 		try {
-			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -226,7 +240,7 @@ public class BitManipulationTest {
 		}
 		exception = false;
 		try {
-			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -248,7 +262,7 @@ public class BitManipulationTest {
 		}
 		exception = false;
 		try {
-			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -270,7 +284,7 @@ public class BitManipulationTest {
 		}
 		exception = false;
 		try {
-			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {

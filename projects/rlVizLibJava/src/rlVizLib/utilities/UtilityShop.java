@@ -22,116 +22,182 @@ import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.hasVersionDetails;
 import rlglue.types.Observation;
 
+/**
+ * The Utility Shop is a useful dump for all sorts of odds and ends that come in
+ * handy. Some day it should probably be deprecated and distributed.
+ * 
+ * @author Brian Tanner
+ * @author Mark Lee
+ * 
+ */
+/**
+ * @author btanner
+ * 
+ */
 public class UtilityShop {
 
-    public static double normalizeValue(double theValue, double minPossible, double maxPossible) {
-        return (theValue - minPossible) / (maxPossible - minPossible);
-    }
+	public static double normalizeValue(double theValue, double minPossible,
+			double maxPossible) {
+		return (theValue - minPossible) / (maxPossible - minPossible);
+	}
 
-    public static Observation cloneObservation(Observation theObs) {
+	public static Observation cloneObservation(Observation theObs) {
 
-        Observation newObs = new Observation(theObs.intArray.length, theObs.doubleArray.length);
-        for (int i = 0; i < theObs.intArray.length; i++) {
-            newObs.intArray[i] = theObs.intArray[i];
-        }
-        for (int i = 0; i < theObs.doubleArray.length; i++) {
-            newObs.doubleArray[i] = theObs.doubleArray[i];
-        }
-        return newObs;
-    }
+		Observation newObs = new Observation(theObs.intArray.length,
+				theObs.doubleArray.length);
+		for (int i = 0; i < theObs.intArray.length; i++) {
+			newObs.intArray[i] = theObs.intArray[i];
+		}
+		for (int i = 0; i < theObs.doubleArray.length; i++) {
+			newObs.doubleArray[i] = theObs.doubleArray[i];
+		}
+		return newObs;
+	}
 
-    public static StringBuffer serializeObservation(StringBuffer theRequestBuffer, Observation theObs) {
-        theRequestBuffer.append(theObs.intArray.length);
-        theRequestBuffer.append("_");
-        for (int i = 0; i < theObs.intArray.length; i++) {
-            theRequestBuffer.append(theObs.intArray[i]);
-            theRequestBuffer.append("_");
-        }
-        theRequestBuffer.append(theObs.doubleArray.length);
-        theRequestBuffer.append("_");
-        for (int i = 0; i < theObs.doubleArray.length; i++) {
-            theRequestBuffer.append(theObs.doubleArray[i]);
-            theRequestBuffer.append("_");
-        }
-        return theRequestBuffer;
-    }
+	public static StringBuffer serializeObservation(
+			StringBuffer theRequestBuffer, Observation theObs) {
+		theRequestBuffer.append(theObs.intArray.length);
+		theRequestBuffer.append("_");
+		for (int i = 0; i < theObs.intArray.length; i++) {
+			theRequestBuffer.append(theObs.intArray[i]);
+			theRequestBuffer.append("_");
+		}
+		theRequestBuffer.append(theObs.doubleArray.length);
+		theRequestBuffer.append("_");
+		for (int i = 0; i < theObs.doubleArray.length; i++) {
+			theRequestBuffer.append(theObs.doubleArray[i]);
+			theRequestBuffer.append("_");
+		}
+		return theRequestBuffer;
+	}
 
-    public static Observation buildObservationFromString(String thisObsString) {
-        StringTokenizer obsTokenizer = new StringTokenizer(thisObsString, "_");
+	public static Observation buildObservationFromString(String thisObsString) {
+		StringTokenizer obsTokenizer = new StringTokenizer(thisObsString, "_");
 
-        String intCountToken = obsTokenizer.nextToken();
-        int theIntCount = Integer.parseInt(intCountToken);
-        int[] theInts = new int[theIntCount];
+		String intCountToken = obsTokenizer.nextToken();
+		int theIntCount = Integer.parseInt(intCountToken);
+		int[] theInts = new int[theIntCount];
 
-        for (int i = 0; i < theInts.length; i++) {
-            theInts[i] = Integer.parseInt(obsTokenizer.nextToken());
-        }
+		for (int i = 0; i < theInts.length; i++) {
+			theInts[i] = Integer.parseInt(obsTokenizer.nextToken());
+		}
 
-        String doubleCountToken = obsTokenizer.nextToken();
-        int theDoubleCount = Integer.parseInt(doubleCountToken);
-        double[] theDoubles = new double[theDoubleCount];
+		String doubleCountToken = obsTokenizer.nextToken();
+		int theDoubleCount = Integer.parseInt(doubleCountToken);
+		double[] theDoubles = new double[theDoubleCount];
 
-        for (int i = 0; i < theDoubles.length; i++) {
-            theDoubles[i] = Double.parseDouble(obsTokenizer.nextToken());
-        }
+		for (int i = 0; i < theDoubles.length; i++) {
+			theDoubles[i] = Double.parseDouble(obsTokenizer.nextToken());
+		}
 
-        Observation theObs = new Observation(theIntCount, theDoubleCount);
-        theObs.intArray = theInts;
-        theObs.doubleArray = theDoubles;
+		Observation theObs = new Observation(theIntCount, theDoubleCount);
+		theObs.intArray = theInts;
+		theObs.doubleArray = theDoubles;
 
-        return theObs;
-    }
+		return theObs;
+	}
 
-    public static String serializeObservation(Observation o) {
-        StringBuffer b = new StringBuffer();
-        return serializeObservation(b, o).toString();
-    }
+	public static String serializeObservation(Observation o) {
+		StringBuffer b = new StringBuffer();
+		return serializeObservation(b, o).toString();
+	}
 
-    public static final int LongHighBitsToInt(Long thisLong) {
-        int b = (int) (thisLong >>> 32);
-        return b;
-    }
+	/**
+	 * Takes the high half of the bits out of a long and tells you what int they
+	 * are
+	 * 
+	 * @param thisLong
+	 * @return
+	 * @author Brian Tanner
+	 */
+	public static final int LongHighBitsToInt(Long thisLong) {
+		int b = (int) (thisLong >>> 32);
+		return b;
+	}
 
-    public static final int LongLowBitsToInt(Long thisLong) {
-        int a = (int) (thisLong & 0x00000000FFFFFFFF);
+	/**
+	 * Takes the low half of the bits out of a long and tells you want int they
+	 * are
+	 * 
+	 * @param thisLong
+	 * @return
+	 * @author Brian Tanner
+	 */
+	public static final int LongLowBitsToInt(Long thisLong) {
+		int a = (int) (thisLong & 0x00000000FFFFFFFF);
 
-        return a;
-    }
+		return a;
+	}
 
-    public static final long intsToLong(int highBits, int lowBits) {
-        long newLong = (4294967295L & (long) lowBits) | (long) highBits << 32;
-        return newLong;
-    }
+	/**
+	 * Takes two int and smooshes them into a long.
+	 * 
+	 * @param highBits
+	 * @param lowBits
+	 * @return
+	 * @author Brian Tanner
+	 */
+	public static final long intsToLong(int highBits, int lowBits) {
+		long newLong = (4294967295L & (long) lowBits) | (long) highBits << 32;
+		return newLong;
+	}
 
-    /**
+	/**
+	 * 
+	 * Returns the path the the RLViz Libraries as has been set by the
+	 * RLVIZ_LIB_PATH System property or by hopings its at ../../libraries
+	 * 
+	 * @return
+	 * @author Brian Tanner
+	 */
+	public final static String getLibraryPath() {
+		// Some more dynamic loading goodness
+		String libraryPath = System.getProperty("RLVIZ_LIB_PATH");
+		if (libraryPath == null) {
+			String curDir = System.getProperty("user.dir");
+			File thisDirectoryFile = new File(curDir);
+			String mainLibraryDir = thisDirectoryFile.getParent();
+			File parentDirectoryFile = new File(mainLibraryDir);
+			String workSpaceDirString = parentDirectoryFile.getParent();
+			libraryPath = workSpaceDirString + "/libraries";
+		}
+		return libraryPath;
+	}
 
-@return Path to the RLViz Libraries, using either ../../libraries or RLVIZ_LIB_PATH System property
-*/
-   public final static String getLibraryPath() {
-        //Some more dynamic loading goodness
-        String libraryPath = System.getProperty("RLVIZ_LIB_PATH");
-        if (libraryPath == null) {
-            String curDir = System.getProperty("user.dir");
-            File thisDirectoryFile = new File(curDir);
-            String mainLibraryDir = thisDirectoryFile.getParent();
-            File parentDirectoryFile = new File(mainLibraryDir);
-            String workSpaceDirString = parentDirectoryFile.getParent();
-            libraryPath = workSpaceDirString + "/libraries";
-        }
-        return libraryPath;
-    }
-   
-   public final static void setVersionDetails(ParameterHolder P,hasVersionDetails provider){
-       if(P!=null){
-           P.addStringParam("###name",provider.getName());
-           P.addStringParam("###shortname",provider.getShortName());
-           P.addStringParam("###url",provider.getInfoUrl());
-           P.addStringParam("###authors",provider.getAuthors());
-           P.addStringParam("###description",provider.getDescription());
-       }
-   }
+	/**
+	 * Given a {@link hasVersionDetails} provider, fills fields into the ParameterHolder formatted
+	 * so that they show up nicely in the application that might want to display them 
+	 * @param P
+	 * @param provider
+     * @author Brian Tanner
+	 */
+	public final static void setVersionDetails(ParameterHolder P,
+			hasVersionDetails provider) {
+		if (P != null) {
+			P.addStringParam("###name", provider.getName());
+			P.addStringParam("###shortname", provider.getShortName());
+			P.addStringParam("###url", provider.getInfoUrl());
+			P.addStringParam("###authors", provider.getAuthors());
+			P.addStringParam("###description", provider.getDescription());
+		}
+	}
 
-	public static int putSomeBitsFromIntIntoInt(int A, int B, int amount, int offset) throws Exception {
+	
+	/**
+	 * Isolates some of the bits from int A and uses bit manipulation to insert them at an offset in B
+	 * <p>
+	 * Need an example here.
+	 * @param A Source of the bits to be copy (they should be stored in the first amount bits)
+	 * @param B	Destination of the bits 
+	 * @param amount Number of the bits to copy
+	 * @param offset Offset to put the bits at
+	 * @return B with the bits transplanted
+	 * @throws Exception 
+	 * @author Mark Lee
+	 * @author Brian Tanner
+	 */
+	public static int putSomeBitsFromIntIntoInt(int A, int B, int amount,
+			int offset) throws Exception {
 		if (A < 0)
 			throw new Exception();
 		if (B < 0)
@@ -157,10 +223,20 @@ public class UtilityShop {
 		B = B | A;
 		return B;
 	}
-	
-	public static int extractSomeBitsAsIntFromInt(int A, int B, int amount, int offset) throws Exception {
-		if (A < 0)
-			throw new Exception();
+
+	/**
+	 * Isolate some of the bits from B and return them as an int
+	 * @param B  Int with bits stuffed into it that we want to extract
+	 * @param amount The number of bits to extract
+	 * @param offset Where to start extracting
+	 * @return Int made from the extracted bits
+	 * @throws Exception
+	 * @author Mark Lee
+	 * @author Brian Tanner
+	 */
+	public static int extractSomeBitsAsIntFromInt(int B, int amount,
+			int offset) throws Exception {
+		int A=0;
 		if (B < 0)
 			throw new Exception();
 		if (amount < 0)
