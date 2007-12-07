@@ -129,7 +129,6 @@ public class LogCompressorTest {
 		}
 		
 		assertTrue(A1_8bit == A1_out);
-		System.out.println("Not equal: " + A2_out);
 		assertTrue(A2_4bit == A2_out);
 		assertTrue(A3_3bit == A3_out);
 	}
