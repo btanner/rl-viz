@@ -13,10 +13,11 @@ import static org.junit.Assert.*;
  *
  * @author mlee
  */
-public class BitManipulationTest extends junit.framework.TestCase{
+public class BitManipulationTest {
 
 
 
+	@Test
 	public void testinputEqualsOutput() {
 		int A = 0;
 		int B = 0;
@@ -38,6 +39,7 @@ public class BitManipulationTest extends junit.framework.TestCase{
 		assertTrue(A == unpacked);
 	}
 	
+	@Test
 	public void testPackMultiple() {
 		int A1_8bit = 37;
 		int A2_4bit = 12;
@@ -113,6 +115,7 @@ public class BitManipulationTest extends junit.framework.TestCase{
 		assertTrue(A3_3bit == A3_out);
 	}
 	
+	@Test
 	public void testOffset() {
 		int A = 0;
 		int B = 0;
@@ -133,6 +136,7 @@ public class BitManipulationTest extends junit.framework.TestCase{
 		assertTrue(packed == (5 << 10));
 	}
 	
+	@Test
 	public void testAmount() {
 		int A = 0;
 		int B = 0;
@@ -153,6 +157,7 @@ public class BitManipulationTest extends junit.framework.TestCase{
 		assertTrue(packed == (5 << 10));
 	}
 	
+	@Test
 	public void testAssertionFailureOnInvalidInput() {
 		int A = 0;
 		int B = 0;

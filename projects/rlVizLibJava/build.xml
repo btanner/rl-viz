@@ -10,6 +10,9 @@
 	<property name="rlglue.jar" value="libs/RL-Glue.jar" />
 	<property name="junit.jar" value="libs/junit-4.4.jar" />
 	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
+
+    <property name="test.reports"   value="reports"/>
+    <property name="test.raw"   value="reports/raw"/>
 	
 	<path id="application" location="${jar.result}"/>
 	<path id="classpath" location="${rlglue.jar}"/>
@@ -45,19 +48,40 @@
        <javac srcdir="${test.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
    </target>
 
-<target name="junit" depends="clean,compile-tests,jar">
+<target name="test" depends="clean,compile-tests,jar">
      <junit printsummary="withOutAndErr" showoutput="yes" >
          <classpath>
               <path refid="application"/>
-							<path refid="junit" />
+			<path refid="junit" />
           </classpath>
 
-         <batchtest fork="yes" todir="reports/raw/">
+         <batchtest fork="yes" todir="${test.raw}">
 	          <formatter type="xml"/> 
  						 <fileset dir="${test.dir}" includes="**/*Test.java"/>
          </batchtest>
      </junit>
  </target> 
+
+<target name="test-html" depends="test">
+<!--  <junit fork="yes" printsummary="no" haltonfailure="no">
+    <batchtest fork="yes" todir="${test.reports}" >
+		 <fileset dir="${test.dir}" includes="**/*Test.java"/>
+    </batchtest>
+    <formatter type="xml" />
+    <classpath>
+         <path refid="application"/>
+		<path refid="junit" />
+     </classpath>
+  </junit> -->
+
+  <junitreport todir="${test.reports}">
+    <fileset dir="${test.raw}">
+      <include name="TEST-*.xml" />
+    </fileset>
+    <report todir="${test.reports}" />
+  </junitreport>
+</target>
+
 
 <target name="javadoc">
 	<mkdir dir="${docs.dir}"/>
