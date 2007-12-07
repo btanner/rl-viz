@@ -11,6 +11,8 @@
 	<path id="application" location="${jar.result}"/>
 	<path id="classpath" location="${RLVizLib.jar}"/>
  	
+	<property file="../rlVizLibJava/version.properties"/>
+
 
     <target name="clean">
  		<delete dir="${build.dir}"/>
@@ -27,6 +29,16 @@
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
+			   <attribute name="Built-By" value="${user.name}"/>
+			   <attribute name="RLVizLib-Link-Version" value="${rlVizLib.version}"/>
+			    <section name="environmentShell/">
+			      <attribute name="Specification-Title" value="EnvironmentShell"/>
+			      <attribute name="Specification-Version" value="1.0"/>
+			      <attribute name="Specification-Vendor" value="RLAI"/>
+			      <attribute name="Implementation-Title" value="EnvironmentShell"/>
+			      <attribute name="Implementation-Version" value="1.0"/> 
+			      <attribute name="Implementation-Vendor" value="Brian Tanner"/>
+			    </section>
             </manifest>
         </jar>
         <copy file="${jar.result}" todir="../../dist/" />

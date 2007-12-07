@@ -17,6 +17,7 @@
 package environmentShell;
 
 import java.util.Map;
+
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -27,7 +28,6 @@ import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.environmentShell.EnvShellListResponse;
 import rlVizLib.messaging.environmentShell.EnvShellLoadRequest;
 import rlVizLib.messaging.environmentShell.EnvShellLoadResponse;
-import rlVizLib.messaging.environmentShell.EnvShellRefreshRequest;
 import rlVizLib.messaging.environmentShell.EnvShellRefreshResponse;
 import rlVizLib.messaging.environmentShell.EnvShellMessageType;
 import rlVizLib.messaging.environmentShell.EnvShellUnLoadResponse;
@@ -40,8 +40,19 @@ import rlglue.types.Random_seed_key;
 import rlglue.types.Reward_observation;
 import rlglue.types.State_key;
 
-public class EnvironmentShell implements Environment {
 
+public class EnvironmentShell implements Environment {
+	static{
+		String rlVizVersion=rlVizLib.rlVizCore.getVersion();
+		String ourVersion=rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(EnvironmentShell.class);
+		
+		if(!rlVizVersion.equals(ourVersion)){
+			System.err.println("Warning :: Possible RLVizLib Incompatibility");
+			System.err.println("Warning :: Runtime version used by EnvironmentShell is:  "+rlVizVersion);
+			System.err.println("Warning :: Compile version used to build EnvironmentShell is:  "+ourVersion);
+		}
+	}
+	
     private Environment theEnvironment = null;
     Map<String, EnvironmentLoaderInterface> mapFromUniqueNameToLoader = new TreeMap<String, EnvironmentLoaderInterface>();
     Map<String, String> mapFromUniqueNameToLocalName = new TreeMap<String, String>();
