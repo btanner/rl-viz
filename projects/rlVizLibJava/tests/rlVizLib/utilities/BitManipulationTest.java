@@ -13,30 +13,11 @@ import static org.junit.Assert.*;
  *
  * @author mlee
  */
-public class BitManipulationTest {
-
-	public BitManipulationTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() {
-	}
-
-	@After
-	public void tearDown() {
-	}
+public class BitManipulationTest extends junit.framework.TestCase{
 
 
-	@Test
-	public void verifyinputEqualsOutput() {
+
+	public void testinputEqualsOutput() {
 		int A = 0;
 		int B = 0;
 		int amount = 0;
@@ -57,8 +38,7 @@ public class BitManipulationTest {
 		assertTrue(A == unpacked);
 	}
 	
-	@Test
-	public void verifyPackMultiple() {
+	public void testPackMultiple() {
 		int A1_8bit = 37;
 		int A2_4bit = 12;
 		int A3_3bit = 5;
@@ -133,8 +113,7 @@ public class BitManipulationTest {
 		assertTrue(A3_3bit == A3_out);
 	}
 	
-	@Test
-	public void verifyOffset() {
+	public void testOffset() {
 		int A = 0;
 		int B = 0;
 		int amount = 0;
@@ -154,8 +133,7 @@ public class BitManipulationTest {
 		assertTrue(packed == (5 << 10));
 	}
 	
-	@Test
-	public void verifyAmount() {
+	public void testAmount() {
 		int A = 0;
 		int B = 0;
 		int amount = 0;
@@ -175,8 +153,7 @@ public class BitManipulationTest {
 		assertTrue(packed == (5 << 10));
 	}
 	
-	@Test
-	public void verifyAssertionFailureOnInvalidInput() {
+	public void testAssertionFailureOnInvalidInput() {
 		int A = 0;
 		int B = 0;
 		int amount = 0;

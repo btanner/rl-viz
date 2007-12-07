@@ -52,7 +52,8 @@
 							<path refid="junit" />
           </classpath>
 
-         <batchtest fork="yes">
+         <batchtest fork="yes" todir="reports/raw/">
+	          <formatter type="xml"/> 
  						 <fileset dir="${test.dir}" includes="**/*Test.java"/>
          </batchtest>
      </junit>
