@@ -54,8 +54,8 @@ public static Class<?> loadClassFromFile(File theFile,String className) throws C
 
 /**
 
-@param theFile A File object that is the Jar we want to load from
-@param className The fully qualified name of the class to load
+@param theJarFile A File object that is the Jar we want to load from
+@param theClassName The fully qualified name of the class to load
 @return Like loadClassFromFile, except returns null if there is a problem instead of throwing an Exception
  */	
     public static Class<?> loadClassFromFileQuiet(File theJarFile, String theClassName) {
@@ -63,8 +63,8 @@ public static Class<?> loadClassFromFile(File theFile,String className) throws C
 }
 /**
 
-@param theFile A File object that is the Jar we want to load from
-@param className The fully qualified name of the class to load
+@param theJarFile A File object that is the Jar we want to load from
+@param theClassName The fully qualified name of the class to load
 @param dumpTheStack If this is true, a stack trace will be produced if there is an error
 @return Like loadClassFromFile, except returns null if there is a problem instead of throwing an Exception
  */	

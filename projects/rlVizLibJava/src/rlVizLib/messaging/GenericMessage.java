@@ -18,7 +18,43 @@ package rlVizLib.messaging;
 
 import java.util.StringTokenizer;
 
+import rlVizLib.messaging.agent.AgentMessageType;
+import rlVizLib.messaging.agentShell.AgentShellMessageType;
+import rlVizLib.messaging.environment.EnvMessageType;
+import rlVizLib.messaging.environmentShell.EnvShellMessageType;
+
+/**
+ * Generic Message is where much of the actual guts of the messaging system is based.  Basically, every message 
+ * in RLViz is made from:
+ * <p>
+ * <b>to:</b> 	The intended recipient of this message (Experiment, Agent, Environment, AgentShell, EnvironmentShell)
+ * <br />
+ * The type of <b>to</b> is {@link MessageUser}
+ * <p>
+ * <b>from</b>: 	The originator of this message  (Experiment, Agent, Environment, AgentShell, EnvironmentShell)
+ * <br />
+ * The type of <b>from</b> is {@link MessageUser}
+ * <p>
+ * <p>
+ * <b>theMessageType</b>: Identifier of the message type.  These types are all predefined inside RLViz (there is a "custom"
+ * for making custom message types)
+ * <br />
+ * The interpreted type of <b>theMessageType</b> varies from subclass to subclass {@link AgentMessageType}, {@link EnvMessageType}, {@link EnvShellMessageType}, {@link AgentShellMessageType}
+ * <p>
+ * <b>payLoadType</b>: formatting hints about the payload of the message
+ * <br />
+ * The type of <b>payLoadType</b> is {@link MessageValueType}
+ * <p>
+ * <b>payLoad</b>: formatted string with the deliverable aspect of this message
+ * <br />
+ * The type of <b>payLoad</b> is {@link String}
+ * 
+ * @author Brian Tanner
+ * @since The Beginning
+ */
 public class GenericMessage {
+	
+	
 	private int theMessageType;
 	protected MessageUser from;
 	protected MessageUser to;

@@ -30,10 +30,6 @@ import rlglue.types.Observation;
  * @author Mark Lee
  * 
  */
-/**
- * @author btanner
- * 
- */
 public class UtilityShop {
 
 	public static double normalizeValue(double theValue, double minPossible,
@@ -107,8 +103,6 @@ public class UtilityShop {
 	 * are
 	 * 
 	 * @param thisLong
-	 * @return
-	 * @author Brian Tanner
 	 */
 	public static final int LongHighBitsToInt(Long thisLong) {
 		int b = (int) (thisLong >>> 32);
@@ -120,8 +114,6 @@ public class UtilityShop {
 	 * are
 	 * 
 	 * @param thisLong
-	 * @return
-	 * @author Brian Tanner
 	 */
 	public static final int LongLowBitsToInt(Long thisLong) {
 		int a = (int) (thisLong & 0x00000000FFFFFFFF);
@@ -134,8 +126,6 @@ public class UtilityShop {
 	 * 
 	 * @param highBits
 	 * @param lowBits
-	 * @return
-	 * @author Brian Tanner
 	 */
 	public static final long intsToLong(int highBits, int lowBits) {
 		long newLong = (4294967295L & (long) lowBits) | (long) highBits << 32;
@@ -147,8 +137,6 @@ public class UtilityShop {
 	 * Returns the path the the RLViz Libraries as has been set by the
 	 * RLVIZ_LIB_PATH System property or by hopings its at ../../libraries
 	 * 
-	 * @return
-	 * @author Brian Tanner
 	 */
 	public final static String getLibraryPath() {
 		// Some more dynamic loading goodness
@@ -169,7 +157,6 @@ public class UtilityShop {
 	 * so that they show up nicely in the application that might want to display them 
 	 * @param P
 	 * @param provider
-     * @author Brian Tanner
 	 */
 	public final static void setVersionDetails(ParameterHolder P,
 			hasVersionDetails provider) {
@@ -193,11 +180,9 @@ public class UtilityShop {
 	 * @param offset Offset to put the bits at
 	 * @return B with the bits transplanted
 	 * @throws Exception 
-	 * @author Mark Lee
-	 * @author Brian Tanner
 	 */
 	public static int putSomeBitsFromIntIntoInt(int A, int B, int amount,
-			int offset) throws Exception {
+			int offset) {
 		if (A < 0)
 			throw new IllegalArgumentException("A should be non-negative");
 		if (B < 0)
@@ -231,8 +216,6 @@ public class UtilityShop {
 	 * @param offset Where to start extracting
 	 * @return Int made from the extracted bits
 	 * @throws Exception
-	 * @author Mark Lee
-	 * @author Brian Tanner
 	 */
 	public static int extractSomeBitsAsIntFromInt(int B, int amount,
 			int offset){
