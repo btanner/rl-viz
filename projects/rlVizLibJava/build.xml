@@ -63,17 +63,6 @@
  </target> 
 
 <target name="test-html" depends="test">
-<!--  <junit fork="yes" printsummary="no" haltonfailure="no">
-    <batchtest fork="yes" todir="${test.reports}" >
-		 <fileset dir="${test.dir}" includes="**/*Test.java"/>
-    </batchtest>
-    <formatter type="xml" />
-    <classpath>
-         <path refid="application"/>
-		<path refid="junit" />
-     </classpath>
-  </junit> -->
-
   <junitreport todir="${test.reports}">
     <fileset dir="${test.raw}">
       <include name="TEST-*.xml" />
