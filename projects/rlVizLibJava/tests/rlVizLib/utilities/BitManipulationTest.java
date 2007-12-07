@@ -13,9 +13,9 @@ import static org.junit.Assert.*;
  *
  * @author mlee
  */
-public class BitManipulationTests {
+public class BitManipulationTest {
 
-	public BitManipulationTests() {
+	public BitManipulationTest() {
 	}
 
 	@BeforeClass
