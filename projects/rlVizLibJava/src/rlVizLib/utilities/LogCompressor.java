@@ -19,17 +19,12 @@ public class LogCompressor {
 			return B;
 		// mask off higher values from A
 		int mask = (1 << amount) - 1;
-		System.out.println("mask is " + mask);
 		A = A & mask;
-		System.out.println("cleared out A is " +  A);
 		// shift A up to offset
 		A = A << offset;
-		System.out.println("shifted up A is " + A);
 		mask = mask << offset;
-		System.out.println("shifted up mask is " + mask);
 		// zero out this section in B
 		B = B & (~mask);
-		System.out.println("cleared out B is " + B);
 		// bitwise or shifted A with cleared B
 		B = B | A;
 		return B;
