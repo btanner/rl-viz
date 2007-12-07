@@ -1,6 +1,6 @@
 package rlVizLib.utilities;
 
-import rlVizLib.utilities.LogCompressor;
+import rlVizLib.utilities.UtilityShop;
 import java.util.Vector;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -13,9 +13,9 @@ import static org.junit.Assert.*;
  *
  * @author mlee
  */
-public class LogCompressorTest {
+public class BitManipulationTests {
 
-	public LogCompressorTest() {
+	public BitManipulationTests() {
 	}
 
 	@BeforeClass
@@ -48,8 +48,8 @@ public class LogCompressorTest {
 		amount = 3;
 		offset = 10;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
-			unpacked = LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
+			unpacked = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -76,7 +76,7 @@ public class LogCompressorTest {
 		amount = 8;
 		offset = 0;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -85,7 +85,7 @@ public class LogCompressorTest {
 		amount = 4;
 		offset = 8;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,packed,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -94,7 +94,7 @@ public class LogCompressorTest {
 		amount = 3;
 		offset = 12;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,packed,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -104,7 +104,7 @@ public class LogCompressorTest {
 		amount = 8;
 		offset = 0;
 		try {
-			A1_out = LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			A1_out = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -113,7 +113,7 @@ public class LogCompressorTest {
 		amount = 4;
 		offset = 8;
 		try {
-			A2_out = LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			A2_out = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -122,7 +122,7 @@ public class LogCompressorTest {
 		amount = 3;
 		offset = 12;
 		try {
-			A3_out = LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			A3_out = UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -146,7 +146,7 @@ public class LogCompressorTest {
 		amount = 3;
 		offset = 10;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -167,7 +167,7 @@ public class LogCompressorTest {
 		amount = 3;
 		offset = 10;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch(Exception e) {
 			System.err.println("Error: " + e);
 			fail();
@@ -191,7 +191,7 @@ public class LogCompressorTest {
 		
 		exception = false;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -199,7 +199,7 @@ public class LogCompressorTest {
 		}
 		exception = false;
 		try {
-			LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -213,7 +213,7 @@ public class LogCompressorTest {
 		
 		exception = false;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -222,7 +222,7 @@ public class LogCompressorTest {
 		packed = -7;
 		exception = false;
 		try {
-			LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -236,7 +236,7 @@ public class LogCompressorTest {
 		
 		exception = false;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -244,7 +244,7 @@ public class LogCompressorTest {
 		}
 		exception = false;
 		try {
-			LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -258,7 +258,7 @@ public class LogCompressorTest {
 		
 		exception = false;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -266,7 +266,7 @@ public class LogCompressorTest {
 		}
 		exception = false;
 		try {
-			LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -280,7 +280,7 @@ public class LogCompressorTest {
 		
 		exception = false;
 		try {
-			packed = LogCompressor.putSomeAintoB(A,B,amount,offset);
+			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
@@ -288,7 +288,7 @@ public class LogCompressorTest {
 		}
 		exception = false;
 		try {
-			LogCompressor.getSomeAfromB(A,packed,amount,offset);
+			UtilityShop.extractSomeBitsAsIntFromInt(A,packed,amount,offset);
 		} catch (Exception e) {
 			exception = true;
 		} finally {
