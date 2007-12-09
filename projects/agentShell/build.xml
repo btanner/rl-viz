@@ -11,7 +11,22 @@
 	<path id="application" location="${jar.result}"/>
 	<path id="classpath" location="${RLVizLib.jar}"/>
  	
-	<property file="../rlVizLibJava/version.properties"/>
+
+    <target name="getsvnversion">
+        <exec executable="svnversion"
+              failifexecutionfails="no"
+              outputproperty="build.version">
+        </exec>
+    </target>
+    <target name="getRLVizLibVersion">
+        <exec executable="java"
+              failifexecutionfails="no"
+              outputproperty="rlVizLib.spec.version">
+			<arg value="-jar"/>
+			<arg value="${RLVizLib.jar}"/>
+			<arg value="--version"/>
+        </exec>
+    </target>
 
 
     <target name="clean">
@@ -25,18 +40,18 @@
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
     </target>
 
-    <target name="jar" depends="compile" >
+    <target name="jar" depends="compile,getsvnversion,getRLVizLibVersion" >
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
 			   <attribute name="Built-By" value="${user.name}"/>
-			   <attribute name="RLVizLib-Link-Version" value="${rlVizLib.version}"/>
+			   <attribute name="RLVizLib-Link-Version" value="${rlVizLib.spec.version}"/>
 			    <section name="agentShell/">
 			      <attribute name="Specification-Title" value="AgentShell"/>
 			      <attribute name="Specification-Version" value="1.0"/>
 			      <attribute name="Specification-Vendor" value="RLAI"/>
 			      <attribute name="Implementation-Title" value="AgentShell"/>
-			      <attribute name="Implementation-Version" value="1.0"/> 
+			      <attribute name="Implementation-Version" value="Build:${build.version}"/> 
 			      <attribute name="Implementation-Vendor" value="Brian Tanner"/>
 			    </section>
             </manifest>        </jar>
