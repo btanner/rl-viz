@@ -24,13 +24,12 @@
      <target name="getsvnversion">
      <exec executable="svnversion"
            failifexecutionfails="no"
-           output="${basedir}/changenumber.properties">
-       <arg value="${basedir}"/>
-       <arg value="-n"/>
+           output="buildversion.properties">
+       <arg value="."/>
      </exec>
    </target>
    
-    <target name="clean">
+    <target name="clean" depends="getsvnversion">
         <delete dir="${build.dir}"/>
         <delete file="${jar.result}"/>
     </target>
