@@ -23,19 +23,39 @@ import java.util.jar.Manifest;
 public final class rlVizCore {
 
 /**
- * Get the version of rlVizLib as set in the Manifest file.
+ * Get the version of rlVizLib as set in the Manifest file.  
  * @return String representation of current rlVizLib version.
  * @since 1.1
+ * @deprecated Use getSpecVersion()
  */
 	public static String getVersion(){
-		return rlVizCore.class.getPackage().getImplementationVersion();
+		return rlVizCore.class.getPackage().getSpecificationVersion();
 	}
+        
+/**
+ * Get the Specification (Interface) version of rlVizLib as set in the Manifest file.  
+ * @return String representation of current rlVizLib Interface version.
+ * @since 1.2
+ */
+        public static String getSpecVersion(){
+		return rlVizCore.class.getPackage().getSpecificationVersion();
+        }
+/**
+ * Get the Implementation (Build) version of rlVizLib as set in the Manifest file.  
+ * @return String representation of current rlVizLib Build version.
+ * @since 1.2
+ */
+        public static String getImplementationVersion(){
+		return rlVizCore.class.getPackage().getImplementationVersion();
+        }
 
 /**
  * getRLVizLinkVersionOfClass will try and lookup what Jar a particular class was loaded from, and then 
  * check for it's RLVizLib-Link-Version tag in the manifest. Basically, at runtime you are using version X, and you 
  * want to find out what version Y this code was compiled against.  If the versions are different, this class might expect things
  * that aren't really there (yet or anymore).
+ * <p>
+ * These versions are talking about the INTERFACE version, not the implementation version.
  * <p>
  * This will hopefully make it easy to check
  * whether the versions of different components work together

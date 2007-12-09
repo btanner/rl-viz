@@ -1,91 +1,105 @@
 <project name="RLVizLib" basedir="." >
-
+    
     <property name="src.dir"     value="src"/>
-		<property name="test.dir"			value="tests"/>
+    <property name="test.dir"			value="tests"/>
     <property name="docs.dir"     value="javadocs"/>
-
+    
     <property name="build.dir"   value="build"/>
     <property name="dist.dir"   value="dist"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
-	<property name="rlglue.jar" value="libs/RL-Glue.jar" />
-	<property name="junit.jar" value="libs/junit-4.4.jar" />
-	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
-	
- 	<property file="version.properties"/>
-
+    <property name="rlglue.jar" value="libs/RL-Glue.jar" />
+    <property name="junit.jar" value="../../libs/junit.jar" />
+    <property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
+    
+    <property file="version.properties"/>
+    
     <property name="test.reports"   value="reports"/>
     <property name="test.raw"   value="reports/raw"/>
-	
-	<path id="application" location="${jar.result}"/>
-	<path id="classpath" location="${rlglue.jar}"/>
-	<path id="junit" location="${junit.jar}"/>
- 	
-
+    
+    <path id="application" location="${jar.result}"/>
+    <path id="classpath" location="${rlglue.jar}"/>
+    <path id="junit" location="${junit.jar}"/>
+    
+    
+     <target name="getsvnversion">
+     <exec executable="svnversion"
+           failifexecutionfails="no"
+           output="${basedir}/changenumber.properties">
+       <arg value="${basedir}"/>
+       <arg value="-n"/>
+     </exec>
+   </target>
+   
     <target name="clean">
- 		<delete dir="${build.dir}"/>
-		<delete file="${jar.result}"/>
+        <delete dir="${build.dir}"/>
+        <delete file="${jar.result}"/>
     </target>
-
+    
     <target name="compile">
-       <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
     </target>
-
+    
     <target name="jar" depends="compile" >
-		<unjar src="${rlglue.jar}" dest="${classes.dir}" />
+        <unjar src="${rlglue.jar}" dest="${classes.dir}" />
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
-			   <attribute name="Built-By" value="${user.name}"/>
-			    <section name="rlVizLib/">
-			      <attribute name="Specification-Title" value="rlVizLib"/>
-			      <attribute name="Specification-Version" value="${rlVizLib.version}"/>
-			      <attribute name="Specification-Vendor" value="RLAI"/>
-			      <attribute name="Implementation-Title" value="rlVizLib"/>
-			      <attribute name="Implementation-Version" value="${rlVizLib.version}"/> 
-			      <attribute name="Implementation-Vendor" value="Brian Tanner"/>
-			    </section>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="rlVizLib/">
+                    <attribute name="Specification-Title" value="rlVizLib"/>
+                    <attribute name="Specification-Version" value="${rlVizLib.version}"/>
+                    <attribute name="Specification-Vendor" value="RLAI"/>
+                    <attribute name="Implementation-Title" value="rlVizLib"/>
+                    <attribute name="Implementation-Version" value="${rlVizLib.version}"/> 
+                    <attribute name="Implementation-Vendor" value="Brian Tanner"/>
+                </section>
             </manifest>
         </jar>
         <copy file="${jar.result}" todir="../../dist/" />
     </target>
-
-   <target name="clean-build" depends="clean,jar"/>
-
-
-   <target name="compile-tests" depends="compile">
-      <mkdir dir="${classes.dir}"/>
-       <javac srcdir="${test.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
-   </target>
-
-<target name="test" depends="clean,compile-tests,jar">
-     <junit printsummary="withOutAndErr" showoutput="yes" >
-         <classpath>
-              <path refid="application"/>
-			<path refid="junit" />
-          </classpath>
-
-         <batchtest fork="yes" todir="${test.raw}">
-	          <formatter type="xml"/> 
- 						 <fileset dir="${test.dir}" includes="**/*Test.java"/>
-         </batchtest>
-     </junit>
- </target> 
-
-<target name="test-html" depends="test">
-  <junitreport todir="${test.reports}">
-    <fileset dir="${test.raw}">
-      <include name="TEST-*.xml" />
-    </fileset>
-    <report todir="${test.reports}" />
-  </junitreport>
-</target>
-
-
-<target name="javadoc">
-	<mkdir dir="${docs.dir}"/>
-	<javadoc sourcepath="${src.dir}" destdir="${docs.dir}" classpathref="classpath"/>
-</target>
-
+    
+    <target name="clean-build" depends="clean,jar"/>
+    
+    
+    <target name="compile-tests" depends="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${test.dir}" destdir="${classes.dir}">
+            <classpath>
+                <path refid="application"/>
+                <path refid="junit" />
+            </classpath>
+        </javac>
+    </target>
+    
+    <target name="test" depends="clean,compile-tests,jar">
+        <junit printsummary="withOutAndErr" showoutput="yes" >
+            <classpath>
+                <path refid="application"/>
+                <path refid="junit" /> 
+            </classpath>
+            
+            <batchtest fork="yes" todir="${test.raw}">
+                <formatter type="xml"/> 
+                <fileset dir="${test.dir}" includes="**/*Test.java"/>
+            </batchtest>
+        </junit>
+    </target> 
+    
+    <target name="test-html" depends="test">
+        <junitreport todir="${test.reports}">
+            <fileset dir="${test.raw}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${test.reports}" />
+        </junitreport>
+    </target>
+    
+    
+    <target name="javadoc">
+        <mkdir dir="${docs.dir}"/>
+        <javadoc sourcepath="${src.dir}" destdir="${docs.dir}" classpathref="classpath"/>
+    </target>
+    
 </project>
 

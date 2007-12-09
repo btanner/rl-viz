@@ -1,11 +1,9 @@
 package rlVizLib.messaging.environment;
 
 import rlVizLib.messaging.environment.EpisodeSummaryRequest;
-public class EpisodeSummaryRequestTest extends junit.framework.TestCase {
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-	public void testNothing() {
-    }
-    
-	public void testWillAlwaysFail() {
-    }
+public class EpisodeSummaryRequestTest {
+
 }

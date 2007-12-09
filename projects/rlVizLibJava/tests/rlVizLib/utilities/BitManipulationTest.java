@@ -1,11 +1,5 @@
 package rlVizLib.utilities;
 
-import rlVizLib.utilities.UtilityShop;
-import java.util.Vector;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -157,6 +151,7 @@ public class BitManipulationTest {
 		assertTrue(packed == (5 << 10));
 	}
 	
+        
 	@Test
 	public void testAssertionFailureOnInvalidInput1() {
 		int A = 0;
@@ -173,9 +168,7 @@ public class BitManipulationTest {
 		
 		exception = false;
 		try {
-			System.err.println("calling with bad params");
 			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
-			System.err.println("back from call with bad params");
 		} catch (Exception e) {
 			exception = true;
 		} finally {
