@@ -21,15 +21,14 @@
     <path id="junit" location="${junit.jar}"/>
     
     
-     <target name="getsvnversion">
-     <exec executable="svnversion"
-           failifexecutionfails="no"
-           output="buildversion.properties">
-       <arg value="."/>
-     </exec>
-   </target>
-   
-    <target name="clean" depends="getsvnversion">
+    <target name="getsvnversion">
+        <exec executable="svnversion"
+              failifexecutionfails="no"
+              outputproperty="rlVizLib.build.version">
+        </exec>
+    </target>
+    
+    <target name="clean">
         <delete dir="${build.dir}"/>
         <delete file="${jar.result}"/>
     </target>
@@ -39,18 +38,19 @@
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
     </target>
     
-    <target name="jar" depends="compile" >
+    <target name="jar" depends="compile,getsvnversion" >
         <unjar src="${rlglue.jar}" dest="${classes.dir}" />
         <mkdir dir="${dist.dir}" />
         <jar destfile="${jar.result}" basedir="${classes.dir}" >
             <manifest>
+                <attribute name="Main-Class" value="rlVizLib.rlVizCore"/>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="rlVizLib/">
                     <attribute name="Specification-Title" value="rlVizLib"/>
-                    <attribute name="Specification-Version" value="${rlVizLib.version}"/>
+                    <attribute name="Specification-Version" value="${rlVizLib.spec.version}"/>
                     <attribute name="Specification-Vendor" value="RLAI"/>
                     <attribute name="Implementation-Title" value="rlVizLib"/>
-                    <attribute name="Implementation-Version" value="${rlVizLib.version}"/> 
+                    <attribute name="Implementation-Version" value="Build:${rlVizLib.build.version}"/> 
                     <attribute name="Implementation-Vendor" value="Brian Tanner"/>
                 </section>
             </manifest>

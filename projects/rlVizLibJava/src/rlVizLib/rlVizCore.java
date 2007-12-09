@@ -84,6 +84,27 @@ public static String getRLVizLinkVersionOfClass(Class<?> theClass){
 	return rlVizLinkVersion;
 }//getRLVizLinkVersionOfClass
 
+private static void printHelp() {
+   System.out.println("--------------------------------");
+   System.out.println("RLVizLib main diagnostic program");
+   System.out.println("--------------------------------");
+   System.out.println("-v or --version will print out the interface version");
+}
+
+private static void printVersion(){
+    System.out.println(rlVizCore.getSpecVersion());
+}
+/*
+ * Print out the current interface version of RLVizLib.  We'll make it do more interesting things with commandline parameters later
+ */
+public static void main(String[] args){
+    if(args.length==0){
+        printHelp();return;
+    }
+    if(args[0].equalsIgnoreCase("-v")||args[0].equalsIgnoreCase("--version")){
+    printVersion();return;
+    }
+}
 }//class
 
 
