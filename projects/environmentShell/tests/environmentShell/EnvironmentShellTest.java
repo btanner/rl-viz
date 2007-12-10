@@ -16,6 +16,6 @@ public class EnvironmentShellTest {
 
     @Test
     public void testEnvShellVersion(){
-        assertEquals(rlVizCore.getSpecVersion(),EnvironmentShell.class.getPackage().getSpecificationVersion());
+       assertEquals(rlVizCore.getSpecVersion(),rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(EnvironmentShell.class));
     }
 }
