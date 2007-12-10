@@ -1,4 +1,5 @@
 <project name="RLVizProject" basedir="." >
+
 <target name="RLVizLib" description="RLVizLib">
    <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean-build"/>
  </target>
@@ -25,35 +26,35 @@
 </target>
 
 <target name="brian-comp" description="Copy all of the jars into brians competion directory" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
-	 <copy file="dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/system/libraries/" />
-	 <copy file="dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/proving/bin/lib/" />
-	 <copy file="dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-library/libraries/" />
-	 <copy file="dist/AgentShell.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/system/libraries/" />
-	 <copy file="dist/EnvironmentShell.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/system/libraries/" />
-	 <copy file="dist/RLVizApp.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/trainers/guiTrainerJava/bin/" />
-	 <copy file="dist/RLVizApp.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
+	 <copy file="system/dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/system/libraries/" />
+	 <copy file="system/dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/proving/bin/lib/" />
+	 <copy file="system/dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-library/libraries/" />
+	 <copy file="system/dist/AgentShell.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/system/libraries/" />
+	 <copy file="system/dist/EnvironmentShell.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/system/libraries/" />
+	 <copy file="system/dist/RLVizApp.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/trainers/guiTrainerJava/bin/" />
+	 <copy file="system/dist/RLVizApp.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
 </target>	
 
 <target name="mark-comp" description="Copy all of the jars into brians competion directory" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
-	 <copy file="dist/RLVizLib.jar" todir="/Users/mark/rl-comp/rl-competition/system/libraries/" />
-	 <copy file="dist/RLVizLib.jar" todir="/Users/mark/rl-comp/rl-competition/proving/bin/lib/" />
-	 <copy file="dist/RLVizLib.jar" todir="/Users/mark/rl-comp/rlcomplibrary/libraries/" />
-	 <copy file="dist/AgentShell.jar" todir="/Users/mark/rl-comp/rl-competition/system/libraries/" />
-	 <copy file="dist/EnvironmentShell.jar" todir="/Users/mark/rl-comp/rl-competition/system/libraries/" />
-	 <copy file="dist/RLVizApp.jar" todir="/Users/mark/rl-comp/rl-competition/trainers/guiTrainerJava/bin/" />
-	 <copy file="dist/RLVizApp.jar" todir="/Users/mark/rl-comp/rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
+	 <copy file="system/dist/RLVizLib.jar" todir="/Users/mark/rl-comp/rl-competition/system/libraries/" />
+	 <copy file="system/dist/RLVizLib.jar" todir="/Users/mark/rl-comp/rl-competition/proving/bin/lib/" />
+	 <copy file="system/dist/RLVizLib.jar" todir="/Users/mark/rl-comp/rlcomplibrary/libraries/" />
+	 <copy file="system/dist/AgentShell.jar" todir="/Users/mark/rl-comp/rl-competition/system/libraries/" />
+	 <copy file="system/dist/EnvironmentShell.jar" todir="/Users/mark/rl-comp/rl-competition/system/libraries/" />
+	 <copy file="system/dist/RLVizApp.jar" todir="/Users/mark/rl-comp/rl-competition/trainers/guiTrainerJava/bin/" />
+	 <copy file="system/dist/RLVizApp.jar" todir="/Users/mark/rl-comp/rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
 </target>	
 
 <target name="matt-comp" description="build everything and put it into the right spots for matt" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
-    <copy file="dist/RLVizLib.jar" todir="../rlcomplibrary/libraries" />
-    <copy file="dist/RLVizLib.jar" todir="../rl-competition/system/libraries" />
-    <copy file="dist/RLVizLib.jar" todir="../rl-competition/proving/bin/lib" />
-    <copy file="dist/EnvironmentShell.jar" todir="../rlcomplibrary/libraries" />
-    <copy file="dist/EnvironmentShell.jar" todir="../rl-competition/system/libraries" />    
-    <copy file="dist/AgentShell.jar" todir="../rlcomplibrary/libraries" />
-    <copy file="dist/AgentShell.jar" todir="../rl-competition/system/libraries" />
-    <copy file="dist/RLVizApp.jar" todir="../rl-competition/trainers/guiTrainerJava/bin" />
-    <copy file="dist/RLVizApp.jar" todir="../rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
+    <copy file="system/dist/RLVizLib.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="system/dist/RLVizLib.jar" todir="../rl-competition/system/libraries" />
+    <copy file="system/dist/RLVizLib.jar" todir="../rl-competition/proving/bin/lib" />
+    <copy file="system/dist/EnvironmentShell.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="system/dist/EnvironmentShell.jar" todir="../rl-competition/system/libraries" />    
+    <copy file="system/dist/AgentShell.jar" todir="../rlcomplibrary/libraries" />
+    <copy file="system/dist/AgentShell.jar" todir="../rl-competition/system/libraries" />
+    <copy file="system/dist/RLVizApp.jar" todir="../rl-competition/trainers/guiTrainerJava/bin" />
+    <copy file="system/dist/RLVizApp.jar" todir="../rl-competition/trainers/guiTrainerRealTimeStrategy/bin/" />
 </target>
 	
 

@@ -7,6 +7,7 @@
 	<property name="main.package.spec.version" value="1.0"/>
 	<property name="main.vendor.name" value="Brian Tanner"/>
 	<property name="rl.viz.system.directory" value="${baseLibraryDir}/system"/>
+	<path id="project.extra.classpath" />
 	<import file="${rl.viz.system.directory}/build-common.xml"/>
 
 
