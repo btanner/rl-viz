@@ -7,7 +7,7 @@ package agentShell;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import rlVizLib.rlVizCore;
-import agentShell.EnvironmentShell;
+import agentShell.AgentShell;
 /**
  *
  * @author btanner
