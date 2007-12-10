@@ -1,77 +1,22 @@
 <project name="AgentShell" basedir="." >
 
-    <property name="src.dir"     value="src"/>
-
-    <property name="build.dir"   value="build"/>
-    <property name="dist.dir"   value="dist"/>
-    <property name="classes.dir" value="${build.dir}/classes"/>
-	<property name="RLVizLib.jar" value="../../dist/RLVizLib.jar" />
-	<property name="jar.result" value="${dist.dir}/${ant.project.name}.jar" />
-	
-	<path id="application" location="${jar.result}"/>
-	<path id="classpath" location="${RLVizLib.jar}"/>
- 	
-
-    <target name="getsvnversion">
-        <exec executable="svnversion"
-              failifexecutionfails="no"
-              outputproperty="build.version">
-        </exec>
-    </target>
-    <target name="getRLVizLibVersion">
-        <exec executable="java"
-              failifexecutionfails="no"
-              outputproperty="rlVizLib.spec.version">
-			<arg value="-jar"/>
-			<arg value="${RLVizLib.jar}"/>
-			<arg value="--version"/>
-        </exec>
-    </target>
+	<property name="baseLibraryDir" value="../.."/>
+	<!-- Things required for build-common.xml -->
+	<property name="main.project.name" value="${ant.project.name}"/>
+	<property name="main.package.name" value="agentShell/"/>
+	<property name="main.package.spec.version" value="1.0"/>
+	<property name="main.vendor.name" value="Brian Tanner"/>
+	<property name="rl.viz.system.directory" value="${baseLibraryDir}/system"/>
+	<import file="${rl.viz.system.directory}/build-common.xml"/>
 
 
-    <target name="clean">
- 		<delete dir="${build.dir}"/>
- 		<delete dir="${dist.dir}"/>
-		<delete file="${jar.result}"/>
-    </target>
 
-    <target name="compile">
-       <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" /> 
-    </target>
+    <target name="clean" depends="rl-clean" />
+    <target name="compile" depends="rl-compile" />
 
-    <target name="jar" depends="compile,getsvnversion,getRLVizLibVersion" >
-        <mkdir dir="${dist.dir}" />
-        <jar destfile="${jar.result}" basedir="${classes.dir}" >
-            <manifest>
-			   <attribute name="Built-By" value="${user.name}"/>
-			   <attribute name="RLVizLib-Link-Version" value="${rlVizLib.spec.version}"/>
-			    <section name="agentShell/">
-			      <attribute name="Specification-Title" value="AgentShell"/>
-			      <attribute name="Specification-Version" value="1.0"/>
-			      <attribute name="Specification-Vendor" value="RLAI"/>
-			      <attribute name="Implementation-Title" value="AgentShell"/>
-			      <attribute name="Implementation-Version" value="Build:${build.version}"/> 
-			      <attribute name="Implementation-Vendor" value="Brian Tanner"/>
-			    </section>
-            </manifest>        </jar>
-        <copy file="${jar.result}" todir="../../dist/" />
-    </target>
-
-   <target name="clean-build" depends="clean,jar"/>
-
-<target name="junit" depends="jar">
-     <junit printsummary="yes"  >
-         <classpath>
-              <path refid="application"/>
-          </classpath>
-
-         <batchtest fork="yes">
-             <fileset dir="${src.dir}" includes="**/*Test.java"/>
-         </batchtest>
-     </junit>
- </target>
-
-
+    <target name="jar" depends="rl-jar" />
+    <target name="clean-build" depends="clean,jar"/>
+	<target name="test" depends="rl-test-html" />
+	<target name="javadoc" depends="rl-javadoc" />
 </project>
 
