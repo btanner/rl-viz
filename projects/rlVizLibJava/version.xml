@@ -1,5 +1,19 @@
 rlVizLib.spec.version = 1.21
+<!-- Future:
+	- Move package to org.rlcommunity.rlvizlib
+-->
+
+<!-- 1.21 : 
+	- Removed the rlVizLib.functionapproximation package cause it didn't belong here
+-->
+<!-- 1.2 : 
+	- Updated the version calls in rlVizLib.RLVizCore
+	- Added main method to rlVizLib.RLVizCore to allow for command line (and ant) to find current version of RLVizLib.jar
+	- Added automated implementation level versioning from SVN
+-->
+
 <!-- 1.1 : 
 	- introduced versioning and moved to the rl-viz.googlecode.com repository
 	- moved to our own ant build system
-	-->
+	- introduced class rlVizLib.RLVizCore for querying compile-version of RLVizLib for other code and current runtime version of RLVizLib
+-->
