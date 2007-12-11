@@ -3,7 +3,7 @@
 		 We should be able to re-use more things with the rest of the projects -->
 		
     <!-- This file holds the rlVizLib.spec.version -->
-	<property file="version.properties"/>
+	<property file="version.xml"/>
 	
 	<property name="baseLibraryDir" value="../.."/>
 	<!-- Things required for build-common.xml -->
