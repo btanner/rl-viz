@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author btanner
+ * @author btann er
  */
 public class RLVizCoreTest {
 
