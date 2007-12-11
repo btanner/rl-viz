@@ -16,8 +16,14 @@
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean-build"/>
 </target>
 
-<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
-</target>	
+<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue" />
+
+<target name="test" description="Builds all tests RLVizLib, and the agent and environment shells, and RLVizApp" >
+   <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="test"/>
+   <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="test"/>
+   <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="test"/>
+   <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="test"/>
+</target>
 
 <target name="rl-glue" description="Build RL-Glue executable">
 	  <exec executable="make" dir="projects/rl-glue">
