@@ -118,7 +118,7 @@ public class EpisodeSummaryRequest extends EnvironmentMessages {
                 break;
             }
             nextChunkStart += EpisodeSummaryRequest.defaultChunkSize;
-        } while (!thisChunk.moreAvailable());
+        } while (thisChunk.moreAvailable());
 
 
         EpisodeSummaryResponse theResponse = new EpisodeSummaryResponse(tmpLogFile);
