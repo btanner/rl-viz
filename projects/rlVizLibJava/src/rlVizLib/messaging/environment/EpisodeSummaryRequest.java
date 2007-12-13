@@ -21,15 +21,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import rlVizLib.glueProxy.RLGlueProxy;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
-import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
 import rlVizLib.messaging.interfaces.ProvidesEpisodeSummariesInterface;
 import rlglue.environment.Environment;
 
@@ -55,19 +52,19 @@ import rlglue.environment.Environment;
  */
 public class EpisodeSummaryRequest extends EnvironmentMessages {
 //1 million chars is about a MB
-    final static long defaultChunkSize = 1000000L;
-    private long theChunkSize;
+    final static int defaultChunkSize = 1000000;
+    private int theChunkSize;
     private long theStartCharacter;
 
     public EpisodeSummaryRequest(GenericMessage theMessageObject) {
         super(theMessageObject);
         String thePayLoad = super.getPayLoad();
         StringTokenizer paramTokenizer = new StringTokenizer(thePayLoad, ":");
-        this.theChunkSize = Long.parseLong(paramTokenizer.nextToken());
+        this.theChunkSize = Integer.parseInt(paramTokenizer.nextToken());
         this.theStartCharacter = Long.parseLong(paramTokenizer.nextToken());
     }
 
-    public static String makeRequest(long startChar, long theChunkSize) {
+    public static String makeRequest(long startChar, int theChunkSize) {
         String theRequest = AbstractMessage.makeMessage(
                 MessageUser.kEnv.id(),
                 MessageUser.kBenchmark.id(),
@@ -78,7 +75,7 @@ public class EpisodeSummaryRequest extends EnvironmentMessages {
         return theRequest;
     }
 
-    private static EpisodeSummaryChunkResponse ExecuteChunk(long startChar, long theChunkSize) {
+    private static EpisodeSummaryChunkResponse ExecuteChunk(long startChar, int theChunkSize) {
         EpisodeSummaryChunkResponse theChunk = null;
         try {
             String theRequest = makeRequest(startChar, theChunkSize);

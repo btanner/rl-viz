@@ -26,6 +26,6 @@ public interface ProvidesEpisodeSummariesInterface {
      * @param theStartCharacter
      * @param theChunkSize
      * @return
-     */public String getEpisodeSummary(long theStartCharacter, long theChunkSize);
+     */public String getEpisodeSummary(long theStartCharacter, int theChunkSize);
 
 }

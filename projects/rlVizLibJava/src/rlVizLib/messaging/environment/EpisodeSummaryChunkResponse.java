@@ -31,9 +31,9 @@ import rlVizLib.messaging.NotAnRLVizMessageException;
 class EpisodeSummaryChunkResponse extends AbstractResponse {
 
     String theLogData;
-    long amountRequested = 0;
+    int amountRequested = 0;
 
-    public EpisodeSummaryChunkResponse(String theLogString, long amountRequested) {
+    public EpisodeSummaryChunkResponse(String theLogString, int amountRequested) {
         this.amountRequested = amountRequested;
         this.theLogData = theLogString;
     }

@@ -63,8 +63,6 @@ public class EpisodeLogger {
     public String getLogSubString(long startPoint, int amount){
             flush();
         try {
-
-
             RandomAccessFile raf = new RandomAccessFile(theLogFile, "r");
             raf.seek(startPoint);
             byte[] result=new byte[amount];
@@ -73,31 +71,6 @@ public class EpisodeLogger {
             if(amountRead<=0)return "";
             String returnString=stringResult.substring(0, amountRead);
             return returnString;
-//
-//            // Read a character
-//            raf.read
-//            byte ch = raf.readByte();
-//            System.out.println("Read first character of file: " + (char)ch);
-//
-//            // Now read the remaining portion of the line.
-//            // This will print out from where the file pointer is located
-//            // (just after the '+' character) and print all remaining characters
-//            // up until the end of line character.
-//            System.out.println("Read full line: " + raf.readLine());
-//
-//            // Seek to the end of file
-//            raf.seek(file.length());
-//
-//            // Append to the end of the file
-//            raf.write(0x0A);
-//            raf.writeBytes("This will complete the Demo");
-//            raf.close();
-//          
-//        } catch (IOException e) {
-//            System.out.println("IOException:");
-//            e.printStackTrace();
-//        }
-
         } catch (IOException ex) {
             Logger.getLogger(EpisodeLogger.class.getName()).log(Level.SEVERE, null, ex);
         }
