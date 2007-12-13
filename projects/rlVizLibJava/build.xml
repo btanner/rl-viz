@@ -58,7 +58,7 @@
         </javac>
     </target>
     
-    <target name="run-test" depends="clean,compile-tests,jar">
+    <target name="run-test" depends="compile-tests,jar">
 		<mkdir dir="${test.raw}" />
        <junit printsummary="withOutAndErr" showoutput="yes" >
             <classpath>
