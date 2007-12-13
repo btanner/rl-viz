@@ -23,4 +23,11 @@ public class NotAnRLVizMessageException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
+    public NotAnRLVizMessageException(String theMessage) {
+        super(theMessage);
+    }
+    public NotAnRLVizMessageException(){
+        super();
+    }
+
 }

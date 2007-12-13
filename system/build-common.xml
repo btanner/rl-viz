@@ -138,7 +138,7 @@ We'll try and rely on minimal variables from above.
 
 <target name="rl-javadoc">
     <mkdir dir="${docs.dir}"/>
-    <javadoc sourcepath="${src.dir}" destdir="${docs.dir}" classpathref="rlvizlib.classpath"/>
+    <javadoc sourcepath="${src.dir}" destdir="${docs.dir}" classpathref="rlvizlib.classpath" access="private"/>
 </target>
 
 
