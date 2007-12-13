@@ -22,6 +22,10 @@ import java.io.File;
  * This class is technically a cheater or fake response, because it doesn't 
  * actually function over the network.  Instead, it is build from several 
  * smaller {@link EpisodeSummaryChunkResponse} messages.
+ * <p>
+ * The behavior of the code that creates this log {@link EpisodeSummaryRequest} 
+ * is such that this log file will not persist past the end of session, it will
+ * be deleted. If you really want to <i>save</i> it permantently, make a copy.
  * @author btanner
  * @see EpisodeSummaryChunkResponse
  */public class EpisodeSummaryResponse  {

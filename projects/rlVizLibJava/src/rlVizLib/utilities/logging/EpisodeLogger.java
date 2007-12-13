@@ -27,6 +27,10 @@ import java.util.logging.Logger;
  * This is a utility class that can be used by environments to keep episode logs
  * in temporary files on their computer.  These logs can be easily sent to the 
  * experiment program (if requested) via {@link rlVizLib.messaging.environment.EpisodeSummaryRequest}.
+ * <p>
+ * Note that these log files do not persist past the end of session, or even past
+ * a call to {@link EpisodeLogger.clear}.  If you need them for longer than that
+ * remember to save a copy.
  * @author Brian Tanner
  */
 public class EpisodeLogger {

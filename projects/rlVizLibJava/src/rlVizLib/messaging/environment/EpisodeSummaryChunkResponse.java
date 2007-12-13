@@ -46,7 +46,10 @@ class EpisodeSummaryChunkResponse extends AbstractResponse {
 
         this.amountRequested=Integer.parseInt(T.nextToken());
         int amountReceived=Integer.parseInt(T.nextToken());
+        if(amountReceived>0)
         this.theLogData=T.nextToken();
+        else
+            this.theLogData="";
         
         assert(amountRequested>=amountReceived);
         assert(theLogData.length()==amountReceived);
@@ -65,7 +68,7 @@ class EpisodeSummaryChunkResponse extends AbstractResponse {
     public String makeStringResponse() {
         StringBuffer thePayLoadBuffer = new StringBuffer();
         if (theLogData == null) {
-            thePayLoadBuffer.append("0:");
+            thePayLoadBuffer.append(amountRequested+":0:");
         } else {
             thePayLoadBuffer.append(amountRequested);
             thePayLoadBuffer.append(":");
