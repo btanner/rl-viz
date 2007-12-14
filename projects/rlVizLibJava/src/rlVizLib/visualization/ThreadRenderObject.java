@@ -32,7 +32,7 @@ public class ThreadRenderObject extends Thread {
 	volatile boolean shouldDie=false;
 	
 	AffineTransform theScaleTransform=null;
-	int defaultSleepTime=41;
+	int defaultSleepTime=100;
 	ImageAggregator theBoss;
 	
 	Dimension mySize;
