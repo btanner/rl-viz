@@ -74,6 +74,7 @@ public class EpisodeLogger {
             String stringResult=new String(result);
             if(amountRead<=0)return "";
             String returnString=stringResult.substring(0, amountRead);
+            raf.close();
             return returnString;
         } catch (IOException ex) {
             Logger.getLogger(EpisodeLogger.class.getName()).log(Level.SEVERE, null, ex);
