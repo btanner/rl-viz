@@ -31,10 +31,13 @@ import rlVizLib.messaging.NotAnRLVizMessageException;
 class EpisodeSummaryChunkResponse extends AbstractResponse {
 
     String theLogData;
-    int amountRequested = 0;
 
-    public EpisodeSummaryChunkResponse(String theLogString, int amountRequested) {
-        this.amountRequested = amountRequested;
+    /**
+     * Not storing amount requested inside anymore but if I take it out of constructor
+     * then I have a conflict with the constructor that builds object from messsage string
+     * @param theLogString
+     * @param amountRequested
+     */public EpisodeSummaryChunkResponse(String theLogString, int amountRequested) {
         this.theLogData = theLogString;
     }
     
@@ -42,22 +45,12 @@ class EpisodeSummaryChunkResponse extends AbstractResponse {
         GenericMessage theGenericResponse = new GenericMessage(responseMessage);
         String thePayLoad = theGenericResponse.getPayLoad();
 
-        StringTokenizer T = new StringTokenizer(thePayLoad, ":");
-
-        this.amountRequested=Integer.parseInt(T.nextToken());
-        int amountReceived=Integer.parseInt(T.nextToken());
-        if(amountReceived>0)
-        this.theLogData=T.nextToken();
-        else
-            this.theLogData="";
-        
-        assert(amountRequested>=amountReceived);
-        assert(theLogData.length()==amountReceived);
+        this.theLogData=thePayLoad;
     }
 
 
-    boolean moreAvailable() {
-        return theLogData.length() == amountRequested;
+    int getAmountReceived() {
+        return theLogData.length();
     }
 
     String getLogData() {
@@ -67,13 +60,7 @@ class EpisodeSummaryChunkResponse extends AbstractResponse {
     @Override
     public String makeStringResponse() {
         StringBuffer thePayLoadBuffer = new StringBuffer();
-        if (theLogData == null) {
-            thePayLoadBuffer.append(amountRequested+":0:");
-        } else {
-            thePayLoadBuffer.append(amountRequested);
-            thePayLoadBuffer.append(":");
-            thePayLoadBuffer.append(theLogData.length());
-            thePayLoadBuffer.append(":");
+        if (theLogData != null) {
             thePayLoadBuffer.append(theLogData);
         }
 
