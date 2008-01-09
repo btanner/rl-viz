@@ -1,11 +1,13 @@
-BIN_PATH=../../bin
-BASE_PATH=../../../../rlcomplibrary
-OUT_PATH=$(BASE_PATH)/libraries
+BASE_PATH=../../../system
+OUT_PATH=$(BASE_PATH)/dist/SharedLibraries
 INCLUDE_PATH=$(BASE_PATH)/includes
-GLUE_PATH=$(BASE_PATH)/RL-Glue/RL-Glue
-ENV_HEADERS=$(BASE_PATH)/system/rl-viz
+#Needed?
+GLUE_PATH=../../rl-glue/RL-Glue
+ENV_HEADERS=$(BASE_PATH)/dist
+#We should use PWD to get this path
 GET_BACK=../../../rl-viz/projects/environmentShell/CPPEnvLoader
 
+#This is a Mac default
 ifndef JAVA_HOME
 	JAVA_HOME=/Library/Java/Home
 endif
@@ -20,7 +22,6 @@ OSTYPE_CYGWIN := CYGWIN
 OSTYPE_MINGW  := MSYS
 
 # convert OSTYPE to uppercase
-
 ifeq ("$(OSTYPE)", "") 
 	OSTYPE := $(shell uname | grep -i -E "(Darwin)|(Linux)|(CYGWIN)")
 	OSTYPE := $(shell echo "$(OSTYPE)" | tr a-z A-Z )
@@ -36,10 +37,12 @@ ifeq ("$(OSTYPE)","$(OSTYPE_MAC)")
 	SFLAGS := -dynamiclib
 else 
 	SFLAGS := -shared
+#This is for linux
+	EXTRA_JNI_INCLUDES := $(JAVA_HOME)/include/linux 
 endif
 
 CPPENV.dylib: $(LIB_HEADERS)
-	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I$(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
+	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I $(EXTRA_JNI_INCLUDES) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
 	cd $(ENV_HEADERS) && rm -rf META-INF
 	cd $(ENV_HEADERS) && rm -rf environmentShell
 	
