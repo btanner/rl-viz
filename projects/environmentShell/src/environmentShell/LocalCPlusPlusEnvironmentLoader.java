@@ -44,9 +44,9 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
 		String mainLibraryDir=thisDirectoryFile.getParent();
                 File parentDirectoryFile=new File(mainLibraryDir);
                 String workSpaceDirString=parentDirectoryFile.getParent();
-		libDir=workSpaceDirString+"/libraries/";
+		libDir=workSpaceDirString+"/rlcomplibrary/libraries/";
 		System.load(libDir + "CPPENV.dylib");
-                libDir = libDir +"/envJars/";
+                libDir = libDir +"envJars/";
 	}
 	
 	public LocalCPlusPlusEnvironmentLoader(String path){
