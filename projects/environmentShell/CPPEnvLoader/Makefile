@@ -34,15 +34,14 @@ CC=g++
 LIB_HEADERS=environmentShell_LocalCPlusPlusEnvironmentLoader.h environmentShell_JNIEnvironment.h
 
 ifeq ("$(OSTYPE)","$(OSTYPE_MAC)")
-	SFLAGS := -dynamiclib
+	SFLAGS := -dynamiclib 
 else 
-	SFLAGS := -shared
+	SFLAGS := -shared -I $(JAVA_HOME)/include/linux 
 #This is for linux
-	EXTRA_JNI_INCLUDES := $(JAVA_HOME)/include/linux 
 endif
 
 CPPENV.dylib: $(LIB_HEADERS)
-	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I $(EXTRA_JNI_INCLUDES) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
+	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
 	cd $(ENV_HEADERS) && rm -rf META-INF
 	cd $(ENV_HEADERS) && rm -rf environmentShell
 	
