@@ -40,8 +40,8 @@ LIB_HEADERS=agentShell_LocalCPlusPlusAgentLoader.h agentShell_JNIAgent.h
 
 CPPAGENT.dylib: $(LIB_HEADERS)
 	g++ -o $(OUT_PATH)/CPPAGENT.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I$(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusAgentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
-	rm -f $(SRC_PATH)/agentShell_LocalCPlusPlusAgentLoader.h
-	rm -f $(SRC_PATH)/agentShell_JNIAgent.h
+	cd $(ENV_HEADERS) && rm -rf META-INF
+	cd $(ENV_HEADERS) && rm -rf agentShell
 
 agentShell_LocalCPlusPlusAgentLoader.h:
 	cd $(ENV_HEADERS) && unzip AgentShell.jar
@@ -52,6 +52,6 @@ agentShell_JNIAgent.h:
 
 clean:
 	cd $(ENV_HEADERS) && rm -rf META-INF
-	cd $(ENV_HEADERS) && rm -rf environmentShell
+	cd $(ENV_HEADERS) && rm -rf agentShell
 	rm -f $(OUT_PATH)/CPPAGENT.dylib
 	

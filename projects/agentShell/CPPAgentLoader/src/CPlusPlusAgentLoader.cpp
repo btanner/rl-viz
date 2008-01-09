@@ -1,5 +1,5 @@
 //File: Hello.c
-#include "/Library/Java/Home/include/jni.h" 
+#include "jni.h" 
 #include "agentShell_JNIAgent.h"
 #include "agentShell_LocalCPlusPlusAgentLoader.h" 
 #include <iostream>
