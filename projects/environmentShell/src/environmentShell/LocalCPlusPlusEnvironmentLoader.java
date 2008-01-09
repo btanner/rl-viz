@@ -1,5 +1,5 @@
 /* EnvironmentShell, a dynamic loader for C++ and Java RL-Glue environments
-* Copyright (C) 2007, Brian Tanner brian@tannerpages.com (http://brian.tannerpages.com/)
+* Copyright (C) 2007, Matthew Radkie radkie@gmail.com
 * 
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -22,9 +22,11 @@ import java.util.Vector;
 import rlVizLib.general.ParameterHolder;
 import rlglue.environment.Environment;
 
-
-//Hey Matt!  I think this is a start.  This should let us list and load the environment (the java side of it).
-//Not sure in my head quite how the next part (using the loaded environment) works
+/**
+*	Java class to talk to a C++ counterpart, 
+*
+*	environmentShell -> LocalCPlusPlusEnvironmentLoader (java) -> CPlusPlusEnvironmentLoader (C++)
+*/
 public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterface {
 	
 	// C++ functions to be called from within Java
@@ -33,7 +35,6 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
 	public native String JNIgetEnvName(int index); 
 	public native String JNIgetEnvParams(int index);
 	public native int JNIgetEnvCount();
-	
 	
 	String libDir;
 	
@@ -54,36 +55,25 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
 	public LocalCPlusPlusEnvironmentLoader(String path){
 		libDir = path;
 		System.load(libDir + "CPPENV.dylib");
-//		System.out.println("Loaded CPPENV");
 	}
 	public boolean makeList() {
 		JNImakeEnvList(libDir);
-		//Invoke a JNI call to do lots of magic.  
-		//For now, this can just invoke a JNI call that prints out 'making Env List', cause I already have the code to do it
-//		JNImakeEnvList();
 		return true;
 	}
 
 	public Vector<String> getNames() {
-		//I'm picturing something like this, maybe you can do better
-		Vector<String> theEnvNames=new Vector<String>();
-		
-		int numEnvs=JNIgetEnvCount();//JNI call to something like getEnvCount() that returns the number of envs that were found with makeEnvList()
+		Vector<String> theEnvNames=new Vector<String>();	
+		int numEnvs=JNIgetEnvCount();//JNI call that returns the number of envs that were found with makeEnvList()
 		
 		for(int i=0;i<numEnvs;i++){
-			String thisName=JNIgetEnvName(i);//JNI call like getEnvName(i)
+			String thisName=JNIgetEnvName(i);
 			theEnvNames.add(thisName);
 		}
-		
 		return theEnvNames;
 	}
 
-
 	public Vector<ParameterHolder> getParameters() {
-		//This would follow the same structure as getEnvNames I think?
-
 		Vector<ParameterHolder> theEnvParams=new Vector<ParameterHolder>();
-		
 		int numEnvs=JNIgetEnvCount();
                 
 		for(int i=0;i<numEnvs;i++){
@@ -91,7 +81,6 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
 			ParameterHolder thisParamHolder=new ParameterHolder(ParamHolderString);
 			theEnvParams.add(thisParamHolder);
 		}
-		
 		theEnvParams.add(null);
 		return theEnvParams;
 	}
@@ -105,13 +94,7 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
                     return null;
 	}
 
-
 	public String getTypeSuffix() {
 		return " - C++";
 	}
-
-
-
-
-
 }

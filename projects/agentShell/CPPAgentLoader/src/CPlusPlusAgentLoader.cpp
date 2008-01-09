@@ -1,4 +1,20 @@
-//File: Hello.c
+/* CPlusPlusAgentLoader, a dynamic loader for C++ and Java RL-Glue Agents
+* Copyright (C) 2007, Matthew Radkie radkie@gmail.com
+* 
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
+
 #include "jni.h" 
 #include "agentShell_JNIAgent.h"
 #include "agentShell_LocalCPlusPlusAgentLoader.h" 
@@ -8,14 +24,11 @@
 #include "RL_common.h"
 #include "ParameterHolder.h"
 
-
 #include <sys/types.h>
 #include <dirent.h>
 #include <errno.h>
 #include <vector>
 #include <string>
-
-
 
 #define debugCPPAGENTLOAD 0
 
@@ -89,7 +102,6 @@ void printWarning(char* symname){
 	std::cerr << "Warning, this function is not Required.. so the handle will not be closed yet \n";
 }
 
-
 JNIEXPORT jboolean JNICALL Java_agentShell_JNIAgent_JNIloadAgent(JNIEnv *env, jobject obj, jstring libName)  
 {
 	//make a C cipy of the java string
@@ -157,7 +169,7 @@ JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentinit(JNIEnv *env, jobjec
 
 JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentstart(JNIEnv *env, jobject obj, jint numInts, jint numDoubles, jintArray intArray, jdoubleArray doubleArray)  
 { 
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent start"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent start"<<std::endl;
 
 	//ensure the handle is still valid
 	checkValidHandle();
@@ -183,7 +195,7 @@ JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentstart(JNIEnv *env, jobje
 } 
 JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentstep(JNIEnv *env, jobject obj, jdouble rew, jint numInts, jint numDoubles, jintArray intArray, jdoubleArray doubleArray)  
 { 
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent step"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent step"<<std::endl;
 
 	//ensure the handle is still valid
 	checkValidHandle();
@@ -205,6 +217,7 @@ JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentstep(JNIEnv *env, jobjec
 	free(a.intArray);
 	free(a.doubleArray);
 } 
+
 JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentend(JNIEnv *env, jobject obj, jdouble rew)  
 {     if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent end"<<std::endl;
 
@@ -217,10 +230,11 @@ JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentend(JNIEnv *env, jobject
 	}
 	
 	agent_end(rew);
-} 
+}
+
 JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentcleanup(JNIEnv *env, jobject obj)  
 { 
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent cleanup"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent cleanup"<<std::endl;
 
 	//ensure the handle is still valid
 	checkValidHandle();
@@ -233,7 +247,7 @@ JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentcleanup(JNIEnv *env, job
 } 
 JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentfreeze(JNIEnv *env, jobject obj)  
 { 
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent freeze"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent freeze"<<std::endl;
 
 	//ensure the handle is still valid
 	checkValidHandle();
@@ -247,7 +261,7 @@ JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIagentfreeze(JNIEnv *env, jobj
 
 JNIEXPORT jstring JNICALL Java_agentShell_JNIAgent_JNIagentmessage(JNIEnv *env, jobject obj, jstring themessage)  
 { 
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent message"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent message"<<std::endl;
 
 	static const char *message=NULL;
 	//get rid of the old message
@@ -272,7 +286,7 @@ JNIEXPORT jstring JNICALL Java_agentShell_JNIAgent_JNIagentmessage(JNIEnv *env, 
 
 JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIsetDefaultParameters(JNIEnv *env, jobject obj, jstring paramString)  
 { 
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent setdefaultParams"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI agent setdefaultParams"<<std::endl;
 
 	static const char *theparams=NULL;
 	//get rid of the old message
@@ -303,14 +317,14 @@ JNIEXPORT void JNICALL Java_agentShell_JNIAgent_JNIsetDefaultParameters(JNIEnv *
 //get the integer from the current struct
 JNIEXPORT jint JNICALL Java_agentShell_JNIAgent_JNIgetInt(JNIEnv *env, jobject obj)  
 { 
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI getint"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI getint"<<std::endl;
 
 	return (jint) genericReturn.numInts;	
 }
 //get the integer array
 JNIEXPORT jintArray JNICALL Java_agentShell_JNIAgent_JNIgetIntArray(JNIEnv *env, jobject obj)  
 { 
-            if(debugCPPAGENTLOAD)std::cout<<" ----JNI getintArray"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI getintArray"<<std::endl;
 
 	jintArray temp = (env)->NewIntArray(genericReturn.numInts);
 	jsize arrSize = (jsize)(genericReturn.numInts);
@@ -320,14 +334,14 @@ JNIEXPORT jintArray JNICALL Java_agentShell_JNIAgent_JNIgetIntArray(JNIEnv *env,
 //get the double from the current struct
 JNIEXPORT jint JNICALL Java_agentShell_JNIAgent_JNIgetDouble(JNIEnv *env, jobject obj)  
 { 
-            if(debugCPPAGENTLOAD)std::cout<<" ----JNI getdouble"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI getdouble"<<std::endl;
 
 	return (jdouble) genericReturn.numDoubles;	
 }
 //get the double array
 JNIEXPORT jdoubleArray JNICALL Java_agentShell_JNIAgent_JNIgetDoubleArray(JNIEnv *env, jobject obj)  
 { 
-            if(debugCPPAGENTLOAD)std::cout<<" ----JNI getDoubleArray"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI getDoubleArray"<<std::endl;
 
 	jdoubleArray temp = (env)->NewDoubleArray(genericReturn.numDoubles);
 	jsize arrSize = (jsize)(genericReturn.numDoubles);
@@ -356,11 +370,12 @@ int getdir (std::string dir, std::vector<std::string> &files)
 	closedir(dp);
 	return 0;
 }
+
 int checkEnvironment(JNIEnv *env, jobject obj, std::string libName)  
 {
-            if(debugCPPAGENTLOAD)std::cout<<" ---- Check Environment"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ---- Check Environment"<<std::endl;
 
-	//make a C cipy of the java string and check if its a valid library
+	//make a C copy of the java string and check if its a valid library
 	handle = dlopen(libName.c_str(), RTLD_NOW | RTLD_LOCAL);
 	if(!handle){
 		checkValidHandle();
@@ -380,7 +395,7 @@ int checkEnvironment(JNIEnv *env, jobject obj, std::string libName)
 //This mehtod makes a list of C/C++ environment names and parameter holders.
 JNIEXPORT void JNICALL Java_agentShell_LocalCPlusPlusAgentLoader_JNImakeAgentList(JNIEnv *env, jobject obj, jstring envPath)
 {
-            if(debugCPPAGENTLOAD)std::cout<<" ----JNI makeAgentList"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI makeAgentList"<<std::endl;
 
 	std::vector<std::string> files;
 	std::string thePath=std::string(env->GetStringUTFChars(envPath, 0));
@@ -413,20 +428,17 @@ JNIEXPORT void JNICALL Java_agentShell_LocalCPlusPlusAgentLoader_JNImakeAgentLis
 */
 JNIEXPORT jint JNICALL Java_agentShell_LocalCPlusPlusAgentLoader_JNIgetAgentCount(JNIEnv *env, jobject obj)
 {
-            if(debugCPPAGENTLOAD)std::cout<<" ----JNI getAgentCount"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI getAgentCount"<<std::endl;
 
 	return (jint)numAgents;
 }
 JNIEXPORT jstring JNICALL Java_agentShell_LocalCPlusPlusAgentLoader_JNIgetAgentName(JNIEnv *env, jobject obj, jint index)
 {
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI getAgentName"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI getAgentName"<<std::endl;
 	return env->NewStringUTF((agentNames.at((int)index)).c_str());
 }
 JNIEXPORT jstring JNICALL Java_agentShell_LocalCPlusPlusAgententLoader_JNIgetAgentParams(JNIEnv *env, jobject obj, jint index)
 {
-        if(debugCPPAGENTLOAD)std::cout<<" ----JNI getAgentParams"<<std::endl;
+    if(debugCPPAGENTLOAD)std::cout<<" ----JNI getAgentParams"<<std::endl;
 	return env->NewStringUTF((theParamHolderStrings.at((int)index)).c_str());
 }
-	
-	
-	
