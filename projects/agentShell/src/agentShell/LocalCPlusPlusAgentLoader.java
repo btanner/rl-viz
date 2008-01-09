@@ -40,13 +40,14 @@ public class LocalCPlusPlusAgentLoader implements AgentLoaderInterface {
 	//load the library so java knows where to find the above functions
 	public LocalCPlusPlusAgentLoader(){
 		String curDir = System.getProperty("user.dir");
-                File thisDirectoryFile= new File(curDir);
+        File thisDirectoryFile= new File(curDir);
+		
 		String mainLibraryDir=thisDirectoryFile.getParent();
-                File parentDirectoryFile=new File(mainLibraryDir);
-                String workSpaceDirString=parentDirectoryFile.getParent();
-		libDir=workSpaceDirString+"/libraries/";
-		System.load(libDir + "CPPAGENT.dylib");
-                libDir = libDir +"/agentJars/";
+        File parentDirectoryFile=new File(mainLibraryDir);
+        
+		String workSpaceDirString=parentDirectoryFile.getParent();
+		libDir=workSpaceDirString+"/rlcomplibrary/libraries/agentJars/";
+		String loaderDir = workSpaceDirString+"/rl-viz/system/dist/SharedLibraries/";
 	}
 	
 	public LocalCPlusPlusAgentLoader(String path){
