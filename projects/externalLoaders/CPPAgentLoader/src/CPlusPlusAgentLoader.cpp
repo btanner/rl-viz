@@ -336,7 +336,7 @@ JNIEXPORT jint JNICALL Java_agentShell_JNIAgent_JNIgetDouble(JNIEnv *env, jobjec
 { 
     if(debugCPPAGENTLOAD)std::cout<<" ----JNI getdouble"<<std::endl;
 
-	return (jdouble) genericReturn.numDoubles;	
+	return (jnit) genericReturn.numDoubles;	
 }
 //get the double array
 JNIEXPORT jdoubleArray JNICALL Java_agentShell_JNIAgent_JNIgetDoubleArray(JNIEnv *env, jobject obj)  

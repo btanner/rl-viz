@@ -5,7 +5,7 @@ INCLUDE_PATH=$(BASE_PATH)/includes
 GLUE_PATH=../../rl-glue/RL-Glue
 ENV_HEADERS=$(BASE_PATH)/dist
 #We should use PWD to get this path
-GET_BACK=../../../rl-viz/projects/environmentShell/CPPEnvLoader
+GET_BACK=../../../rl-viz/projects/externalLoaders/CPPEnvLoader
 
 #This is a Mac default
 ifndef JAVA_HOME

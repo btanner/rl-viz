@@ -118,7 +118,7 @@ JNIEXPORT jboolean JNICALL Java_environmentShell_JNIEnvironment_JNIloadEnvironme
 {
 	//make a C cipy of the java string
 	const char *lib = env->GetStringUTFChars(libName, 0);
-	handle = dlopen(lib, RTLD_LOCAL);
+	handle = dlopen(lib, RTLD_NOW | RTLD_LOCAL);
 	
         std::vector<std::string> notSym;
 	//ensure the handle is valid
@@ -357,7 +357,7 @@ JNIEXPORT jintArray JNICALL Java_environmentShell_JNIEnvironment_JNIgetIntArray(
 //get the double from the current struct
 JNIEXPORT jint JNICALL Java_environmentShell_JNIEnvironment_JNIgetDouble(JNIEnv *env, jobject obj)  
 { 
-	return (jdouble) genericReturn.numDoubles;	
+	return (jint) genericReturn.numDoubles;	
 }
 //get the double array
 JNIEXPORT jdoubleArray JNICALL Java_environmentShell_JNIEnvironment_JNIgetDoubleArray(JNIEnv *env, jobject obj)  
@@ -404,7 +404,7 @@ int getdir (std::string dir, std::vector<std::string> &files)
 int checkEnvironment(JNIEnv *env, jobject obj, std::string libName)  
 {
 	//make a C cipy of the java string and check if its a valid library
-	handle = dlopen(libName.c_str(), RTLD_LOCAL);
+	handle = dlopen(libName.c_str(), RTLD_NOW | RTLD_LOCAL);
 	if(!handle){
 		checkValidHandle();
 		return 0;

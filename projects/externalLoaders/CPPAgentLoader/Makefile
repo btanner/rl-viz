@@ -4,7 +4,7 @@ OUT_PATH=$(BASE_PATH)/libraries
 INCLUDE_PATH=$(BASE_PATH)/includes
 GLUE_PATH=$(BASE_PATH)/RL-Glue/RL-Glue
 ENV_HEADERS=$(BASE_PATH)/system/rl-viz
-GET_BACK=../../../rl-viz/projects/agentShell/CPPAgentLoader
+GET_BACK=../../../rl-viz/projects/externalLoaders/CPPAgentLoader
 
 ifndef JAVA_HOME
 	JAVA_HOME=/Library/Java/Home
