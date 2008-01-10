@@ -31,6 +31,11 @@
 	</exec>
 </target>
 
+<target name="externalLoaders" description="Make external Loaders">
+	<exec executable="make" dir="projects/externalLoaders" />
+</target>
+	
+
 <target name="brian-comp" description="Copy all of the jars into brians competion directory" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue">
 	 <copy file="system/dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/system/libraries/" />
 	 <copy file="system/dist/RLVizLib.jar" todir="/Users/btanner/Documents/Java-Projects/rl-competition/proving/bin/lib/" />
@@ -69,7 +74,10 @@
    <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean"/>
-	  <exec executable="make" dir="projects/rl-glue">
+    <exec executable="make" dir="projects/rl-glue">
+		<arg value="clean"/>
+	</exec>
+	<exec executable="make" dir="projects/externalLoaders">
 		<arg value="clean"/>
 	</exec>
 </target>
