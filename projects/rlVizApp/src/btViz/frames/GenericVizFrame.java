@@ -15,7 +15,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
+import java.lang.reflect.Constructor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -119,8 +121,17 @@ class VizMenus implements ActionListener {
             //Linux
             makeLinuxProgramMenu(menuBar);
         } else {
-            new MacOSAboutHandler();
-        }
+//          	System.loadLibrary("btViz.MacOSAboutHandler")
+			try {
+    			ClassLoader theClassLoader = ClassLoader.getSystemClassLoader();
+    			Class<?> testObjectClass=theClassLoader.loadClass("btViz.frames.MacOSAboutHandler");    
+    			Constructor<?> emptyConstructor = testObjectClass.getConstructor();
+    			Object classInstance =  (Object)emptyConstructor.newInstance();
+			} catch (Exception ex) {
+    			System.err.println("Problem loading MacOSAboutHandler using classloader... blowing up now!");
+				System.exit(1);
+			}
+		}
 
         windowMenu = new JMenu("Window");
         menuBar.add(windowMenu);

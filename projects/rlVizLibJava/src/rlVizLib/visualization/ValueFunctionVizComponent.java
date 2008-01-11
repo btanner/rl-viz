@@ -183,9 +183,11 @@ public class ValueFunctionVizComponent implements VizComponent, ChangeListener {
             VFCols = (int) currentValueFunctionResolution;
 
             //The range of the position and velocity
+			
             double xRangeSize = dataProvider.getMaxValueForDim(0) - dataProvider.getMinValueForDim(0);
             double yRangeSize = dataProvider.getMaxValueForDim(1) - dataProvider.getMinValueForDim(1);
-
+			System.out.println(xRangeSize);
+			System.out.println(yRangeSize);
             //QueryIncrements are the number that the query variables will change from cell to cell
             xQueryIncrement = xRangeSize / VFCols;
             yQueryIncrement = yRangeSize / VFRows;
