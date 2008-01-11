@@ -112,7 +112,7 @@ We'll try and rely on minimal variables from above.
 				<available property="useOSXclasses"/>
 			</then>
 			<else>
-				<exclude name="**/MacOSAboutHandler.java" unless="useOSXClasses" />
+				<exclude name="**/MacOSAboutHandler.java"/>
 			</else>
 		</if>
     </javac>
