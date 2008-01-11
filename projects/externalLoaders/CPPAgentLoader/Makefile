@@ -20,12 +20,12 @@ ifndef JAVA_HEADER
 endif
 
 
-BIN_PATH=../../bin
-BASE_PATH=../../../../rlcomplibrary
-OUT_PATH=$(BASE_PATH)/libraries
+BASE_PATH=../../../system
+OUT_PATH=$(BASE_PATH)/dist/SharedLibraries
 INCLUDE_PATH=$(BASE_PATH)/includes
-GLUE_PATH=$(BASE_PATH)/RL-Glue/RL-Glue
-ENV_HEADERS=$(BASE_PATH)/system/rl-viz
+#Needed?
+GLUE_PATH=../../rl-glue/RL-Glue
+ENV_HEADERS=$(BASE_PATH)/dist
 GET_BACK=../../../rl-viz/projects/externalLoaders/CPPAgentLoader
 
 # supported substrings of OSTYPE
