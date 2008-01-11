@@ -5,8 +5,15 @@
 #	1) type 'locate jni.h'
 #	   set JAVA_HOME to be this path (not including the jni.h on the end)
 #   2) type 'locate jni_md.h'
-#      set JAVA_HEADER to be this path (not includeing the jni_md.h on the end)
-#
+#      set JAVA_HEADER to be this path (not including the jni_md.h on the end)
+#This is a Mac default
+ifndef JAVA_HOME
+	JAVA_HOME=/Library/Java/Home/include
+endif
+
+ifndef JAVA_HEADER
+	JAVA_HEADER = $(JAVA_HOME)
+endif
 
 BASE_PATH=../../../system
 OUT_PATH=$(BASE_PATH)/dist/SharedLibraries
@@ -17,14 +24,6 @@ ENV_HEADERS=$(BASE_PATH)/dist
 #We should use PWD to get this path
 GET_BACK=../../../rl-viz/projects/externalLoaders/CPPEnvLoader
 
-#This is a Mac default
-ifndef JAVA_HOME
-	JAVA_HOME=/Library/Java/Home/include
-endif
-
-ifndef JAVA_HEADER
-	JAVA_HEADER = $(JAVA_HOME)
-endif
 # supported substrings of OSTYPE
 # The following words must be uppercase
 # If they are found in the uppercased OSTYPE variable

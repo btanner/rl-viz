@@ -1,3 +1,19 @@
+#
+#	These makefiles require jni.h and jni_md.h
+#
+#	If they dont work for you
+#	1) type 'locate jni.h'
+#	   set JAVA_HOME to be this path (not including the jni.h on the end)
+#   2) type 'locate jni_md.h'
+#      set JAVA_HEADER to be this path (not including the jni_md.h on the end)
+ifndef JAVA_HOME
+	JAVA_HOME=/Library/Java/Home
+endif
+ifndef JAVA_HEADER
+	JAVA_HEADER = $(JAVA_HOME)
+endif
+
+
 BIN_PATH=../../bin
 BASE_PATH=../../../../rlcomplibrary
 OUT_PATH=$(BASE_PATH)/libraries
@@ -5,10 +21,6 @@ INCLUDE_PATH=$(BASE_PATH)/includes
 GLUE_PATH=$(BASE_PATH)/RL-Glue/RL-Glue
 ENV_HEADERS=$(BASE_PATH)/system/rl-viz
 GET_BACK=../../../rl-viz/projects/externalLoaders/CPPAgentLoader
-
-ifndef JAVA_HOME
-	JAVA_HOME=/Library/Java/Home
-endif
 
 # supported substrings of OSTYPE
 # The following words must be uppercase
@@ -39,7 +51,7 @@ endif
 LIB_HEADERS=agentShell_LocalCPlusPlusAgentLoader.h agentShell_JNIAgent.h
 
 CPPAGENT.dylib: $(LIB_HEADERS)
-	g++ -o $(OUT_PATH)/CPPAGENT.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I$(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusAgentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
+	g++ -o $(OUT_PATH)/CPPAGENT.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I$(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusAgentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
 	cd $(ENV_HEADERS) && rm -rf META-INF
 	cd $(ENV_HEADERS) && rm -rf agentShell
 
