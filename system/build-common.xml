@@ -76,9 +76,6 @@ We'll try and rely on minimal variables from above.
 		<then>
 			<property name="useOSXclasses" value="true"/>
 		</then>
-		<else> 
-			<echo message="excluding i think"/>
-		</else>
 	</if>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" >
 	    <classpath>
