@@ -1,3 +1,4 @@
+#	READ:
 #
 #	These makefiles require jni.h and jni_md.h
 #
@@ -6,6 +7,12 @@
 #	   set JAVA_HOME to be this path (not including the jni.h on the end)
 #   2) type 'locate jni_md.h'
 #      set JAVA_HEADER to be this path (not including the jni_md.h on the end)
+#
+#	If you get an error saying -javah command not found (or similar), you need
+#   to add javah to your $PATH. To do this:
+#   1) type 'locate javah'
+#   2) type 'export PATH=$PATH:"insert path to javah here"'(dont include the trailing javah)
+
 #This is a Mac default
 ifndef JAVA_HOME
 	JAVA_HOME=/Library/Java/Home/include
