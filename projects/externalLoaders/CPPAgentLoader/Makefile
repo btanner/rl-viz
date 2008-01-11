@@ -7,6 +7,8 @@
 #	   set JAVA_HOME to be this path (not including the jni.h on the end)
 #   2) type 'locate jni_md.h'
 #      set JAVA_HEADER to be this path (not including the jni_md.h on the end)
+#	NOTE: to set a variable from commandline do:
+#		export JAVA_HOME = path
 #
 #	If you get an error saying -javah command not found (or similar), you need
 #   to add javah to your $PATH. To do this:
