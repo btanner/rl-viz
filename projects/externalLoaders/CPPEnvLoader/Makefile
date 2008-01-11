@@ -1,3 +1,13 @@
+#
+#	These makefiles require jni.h and jni_md.h
+#
+#	If they dont work for you
+#	1) type 'locate jni.h'
+#	   set JAVA_HOME to be this path (not including the jni.h on the end)
+#   2) type 'locate jni_md.h'
+#      set JAVA_HEADER to be this path (not includeing the jni_md.h on the end)
+#
+
 BASE_PATH=../../../system
 OUT_PATH=$(BASE_PATH)/dist/SharedLibraries
 INCLUDE_PATH=$(BASE_PATH)/includes
@@ -9,7 +19,7 @@ GET_BACK=../../../rl-viz/projects/externalLoaders/CPPEnvLoader
 
 #This is a Mac default
 ifndef JAVA_HOME
-	JAVA_HOME=/Library/Java/Home
+	JAVA_HOME=/Library/Java/Home/include
 endif
 
 ifndef JAVA_HEADER
@@ -44,7 +54,7 @@ else
 endif
 
 CPPENV.dylib: $(LIB_HEADERS)
-	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
+	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
 	cd $(ENV_HEADERS) && rm -rf META-INF
 	cd $(ENV_HEADERS) && rm -rf environmentShell
 	
