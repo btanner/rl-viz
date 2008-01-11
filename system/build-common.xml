@@ -71,11 +71,21 @@ We'll try and rely on minimal variables from above.
 
 <target name="rl-compile" >
    <mkdir dir="${classes.dir}"/>
+	<if>
+		<equals arg1="${os.name}" arg2="Mac OS X" />
+		<then>
+			<property name="useOSXclasses" value="true"/>
+		</then>
+		<else> 
+			<echo message="excluding i think"/>
+		</else>
+	</if>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" >
 	    <classpath>
             <path refid="rlvizlib.classpath" />
  		    <path refid="project.extra.classpath" />
 		</classpath>
+		<exclude name="**/MacOSAboutHandler.java" unless="useOSXclasses"/>
 	</javac> 
 </target>
 
@@ -106,16 +116,6 @@ We'll try and rely on minimal variables from above.
             <path refid="rlvizlib.classpath" />
             <path refid="result.jar.classpath" />
         </classpath>
-		<if>
-			<equals arg1="${os.name}" arg2="Mac OS X" />
-			<then>
-				<available property="useOSXclasses"/>
-			</then>
-			<else> 
-				<echo message="excluding i think"/>
-				<exclude name="**/MacOSAboutHandler.java"/>
-			</else>
-		</if>
     </javac>
 </target>
 
