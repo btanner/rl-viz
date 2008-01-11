@@ -111,7 +111,8 @@ We'll try and rely on minimal variables from above.
 			<then>
 				<available property="useOSXclasses"/>
 			</then>
-			<else>
+			<else> 
+				<echo message="excluding i think"/>
 				<exclude name="**/MacOSAboutHandler.java"/>
 			</else>
 		</if>
