@@ -99,12 +99,22 @@ We'll try and rely on minimal variables from above.
 
 <target name="rl-compile-tests" depends="rl-jar">
     <mkdir dir="${test.classes.dir}"/>
+	
     <javac srcdir="${test.dir}" destdir="${test.classes.dir}">
         <classpath>
             <path refid="junit.classpath" />
             <path refid="rlvizlib.classpath" />
             <path refid="result.jar.classpath" />
         </classpath>
+		<if>
+			<equals arg1="${os.name}" arg2="Mac OS X" />
+			<then>
+				<available property="useOSXclasses"/>
+			</then>
+			<else>
+				<exclude name="**/MacOSAboutHandler.java" unless="useOSXClasses" />
+			</else>
+		</if>
     </javac>
 </target>
 

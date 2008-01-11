@@ -32,7 +32,7 @@
 			    <include name="forms-1.1.0.jar"/>
 			</fileset>
 		</unjar>
-		<antcall target="rl-jar" />		
+		<antcall target="rl-jar" />
 	</target>
 
    <target name="clean-build" depends="clean,jar"/>
