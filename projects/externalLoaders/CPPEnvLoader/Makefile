@@ -12,6 +12,9 @@ ifndef JAVA_HOME
 	JAVA_HOME=/Library/Java/Home
 endif
 
+ifndef JAVA_HEADER
+	JAVA_HEADER = $(JAVA_HOME)
+endif
 # supported substrings of OSTYPE
 # The following words must be uppercase
 # If they are found in the uppercased OSTYPE variable
@@ -36,12 +39,12 @@ LIB_HEADERS=environmentShell_LocalCPlusPlusEnvironmentLoader.h environmentShell_
 ifeq ("$(OSTYPE)","$(OSTYPE_MAC)")
 	SFLAGS := -dynamiclib 
 else 
-	SFLAGS := -shared -I $(JAVA_HOME)/include/linux 
+	SFLAGS := -shared
 #This is for linux
 endif
 
 CPPENV.dylib: $(LIB_HEADERS)
-	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
+	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME)/include -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
 	cd $(ENV_HEADERS) && rm -rf META-INF
 	cd $(ENV_HEADERS) && rm -rf environmentShell
 	
