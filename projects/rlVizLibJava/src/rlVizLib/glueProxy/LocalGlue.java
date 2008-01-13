@@ -96,7 +96,7 @@ public class LocalGlue implements RLGlueProxyInterface {
 	public synchronized void RL_episode(int maxStepsThisEpisode) {
 		int currentStep=0;
 		RL_start();
-		for(currentStep=1;!isTerminal &&(maxStepsThisEpisode<=0 || currentStep < steps ) ; currentStep++){
+		for(currentStep=1;!isTerminal &&(maxStepsThisEpisode<=0 || currentStep < maxStepsThisEpisode ) ; currentStep++){
 			RL_step();
 		}
 		//Old code below.  New code is nicer, hopefully it works.
