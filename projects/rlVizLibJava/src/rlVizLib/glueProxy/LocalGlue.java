@@ -33,6 +33,9 @@ public class LocalGlue implements RLGlueProxyInterface {
 	Action lastAction=null;
 
 	int steps=0;
+	boolean isTerminal=false;
+	double totalReward=0.0d;
+	int totalEpisodes=0;
 	
 	public LocalGlue(Environment E, Agent A){
 		this.E=E;
@@ -40,17 +43,6 @@ public class LocalGlue implements RLGlueProxyInterface {
 	}
 
 
-
-	public synchronized Reward_observation_action_terminal RL_step()	{
-		Reward_observation RO=E.env_step(lastAction);
-		if(RO.terminal==1){
-			A.agent_end(RO.r);
-		}else{
-			steps++;
-			lastAction=A.agent_step(RO.r, RO.o);
-		}
-		return new Reward_observation_action_terminal(RO.r,RO.o,lastAction, RO.terminal);
-	}
 
 	public synchronized String RL_env_message(String theString){
 		return E.env_message(theString);
@@ -61,9 +53,15 @@ public class LocalGlue implements RLGlueProxyInterface {
 
 	public synchronized void RL_init() {
 		A.agent_init(E.env_init());
+		totalEpisodes=0;
 	}
+
+
 	public synchronized Observation_action RL_start() {
 		steps=1;
+		isTerminal=false;
+		totalReward=0.0d;
+		
 		Observation o=E.env_start();
 		lastAction=A.agent_start(o);
 		Observation_action ao=new Observation_action(o, lastAction);
@@ -72,14 +70,38 @@ public class LocalGlue implements RLGlueProxyInterface {
 
 
 
+	public synchronized Reward_observation_action_terminal RL_step()	{
+		Reward_observation RO=E.env_step(lastAction);
+		
+		totalReward+=RO.r;
+		isTerminal=RO.terminal==1;
+
+		if(isTerminal){
+			A.agent_end(RO.r);
+			totalEpisodes++;
+		}else{
+			steps++;
+			lastAction=A.agent_step(RO.r, RO.o);
+		}
+		return new Reward_observation_action_terminal(RO.r,RO.o,lastAction, RO.terminal);
+	}
+
+
 	public synchronized void RL_cleanup() {
             E.env_cleanup();
             A.agent_cleanup();
 	}
 
-
-	public synchronized void RL_episode(int numSteps) {
-		Observation o=E.env_start();
+//Btanner: Jan 13 : Changing this to make it more like RL_glue.c
+	public synchronized void RL_episode(int maxStepsThisEpisode) {
+		int currentStep=0;
+		RL_start();
+		for(currentStep=1;!isTerminal &&(maxStepsThisEpisode<=0 || currentStep < steps ) ; currentStep++){
+			RL_step();
+		}
+		//Old code below.  New code is nicer, hopefully it works.
+		
+/*		Observation o=E.env_start();
 		lastAction=A.agent_start(o);
 
 		int whatStep=1;
@@ -96,6 +118,7 @@ public class LocalGlue implements RLGlueProxyInterface {
 			}
 		}
 		steps=whatStep;
+*/
 	}
 
 	public synchronized void RL_freeze() { 
@@ -113,8 +136,7 @@ public class LocalGlue implements RLGlueProxyInterface {
 
 
 	public synchronized int RL_num_episodes() {
-		// TODO Auto-generated method stub
-		return 0;
+		return totalEpisodes;
 	}
 
 	public synchronized int RL_num_steps() {
@@ -122,8 +144,7 @@ public class LocalGlue implements RLGlueProxyInterface {
 	}
 
 	public synchronized double RL_return() {
-		// TODO Auto-generated method stub
-		return 0;
+		return totalReward;
 	}
 
 	public synchronized void RL_set_random_seed(Random_seed_key rsk) {
