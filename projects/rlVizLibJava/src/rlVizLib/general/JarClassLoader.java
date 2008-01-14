@@ -37,16 +37,14 @@ public static Class<?> loadClassFromFile(File theFile,String className) throws C
 		String theFileName=theFile.getAbsolutePath();
 
 		URLClassLoader urlLoader = null;
+                String urlString="";
 
-
-			URL theURL=null;
-                        
 		try {
-			theURL=new URL("file",null, theFileName);
-			urlLoader = new URLClassLoader(new URL[]{theURL});
+                        urlString=theFile.toURL().toString();
+			urlLoader = new URLClassLoader(new URL[]{theFile.toURL()});
                         theClass=urlLoader.loadClass(className);
 		} catch (Throwable e) {
-                        String errorString="SERIOUS ERROR: When JarClassLoader tried to load class: "+className+" from file: "+theFile.toString()+"\nURL is: "+theURL.toString()+"\n"+e.toString();
+                        String errorString="SERIOUS ERROR: When JarClassLoader tried to load class: "+className+" from file: "+theFile.toString()+"\nURL is: "+urlString;
                         throw new CouldNotLoadJarException(errorString, e);
                 }
 		return theClass;
