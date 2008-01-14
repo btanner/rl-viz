@@ -35,7 +35,7 @@ public class JarClassLoader {
 public static Class<?> loadClassFromFile(File theFile,String className) throws CouldNotLoadJarException {
 		Class<?> theClass=null;
                 
-                theFile=new File("file:/global/home/btanner/ICML_2008/rl-library/scripts/../system/dist/agentJars/EpsilonGreedyTabularSarsaLambda.jar");
+                theFile=new File("file:/global/home/btanner/ICML_2008/rl-library/system/dist/agentJars/EpsilonGreedyTabularSarsaLambda.jar");
 		String theFileName=theFile.getAbsolutePath();
 
 		URLClassLoader urlLoader = null;
