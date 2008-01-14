@@ -39,13 +39,14 @@ public static Class<?> loadClassFromFile(File theFile,String className) throws C
 		URLClassLoader urlLoader = null;
 
 
-
+			URL theURL=null;
+                        
 		try {
-			URL theURL=new URL("file",null, theFileName);
+			theURL=new URL("file",null, theFileName);
 			urlLoader = new URLClassLoader(new URL[]{theURL});
                         theClass=urlLoader.loadClass(className);
 		} catch (Throwable e) {
-                        String errorString="SERIOUS ERROR: When JarClassLoader tried to load class: "+className+" from file: "+theFile.toString();
+                        String errorString="SERIOUS ERROR: When JarClassLoader tried to load class: "+className+" from file: "+theFile.toString()+"\nURL is: "+theURL.toString();
                         throw new CouldNotLoadJarException(errorString, e);
                 }
 		return theClass;
