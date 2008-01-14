@@ -46,7 +46,7 @@ public static Class<?> loadClassFromFile(File theFile,String className) throws C
 			urlLoader = new URLClassLoader(new URL[]{theURL});
                         theClass=urlLoader.loadClass(className);
 		} catch (Throwable e) {
-                        String errorString="SERIOUS ERROR: When JarClassLoader tried to load class: "+className+" from file: "+theFile.toString()+"\nURL is: "+theURL.toString();
+                        String errorString="SERIOUS ERROR: When JarClassLoader tried to load class: "+className+" from file: "+theFile.toString()+"\nURL is: "+theURL.toString()+"\n"+e.toString();
                         throw new CouldNotLoadJarException(errorString, e);
                 }
 		return theClass;
