@@ -45,9 +45,10 @@ We'll try and rely on minimal variables from above.
 
 
 <target name="get.svn.version" description="Get the current subversion revision number of the project">
-    <exec executable="svnversion ."
+    <exec executable="svnversion"
           failifexecutionfails="no"
           outputproperty="svn.revision.version">
+    <arg value="."/>
     </exec>
 </target>
 
