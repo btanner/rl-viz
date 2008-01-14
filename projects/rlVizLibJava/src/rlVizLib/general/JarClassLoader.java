@@ -40,8 +40,8 @@ public static Class<?> loadClassFromFile(File theFile,String className) throws C
                 String urlString="";
 
 		try {
-                        urlString=theFile.toURL().toString();
-			urlLoader = new URLClassLoader(new URL[]{theFile.toURL()});
+                        urlString=theFile.toURI().toURL().toString();
+			urlLoader = new URLClassLoader(new URL[]{theFile.toURI().toURL()});
                         theClass=urlLoader.loadClass(className);
 		} catch (Throwable e) {
                         String errorString="SERIOUS ERROR: When JarClassLoader tried to load class: "+className+" from file: "+theFile.toString()+"\nURL is: "+urlString;
