@@ -15,7 +15,7 @@
 #   1) type 'locate javah'
 #   2) type 'export PATH=$PATH:"insert path to javah here"'(dont include the trailing javah)
 ifndef JAVA_HOME
-	JAVA_HOME=/Library/Java/Home
+	JAVA_HOME=/Library/Java/Home/include
 endif
 ifndef JAVA_HEADER
 	JAVA_HEADER = $(JAVA_HOME)
