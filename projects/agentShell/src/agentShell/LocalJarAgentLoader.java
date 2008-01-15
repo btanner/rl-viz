@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 package agentShell;
 
+import rlVizLib.dynamicLoading.EnvOrAgentType;
 import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
 import rlglue.agent.Agent;
@@ -23,11 +24,11 @@ import rlglue.agent.Agent;
 public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implements AgentLoaderInterface{
 
     public LocalJarAgentLoader() {
-        super("agentJars");
+        super("agentJars",EnvOrAgentType.kAgent);
     }
 
     public LocalJarAgentLoader(String path) {
-       super(path,"agentJars");
+       super(path,"agentJars",EnvOrAgentType.kAgent);
     }
 
 

@@ -168,7 +168,13 @@ public class UtilityShop {
 			P.addStringParam("###description", provider.getDescription());
 		}
 	}
-
+        
+        public final static void addSourceDetails(ParameterHolder P, String fullName, String sourceDescription){
+		if (P != null) {
+			P.addStringParam("###loadname",fullName);
+                        P.addStringParam("###loadsource",sourceDescription);
+                }
+        }
 	
 	/**
 	 * Isolates some of the bits from int A and uses bit manipulation to insert them at an offset in B

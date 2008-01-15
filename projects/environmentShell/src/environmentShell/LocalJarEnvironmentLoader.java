@@ -17,6 +17,7 @@
 package environmentShell;
 
 
+import rlVizLib.dynamicLoading.EnvOrAgentType;
 import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
 import rlglue.environment.Environment;
@@ -24,13 +25,12 @@ import rlglue.environment.Environment;
 public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface{
 
     public LocalJarEnvironmentLoader() {
-        super("envJars");
+        super("envJars", EnvOrAgentType.kEnv);
     }
 
     public LocalJarEnvironmentLoader(String path) {
-       super(path,"envJars");
+       super(path,"envJars",EnvOrAgentType.kEnv);
     }
-
 
     public Environment loadEnvironment(String requestedName, ParameterHolder theParams) {
         Object theEnvObject=load(requestedName, theParams);
