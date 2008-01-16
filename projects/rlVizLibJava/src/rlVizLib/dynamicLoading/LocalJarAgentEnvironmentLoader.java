@@ -137,7 +137,7 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
                             Class<?> theClass = getClassFromJarEntry(thisEntry, thisFile);
                             String theFullClassName = theClass.getName();
 
-                            if (!allFullClassName.contains(theFullClassName)) {
+                            if ((!allFullClassName.contains(theFullClassName)) && !isAbstractClass(theClass)) {
                                 allFullClassName.add(theFullClassName);
                                 String shortName = addFullNameToMap(theFullClassName);
                                 theClasses.add(theClass);
@@ -201,6 +201,12 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         publicNameToFullName.put(proposedShortName, theFullClassName);
         return proposedShortName;
 
+    }
+    
+    private boolean isAbstractClass(Class<?> theClass){
+        int theModifiers = theClass.getModifiers();
+        return (theModifiers == java.lang.reflect.Modifier.ABSTRACT);
+        //return false;
     }
 
     private Class<?> getClassFromJarEntry(JarEntry thisEntry, File thisFile) {
