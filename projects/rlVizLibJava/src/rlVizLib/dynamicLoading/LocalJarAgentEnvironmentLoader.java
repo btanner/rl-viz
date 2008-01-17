@@ -130,7 +130,8 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
                 System.out.println(thisClass.getName());
                 ParameterHolder thisP = loadParameterHolderFromFile(thisClass);
                 //FIX THIS
-                //UtilityShop.addSourceDetails(thisP, thisClass.getName(), thisClass.getName());
+                String sourceJarPath=thisClass.getProtectionDomain().getCodeSource().getLocation().getPath();
+                UtilityShop.addSourceDetails(thisP, thisClass.getName(), sourceJarPath);
                 theParamHolders.add(thisP);
             }
         }

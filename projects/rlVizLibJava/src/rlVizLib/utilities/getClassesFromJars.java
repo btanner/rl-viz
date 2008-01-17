@@ -146,8 +146,10 @@ public class getClassesFromJars {
             getAllAncestors(theSet, thisInterface.getSuperclass());
         }
         Class superClass=sourceClass.getSuperclass();
-        theSet.add(superClass.getName());
-        getAllAncestors(theSet, superClass);
+        if(superClass!=null){
+            theSet.add(superClass.getName());
+            getAllAncestors(theSet, superClass);
+        }
     }
 
     /**
