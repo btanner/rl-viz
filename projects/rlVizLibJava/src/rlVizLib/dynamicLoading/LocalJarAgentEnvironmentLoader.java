@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import rlVizLib.general.ParameterHolder;
 import rlVizLib.utilities.UtilityShop;
 import rlglue.agent.Agent;
 import rlglue.environment.Environment;
+import rlVizLib.utilities.getClassesFromJars;
 
 /**
  * @author btanner
@@ -59,24 +61,13 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     //This seems like we're breaking OO rules
     private EnvOrAgentType theLoaderType;
 
-    public void getAllInterfaces(Set<String> theSet, Class sourceClass) {
-        if (sourceClass == null) {
-            return;
-        }
-
-
-        Class[] theInterfaces = sourceClass.getInterfaces();
-        for (Class thisClass : theInterfaces) {
-            theSet.add(thisClass.getName());
-            getAllInterfaces(theSet, thisClass.getSuperclass());
-        }
-        getAllInterfaces(theSet, sourceClass.getSuperclass());
-    }
-
     public String getClassName(String theName) {
         StringTokenizer theTokenizer = new StringTokenizer(theName, ".");
-
-        return theTokenizer.nextToken();
+        String name = "undefined";
+        while(theTokenizer.hasMoreTokens()){
+            name = theTokenizer.nextToken();
+        }
+        return name;
     //return theName;
     }
 
@@ -99,12 +90,13 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         jarDirString = path + "/" + subDir;
         this.theLoaderType = theLoaderType;
     }
+
     /**
     @param path Path to the main library dir of RLViz, like /.../library
     @param subDir 
      */
     public LocalJarAgentEnvironmentLoader(String path, String subDir) {
-        this(path,subDir,EnvOrAgentType.kBoth);
+        this(path, subDir, EnvOrAgentType.kBoth);
     }
 
     public boolean makeList() {
@@ -112,46 +104,34 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         theClasses = new Vector<Class<?>>();
         theParamHolders = new Vector<ParameterHolder>();
 
+        Vector <Class<?>> allMatching = null;
+        
         File JarDir = new File(jarDirString);
-        File[] theFileList = JarDir.listFiles();
-
-        if (theFileList == null) {
-            System.err.println("Unable to find useable jars, quitting");
-            System.err.println("Was looking in: " + jarDirString);
-            System.exit(1);
+        if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
+            allMatching = getClassesFromJars.gACTI(jarDirString, Environment.class);
+            allMatching.addAll(getClassesFromJars.gACTI(jarDirString, Agent.class));
+        }
+        if (theLoaderType.id() == EnvOrAgentType.kEnv.id()) {
+            allMatching = getClassesFromJars.gACTI(jarDirString, Environment.class);
+        }
+        if (theLoaderType.id() == EnvOrAgentType.kAgent.id()) {
+            allMatching = getClassesFromJars.gACTI(jarDirString, Agent.class);
         }
 
-        for (File thisFile : theFileList) {
-            if (thisFile.getName().endsWith(".jar")) {
-                try {
-                    //So thisFile is a Jar File
-                    JarFile theJarFile = new JarFile(thisFile);
-
-                    Enumeration<JarEntry> allJarEntries = theJarFile.entries();
-
-                    while (allJarEntries.hasMoreElements()) {
-                        JarEntry thisEntry = allJarEntries.nextElement();
-
-
-                        if (shouldLoadClass(thisEntry, thisFile)) {
-                            Class<?> theClass = getClassFromJarEntry(thisEntry, thisFile);
-                            String theFullClassName = theClass.getName();
-
-                            if ((!allFullClassName.contains(theFullClassName)) && !isAbstractClass(theClass)) {
-                                allFullClassName.add(theFullClassName);
-                                String shortName = addFullNameToMap(theFullClassName);
-                                theClasses.add(theClass);
-                                theNames.add(shortName);
-
-                                ParameterHolder thisP = loadParameterHolderFromFile(theClass);
-                                UtilityShop.addSourceDetails(thisP, theFullClassName, thisFile.getName());
-                                theParamHolders.add(thisP);
-                            }
-                        }
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(LocalJarAgentEnvironmentLoader.class.getName()).log(Level.SEVERE, null, ex);
-                }
+      //  for (Class<?> thisClass : allMatching) {
+      //      System.out.println(thisClass.getName());
+      //  }
+        for (Class<?> thisClass : allMatching) {
+            if ((!allFullClassName.contains(thisClass.getName())) && !isAbstractClass(thisClass)) {
+                allFullClassName.add(thisClass.getName());
+                String shortName = addFullNameToMap(thisClass.getName());
+                theClasses.add(thisClass);
+                theNames.add(shortName);
+                System.out.println(thisClass.getName());
+                ParameterHolder thisP = loadParameterHolderFromFile(thisClass);
+                //FIX THIS
+                //UtilityShop.addSourceDetails(thisP, thisClass.getName(), thisClass.getName());
+                theParamHolders.add(thisP);
             }
         }
         return true;
@@ -202,43 +182,11 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         return proposedShortName;
 
     }
-    
-    private boolean isAbstractClass(Class<?> theClass){
+
+    private boolean isAbstractClass(Class<?> theClass) {
         int theModifiers = theClass.getModifiers();
-        return (theModifiers == java.lang.reflect.Modifier.ABSTRACT);
-        //return false;
-    }
-
-    private Class<?> getClassFromJarEntry(JarEntry thisEntry, File thisFile) {
-        if (thisEntry.getName().endsWith(".class")) {
-            //Cut off the .class
-            String thisClassName = thisEntry.getName().substring(0, thisEntry.getName().length() - 6);
-            thisClassName = thisClassName.replace(File.separator, ".");
-
-            //Load the class file first and make sure it works
-            Class<?> theClass = rlVizLib.general.JarClassLoader.loadClassFromFileQuiet(thisFile, thisClassName, debugClassLoading);
-            return theClass;
-        }
-        return null;
-    }
-
-    private Set<String> getInterfaceNames(JarEntry thisEntry, File thisFile) {
-        Set<String> interfaceSet = new TreeSet<String>();
-        Class<?> theClass = getClassFromJarEntry(thisEntry, thisFile);
-
-        getAllInterfaces(interfaceSet, theClass);
-
-        return interfaceSet;
-    }
-
-    private boolean checkIfAgent(JarEntry thisEntry, File thisFile) {
-        Set<String> interfaceSet = getInterfaceNames(thisEntry, thisFile);
-        return interfaceSet.contains(Agent.class.getName());
-    }
-
-    private boolean checkIfEnv(JarEntry thisEntry, File thisFile) {
-        Set<String> interfaceSet = getInterfaceNames(thisEntry, thisFile);
-        return interfaceSet.contains(Environment.class.getName());
+        return Modifier.isAbstract(theModifiers);
+    //return false;
     }
 
     private ParameterHolder loadParameterHolderFromFile(Class<?> theClass) {
@@ -252,6 +200,7 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
                 theParamHolder = (ParameterHolder) paramMakerMethod.invoke((Object[]) null, (Object[]) null);
             }
         } catch (Exception e) {
+            System.out.println(e.toString());
             return null;
         }
 
@@ -314,22 +263,6 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
 
     public String getTypeSuffix() {
         return "- Java";
-    }
-
-    private boolean shouldLoadClass(JarEntry thisEntry, File thisFile) {
-        boolean isEnv = checkIfEnv(thisEntry, thisFile);
-        boolean isAgent = checkIfAgent(thisEntry, thisFile);
-
-        if (theLoaderType.id() == EnvOrAgentType.kBoth.id() && (isEnv || isAgent)) {
-            return true;
-        }
-        if (theLoaderType.id() == EnvOrAgentType.kEnv.id() && isEnv) {
-            return true;
-        }
-        if (theLoaderType.id() == EnvOrAgentType.kAgent.id() && isAgent) {
-            return true;
-        }
-        return false;
     }
 }
 
