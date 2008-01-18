@@ -9,7 +9,8 @@ public enum EnvOrAgentType {
 
     kEnv(0),
     kAgent(1),
-    kBoth(2);
+    kBoth(2),
+    kViz(3);
     private final int id;
 
     EnvOrAgentType(int id) {

@@ -17,12 +17,10 @@ package rlVizLib.dynamicLoading;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import java.lang.reflect.Modifier;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -30,15 +28,14 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.utilities.UtilityShop;
 import rlglue.agent.Agent;
 import rlglue.environment.Environment;
-import rlVizLib.utilities.getClassesFromJars;
+import rlVizLib.utilities.ClassExtractor;
+import rlVizLib.utilities.AbstractJarGrabber;
+import rlVizLib.utilities.LocalDirectoryJarGrabber;
+import rlVizLib.visualization.AbstractVisualizer;
 
 /**
  * @author btanner
@@ -50,13 +47,15 @@ import rlVizLib.utilities.getClassesFromJars;
  */
 public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
 
-    private boolean debugClassLoading = true;
     private Vector<String> theNames = null;
     private Vector<Class<?>> theClasses = null;
     private Vector<ParameterHolder> theParamHolders = null;
     private String jarDirString;
     private Map<String, String> publicNameToFullName = new TreeMap<String, String>();
     private Set<String> allFullClassName = new TreeSet<String>();
+    
+    private AbstractJarGrabber theJarGrabber;
+    private ClassExtractor theClassExtractor;
 
     //This seems like we're breaking OO rules
     private EnvOrAgentType theLoaderType;
@@ -89,6 +88,8 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     public LocalJarAgentEnvironmentLoader(String path, String subDir, EnvOrAgentType theLoaderType) {
         jarDirString = path + "/" + subDir;
         this.theLoaderType = theLoaderType;
+        theJarGrabber = new LocalDirectoryJarGrabber(jarDirString);
+        theClassExtractor = new ClassExtractor(theJarGrabber);
     }
 
     /**
@@ -104,30 +105,27 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         theClasses = new Vector<Class<?>>();
         theParamHolders = new Vector<ParameterHolder>();
 
-        Vector <Class<?>> allMatching = null;
+        Vector <Class<?>> allMatching = new Vector<Class<?>>();
         
         File JarDir = new File(jarDirString);
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
-            allMatching = getClassesFromJars.gACTI(jarDirString, Environment.class);
-            allMatching.addAll(getClassesFromJars.gACTI(jarDirString, Agent.class));
+            allMatching = theClassExtractor.gACTI(Environment.class);
+            allMatching.addAll(theClassExtractor.gACTI(Agent.class));
         }
         if (theLoaderType.id() == EnvOrAgentType.kEnv.id()) {
-            allMatching = getClassesFromJars.gACTI(jarDirString, Environment.class);
+            allMatching = theClassExtractor.gACTI(Environment.class);
         }
         if (theLoaderType.id() == EnvOrAgentType.kAgent.id()) {
-            allMatching = getClassesFromJars.gACTI(jarDirString, Agent.class);
+            allMatching = theClassExtractor.gACTI(Agent.class);
         }
-
-      //  for (Class<?> thisClass : allMatching) {
-      //      System.out.println(thisClass.getName());
-      //  }
+ 
         for (Class<?> thisClass : allMatching) {
             if ((!allFullClassName.contains(thisClass.getName())) && !isAbstractClass(thisClass)) {
                 allFullClassName.add(thisClass.getName());
                 String shortName = addFullNameToMap(thisClass.getName());
                 theClasses.add(thisClass);
                 theNames.add(shortName);
-                System.out.println(thisClass.getName());
+                
                 ParameterHolder thisP = loadParameterHolderFromFile(thisClass);
                 //FIX THIS
                 String sourceJarPath=thisClass.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -201,7 +199,6 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
                 theParamHolder = (ParameterHolder) paramMakerMethod.invoke((Object[]) null, (Object[]) null);
             }
         } catch (Exception e) {
-            System.out.println(e.toString());
             return null;
         }
 
@@ -218,10 +215,6 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
      */
     private Object loadFromClass(Class<?> theClass, ParameterHolder theParams) {
         //before we do this, lets check compatibility
-        boolean goodVersion = checkVersions(theClass);
-
-
-
         Object theModule = null;
 
 //Try to load a constructor that takes a parameterholder

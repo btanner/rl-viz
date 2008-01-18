@@ -1,26 +1,30 @@
 /* RLViz Application, a visualizer and dynamic loader for C++ and Java RL-Glue agents/environments
-* Copyright (C) 2007, Brian Tanner brian@tannerpages.com (http://brian.tannerpages.com/)
-* 
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
+ * Copyright (C) 2007, Brian Tanner brian@tannerpages.com (http://brian.tannerpages.com/)
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 package btViz;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.util.Vector;
 import rlVizLib.general.TinyGlue;
 import rlVizLib.visualization.AbstractVisualizer;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
+import rlVizLib.utilities.AbstractJarGrabber;
+import rlVizLib.utilities.LocalDirectoryJarGrabber;
+import rlVizLib.utilities.ClassExtractor;
 
 public class VisualizerFactory {
 
@@ -36,59 +40,72 @@ public class VisualizerFactory {
     }
 
     private static AbstractVisualizer createVisualizerFromClassName(String theVisualizerClassName, String subDirectory, String defaultClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
-        boolean debugThis=false;
-        
-        if(debugThis)System.out.println("AbstractVisualizer::createVisualizerFromClassName");
-        if(debugThis)System.out.println("\t\t theVisualizerClassName="+theVisualizerClassName);
-        if(debugThis)System.out.println("\t\t subDirectory="+subDirectory);
-        if(debugThis)System.out.println("\t\t defaultClassName="+defaultClassName);
+        boolean debugThis = false;
+
+        if (debugThis){
+            System.out.println("AbstractVisualizer::createVisualizerFromClassName");
+            System.out.println("\t\t theVisualizerClassName=" + theVisualizerClassName);
+            System.out.println("\t\t subDirectory=" + subDirectory);
+            System.out.println("\t\t defaultClassName=" + defaultClassName);
+        }
+
         AbstractVisualizer theViz = null;
         String libPath = rlVizLib.utilities.UtilityShop.getLibraryPath();
         String envVizJarPath = libPath + "/" + subDirectory;
 
-        //Lets say that the Jar needs to have the same name as the Visualizer
-        int lastPeriodPosition = theVisualizerClassName.lastIndexOf(".");
-        String JarName = theVisualizerClassName.substring(lastPeriodPosition + 1) + ".jar";
+        AbstractJarGrabber theJarGrabber = new LocalDirectoryJarGrabber(envVizJarPath);
+        ClassExtractor theClassExtractor = new ClassExtractor(theJarGrabber);
 
-        File theJarFile = new File(envVizJarPath + "/" + JarName);
-        Class<?> theClass = rlVizLib.general.JarClassLoader.loadClassFromFileQuiet(theJarFile, theVisualizerClassName);
+        Vector<Class<?>> allViz = theClassExtractor.gACTI(AbstractVisualizer.class);
+
+        Class<?> GenericVisualizer = null;
+        Class<?> theClass = null;
+        for (Class<?> tempClass : allViz) {
+            if (tempClass.getName().equals(theVisualizerClassName)) {
+                theClass = tempClass;
+            }
+            //Might as well look for this while we're looping through the vizualizers
+            if (tempClass.getName().equals(defaultClassName)) {
+                GenericVisualizer = tempClass;
+            }
+        }
+
+        if (theClass == null) {
+            System.err.println("Couldn't find: " + theVisualizerClassName + " falling back to generic");
+            theClass = GenericVisualizer;
+        }
+
+        if (theClass == null) {
+            System.err.println("Couldn't find the generic visualizer either: " + defaultClassName + " :: no viz for you");
+            return null;
+        }
 
         //If we couldn't load the class they asked for (shock!) we should load the default visualizer
-        if (theClass != null) {
-            if(debugThis)System.out.println("\t Loaded Class Successfully");
-            //First try and load the one with all parameters
-            theViz = createVisualizer(theClass, theGlueState, theControlTarget);
 
-            //IF that didn't work, try without theControlTarget
-            if (theViz == null) {
-                if(debugThis)System.out.println("\t Failed to load triple constructor");
-                theViz = createVisualizer(theClass, theGlueState);
-            }
-            //IF that didn't work, try without theGlueState
-            if (theViz == null) {
-                if(debugThis)System.out.println("\t Failed to load double constructor");
-                theViz = createVisualizer(theClass);
-            }
+        //First try and load the one with all parameters
+        theViz = createVisualizer(theClass, theGlueState, theControlTarget);
 
-        }else{
-                        if(debugThis)System.out.println("\t Failed to load "+theVisualizerClassName+"  from "+theJarFile);
-        }
+        //IF that didn't work, try without theControlTarget
         if (theViz == null) {
-                if(debugThis)System.out.println("\t Failed to load single constructor");
+            if (debugThis) {
+                System.out.println("\t Failed to load triple constructor");
+            }
+            theViz = createVisualizer(theClass, theGlueState);
+        }
+        //IF that didn't work, try without theGlueState
+        if (theViz == null) {
+            if (debugThis) {
+                System.out.println("\t Failed to load double constructor");
+            }
+            theViz = createVisualizer(theClass);
+        }
+
+        if (theViz == null) {
+            if (debugThis) {
+                System.out.println("\t Failed to load single constructor");
+            }
             //Ok at this point, either we didn't load the class for the real visualizer or we couldn't load any constructors
             //In either case, move on to the default visualizer
-            lastPeriodPosition = defaultClassName.lastIndexOf(".");
-            String defaultJarName = defaultClassName.substring(lastPeriodPosition + 1) + ".jar";
-            
-            File genericVizJarFile = new File(envVizJarPath + "/" + defaultJarName);
-            theClass = rlVizLib.general.JarClassLoader.loadClassFromFileQuiet(genericVizJarFile, defaultClassName);
-            //In this case we can't even load the generic class file, give up
-            if (theClass == null) {
-                   if(debugThis)System.out.println("\t Failed to load generic vizualier:"+theVisualizerClassName+"  from "+theJarFile);
-                   return null;
-            }
-
-            theViz = createVisualizer(theClass, theGlueState, theControlTarget);
         }
 
         //Not sure what we ended up with, but in any case, return it
@@ -136,8 +153,6 @@ public class VisualizerFactory {
         }
         return theVisualizer;
     }
-
-
 }
 
 
