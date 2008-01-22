@@ -1,21 +1,22 @@
 /* EnvironmentShell, a dynamic loader for C++ and Java RL-Glue environments
-* Copyright (C) 2007, Brian Tanner brian@tannerpages.com (http://brian.tannerpages.com/)
-* 
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
+ * Copyright (C) 2007, Brian Tanner brian@tannerpages.com (http://brian.tannerpages.com/)
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 package environmentShell;
 
+import java.io.File;
 import java.util.Map;
 
 import java.util.TreeMap;
@@ -40,19 +41,19 @@ import rlglue.types.Random_seed_key;
 import rlglue.types.Reward_observation;
 import rlglue.types.State_key;
 
-
 public class EnvironmentShell implements Environment {
-	static{
-		String rlVizVersion=rlVizLib.rlVizCore.getVersion();
-		String ourVersion=rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(EnvironmentShell.class);
-		
-		if(!rlVizVersion.equals(ourVersion)){
-			System.err.println("Warning :: Possible RLVizLib Incompatibility");
-			System.err.println("Warning :: Runtime version used by EnvironmentShell is:  "+rlVizVersion);
-			System.err.println("Warning :: Compile version used to build EnvironmentShell is:  "+ourVersion);
-		}
-	}
-	
+
+    protected String libDir;
+    static {
+        String rlVizVersion = rlVizLib.rlVizCore.getVersion();
+        String ourVersion = rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(EnvironmentShell.class);
+
+        if (!rlVizVersion.equals(ourVersion)) {
+            System.err.println("Warning :: Possible RLVizLib Incompatibility");
+            System.err.println("Warning :: Runtime version used by EnvironmentShell is:  " + rlVizVersion);
+            System.err.println("Warning :: Compile version used to build EnvironmentShell is:  " + ourVersion);
+        }
+    }
     private Environment theEnvironment = null;
     Map<String, EnvironmentLoaderInterface> mapFromUniqueNameToLoader = new TreeMap<String, EnvironmentLoaderInterface>();
     Map<String, String> mapFromUniqueNameToLocalName = new TreeMap<String, String>();
@@ -61,12 +62,12 @@ public class EnvironmentShell implements Environment {
     public EnvironmentShell() {
         //See if the environment variable for the path to the Jars has been defined
         this.refreshList();
-
     }
 
     public void refreshList() {
-        if(!theEnvironmentLoaders.isEmpty())
+        if (!theEnvironmentLoaders.isEmpty()) {
             theEnvironmentLoaders.clear();
+        }
         //See if the environment variable for the path to the Jars has been defined
         theEnvironmentLoaders.add(new LocalJarEnvironmentLoader());
 
@@ -119,7 +120,7 @@ public class EnvironmentShell implements Environment {
                 Vector<ParameterHolder> envParamVector = new Vector<ParameterHolder>();
 
                 this.refreshList();
-                
+
                 for (EnvironmentLoaderInterface thisEnvLoader : theEnvironmentLoaders) {
                     thisEnvLoader.makeList();
                     Vector<String> thisEnvNameVector = thisEnvLoader.getNames();
@@ -168,10 +169,10 @@ public class EnvironmentShell implements Environment {
 
             if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellRefresh.id()) {
                 this.refreshList();
-                
+
                 EnvShellRefreshResponse theResponse = new EnvShellRefreshResponse(true);
-                
-                return theResponse.makeStringResponse();               
+
+                return theResponse.makeStringResponse();
             }
             System.err.println("Env shell doesn't know how to handle message: " + theMessage);
         }
