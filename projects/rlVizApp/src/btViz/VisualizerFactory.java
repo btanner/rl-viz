@@ -22,6 +22,7 @@ import rlVizLib.dynamicLoading.AbstractResourceGrabber;
 import rlVizLib.dynamicLoading.ClassExtractor;
 import rlVizLib.dynamicLoading.JarFileFilter;
 import rlVizLib.dynamicLoading.LocalDirectoryGrabber;
+import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.TinyGlue;
 import rlVizLib.visualization.AbstractVisualizer;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
@@ -56,7 +57,7 @@ public class VisualizerFactory {
 
         ClassExtractor theClassExtractor = new ClassExtractor(theJarGrabber);
 
-        Vector<Class<?>> allViz = theClassExtractor.getAllClassesThatImplement(AbstractVisualizer.class);
+        Vector<Class<?>> allViz = theClassExtractor.getAllClassesThatImplement(AbstractVisualizer.class, Unloadable.class);
 
         Class<?> GenericVisualizer = null;
         Class<?> theClass = null;
