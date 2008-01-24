@@ -16,6 +16,7 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 package agentShell;
 
+import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.visualization.QueryableAgent;
 import rlglue.agent.Agent;
@@ -23,7 +24,7 @@ import rlglue.types.Action;
 import rlglue.types.Observation;
 
 
-public class JNIAgent implements Agent, QueryableAgent {
+public class JNIAgent implements Agent, QueryableAgent, Unloadable {
     private boolean debugThis=false;
     
 	public native boolean JNIloadAgent(String s);

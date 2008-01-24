@@ -16,6 +16,7 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 package environmentShell;
 
+import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
 import rlglue.environment.Environment;
 import rlglue.types.Action;
@@ -32,7 +33,7 @@ import rlglue.types.State_key;
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-public class JNIEnvironment implements Environment {
+public class JNIEnvironment implements Environment, Unloadable {
 
     public native boolean JNIloadEnvironment(String theFilePath, String theParams);
     public native String JNIenvinit();
