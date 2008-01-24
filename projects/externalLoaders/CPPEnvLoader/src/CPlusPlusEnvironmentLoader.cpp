@@ -46,13 +46,7 @@ JNIEXPORT jboolean JNICALL Java_environmentShell_JNIEnvironment_JNIloadEnvironme
     if(status!=DLSYM_SUCCESS)return false;
 
     setDefaultParams(theEnvironment, env->GetStringUTFChars(theParamString, 0));
-//    if(theEnvironment.env_setDefaultParameters){
-//        //const char *theParamCString=NULL;
-//        //theParamCString = env->GetStringUTFChars(theParamString, 0);
-//        //might be an ERROR here... need testing to verify
-//        //ParameterHolder newParamHolder = ParameterHolder(std::string(theparams));
-//        setParams(env, theParamString);
-//    }
+
     return true;
 }
 
@@ -259,47 +253,8 @@ std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment){
     checkEnvironmentStruct(thisEnvironment, symFailures);
         
     return symFailures;
-    
-//    if(thisEnvironment.env_setDefaultParameters){
-//        //const char *theParamCString=NULL;
-//        //theParamCString = env.GetStringUTFChars(theParamString, 0);
-//        //might be an ERROR here... need testing to verify
-//        //ParameterHolder newParamHolder = ParameterHolder(std::string(theparams));
-//        setParams(env, theParamString);
-//    }
 }
 
-//int loadEnv(std::string fileName, envStruct){
-//    //make a C cipy of the java string and check if its a valid library
-////    (void*) theLocalHandle = openFile(fileName);
-//    void* theLocalHandle=dlopen(fileName.c_str(), RTLD_NOW | RTLD_LOCAL);
-//    if(!theLocalHandle)return DLSYM_HANDLE_ERROR;
-//    
-//    bool allFunctionsPresent=true;
-//    std::vector<std::string> failedSym;
-//    
-//    if(!((envinit_t) dlsym(theLocalHandle, "env_init"))){ allFunctionsPresent=false; failedSym.push_back("env_init");}
-//    if(!((envstart_t) dlsym(theLocalHandle, "env_start"))){ allFunctionsPresent=false; failedSym.push_back("env_start");}
-//    if(!((envstep_t) dlsym(theLocalHandle, "env_step"))){ allFunctionsPresent=false; failedSym.push_back("env_step");}
-//    if(!((envcleanup_t) dlsym(theLocalHandle, "env_cleanup"))){ allFunctionsPresent=false; failedSym.push_back("env_cleanup");}
-//    if(!((envgetstate_t) dlsym(theLocalHandle, "env_get_state"))){ allFunctionsPresent=false; failedSym.push_back("env_get_state");}
-//    if(!((envsetstate_t) dlsym(theLocalHandle, "env_set_state"))){ allFunctionsPresent=false; failedSym.push_back("env_set_state");}
-//    if(!((envsetrandomseed_t) dlsym(theLocalHandle, "env_set_random_seed"))){ allFunctionsPresent=false; failedSym.push_back("env_set_random_seed");}
-//    if(!((envgetrandomseed_t) dlsym(theLocalHandle, "env_get_random_seed"))){ allFunctionsPresent=false; failedSym.push_back("env_get_random_seed");}
-//    if(!((envmessage_t) dlsym(theLocalHandle, "env_message"))){ allFunctionsPresent=false; failedSym.push_back("env_message");}
-//    
-//    closeFile(theLocalHandle);
-//    
-//    if(DEBUGMODE==1&&failedSym.size()>0){
-//        std::cerr<<"On file: "<<fileName<<std::endl;
-//        printSymError(failedSym);
-//    }
-//    if(allFunctionsPresent){
-//        return DLSYM_SUCCESS;
-//    }
-//    
-//    return DLSYM_FUNCTIONS_MISSING;
-//}
 
 const char* getParameterHolder(std::string theFilePath){
     const char* thePHString = theNullParamHolder.c_str();
