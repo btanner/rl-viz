@@ -70,6 +70,10 @@ We'll try and rely on minimal variables from above.
     <delete dir="${test.reports}"/>
 </target>
 
+<target name="rl-debug">
+	<property name="build.debug" value="on"/>
+</target>
+
 <target name="rl-compile" >
    <mkdir dir="${classes.dir}"/>
 	<if>
@@ -78,7 +82,7 @@ We'll try and rely on minimal variables from above.
 			<property name="useOSXclasses" value="true"/>
 		</then>
 	</if>
-    <javac srcdir="${src.dir}" destdir="${classes.dir}" >
+    <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="${build.debug}">
 	    <classpath>
             <path refid="rlvizlib.classpath" />
  		    <path refid="project.extra.classpath" />

@@ -2,36 +2,34 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package rlVizLib.utilities;
+package rlVizLib.dynamicLoading;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- *
+ * Given a grabber that returns Jars, this will find all of the classes in it
+ * that match certain criteria.
  * @author mradkie
  */
 public class ClassExtractor {
 
     private boolean debugClassLoading = false;
     
-    private AbstractJarGrabber theJarGrabber;
+    private AbstractResourceGrabber theJarGrabber;
    
     public String theMainUrl;
     public Vector<File> theJars;
     public Vector<URI> theJarURIs;
     
-    public ClassExtractor(AbstractJarGrabber theJarGrabber){
+    public ClassExtractor(AbstractResourceGrabber theJarGrabber){
         this.theJarGrabber = theJarGrabber;
         
         theJars = new Vector<File>();
@@ -42,14 +40,14 @@ public class ClassExtractor {
     }
 
     public void refreshJars(){
-        theJarGrabber.refreshJarURIList();
+        theJarGrabber.refreshURIList();
 
         theJarURIs.clear();
-        theJarURIs.addAll(theJarGrabber.getAllJarURIs());
+        theJarURIs.addAll(theJarGrabber.getAllResourceURIs());
     }
     
     /**
-     * gACTI stands for get All Classes That Implement.
+     * getAllClassesThatImplement stands for get All Classes That Implement.
      * 
      * This method checks all Jars in theJardDir for classes that implement
      * theInterface. 
@@ -60,14 +58,14 @@ public class ClassExtractor {
      *         theJarDir
      * 
      */
-    public Vector<Class<?>> gACTI(Class<?> theInterface) {
+    public Vector<Class<?>> getAllClassesThatImplement(Class<?> theInterface) {
         
         
         Vector<Class<?>> allClasses = new Vector<Class<?>>();
         Vector<Class<?>> matchingClasses = new Vector<Class<?>>();
         
         for (URI thisURI : theJarURIs) {
-            allClasses.addAll(gACFJ(thisURI));
+            allClasses.addAll(getAllClassesFromJar(thisURI));
         }
         for (Class<?> thisClass : allClasses) {
             if (checkIfDescendantOf(thisClass, theInterface)) {
@@ -79,14 +77,14 @@ public class ClassExtractor {
 
 
     /**
-     * gACFJ stands for get ALL Classes From Jar
+     * getAllClassesFromJar stands for get ALL Classes From Jar
      * 
      * This Method returns a Vector of classes that are contained within
      * a Jar
      * @param theJar - the jar to get classes from
      * @return
      */
-    public Vector<Class<?>> gACFJ(URI theURI) {
+    public Vector<Class<?>> getAllClassesFromJar(URI theURI) {
         Vector<Class<?>> theClasses = new Vector<Class<?>>();
         
         try {
@@ -101,7 +99,7 @@ public class ClassExtractor {
                 }
             }
         } catch (IOException ex) {
-            System.out.println("IO Exception in gACFJ");
+            System.out.println("IO Exception in getAllClassesFromJar: "+ex+" \n on file: "+theURI);
         }
         
         return theClasses;

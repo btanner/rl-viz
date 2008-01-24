@@ -25,8 +25,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import rlVizLib.dynamicLoading.CompositeResourceGrabber;
+import rlVizLib.dynamicLoading.DylibGrabber;
 import rlVizLib.general.ParameterHolder;
-import rlVizLib.utilities.UtilityShop;
 import rlglue.environment.Environment;
 
 /**
@@ -95,8 +96,14 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
      * @return true if there were no errors
      */
     public boolean makeList() {
-        DylibGrabber theGrabber = new DylibGrabber();
-        allCPPEnvURIs = theGrabber.getValidEnvDylibURIs();
+        Vector<URI> allPlacesToLook=EnvironmentShellPreferences.getInstance().getList();
+        
+        CompositeResourceGrabber compGrabber=new CompositeResourceGrabber();
+        for (URI uri : allPlacesToLook) {
+            compGrabber.add(new DylibGrabber(uri));
+        }
+        compGrabber.refreshURIList();
+        allCPPEnvURIs = compGrabber.getAllResourceURIs();
         
 
         for (URI thisURI : allCPPEnvURIs) {

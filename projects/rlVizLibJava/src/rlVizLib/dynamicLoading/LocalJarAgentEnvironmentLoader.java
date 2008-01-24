@@ -17,6 +17,7 @@ package rlVizLib.dynamicLoading;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 import java.io.File;
+import java.io.FileFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -34,9 +35,10 @@ import rlVizLib.general.ParameterHolder;
 import rlVizLib.utilities.UtilityShop;
 import rlglue.agent.Agent;
 import rlglue.environment.Environment;
-import rlVizLib.utilities.ClassExtractor;
-import rlVizLib.utilities.AbstractJarGrabber;
-import rlVizLib.utilities.LocalDirectoryJarGrabber;
+import rlVizLib.dynamicLoading.ClassExtractor;
+import rlVizLib.dynamicLoading.AbstractResourceGrabber;
+import rlVizLib.dynamicLoading.CompositeResourceGrabber;
+import rlVizLib.dynamicLoading.LocalDirectoryGrabber;
 
 /**
  * @author btanner
@@ -51,11 +53,11 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     private Vector<String> theNames = null;
     private Vector<Class<?>> theClasses = null;
     private Vector<ParameterHolder> theParamHolders = null;
-    private String jarDirString;
+
     private Map<String, String> publicNameToFullName = new TreeMap<String, String>();
     private Set<String> allFullClassName = new TreeSet<String>();
     private Vector<URI> theUriList = new Vector<URI>(); 
-    private AbstractJarGrabber theJarGrabber;
+
     private ClassExtractor theClassExtractor;
 
     //This seems like we're breaking OO rules
@@ -74,41 +76,52 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     /**
     @param subDir The directory for these specific Jars, like envJars or agentJars
      */
-    public LocalJarAgentEnvironmentLoader(EnvOrAgentType theLoaderType) {
-        this((rlVizLib.utilities.UtilityShop.getLibraryPath()), EnvOrAgentType.kBoth);
-    }
+//    public LocalJarAgentEnvironmentLoader(EnvOrAgentType theLoaderType) {
+//        this((rlVizLib.utilities.UtilityShop.getLibraryPath()), EnvOrAgentType.kBoth);
+//    }
 
     /**
     @param path Path to the main library dir of RLViz, like /.../library
     @param subDir 
      */
-    public LocalJarAgentEnvironmentLoader(String path, EnvOrAgentType theLoaderType) {
-        try {
-            System.out.println(path);
-            theUriList.add(new URI(path));
-            this.theLoaderType = theLoaderType;
-            /** TODO: write the composite jar grabber */
-            theJarGrabber = new LocalDirectoryJarGrabber(theUriList.elementAt(0).toString());
-            theClassExtractor = new ClassExtractor(theJarGrabber);
-        } catch (URISyntaxException ex) {
-            System.out.print("Error making URI out of the path in LocalJarAgentEnvironmentLoader");
-        }
-    }
+//    public LocalJarAgentEnvironmentLoader(URI theURI, EnvOrAgentType theLoaderType) {
+//        this(new Vector<URI>().add(theURI),theLoaderType);
+//        try {
+//            System.out.println(path);
+//            theUriList.add(new URI(path));
+//            this.theLoaderType = theLoaderType;
+//            /** TODO: write the composite jar grabber */
+//            theJarGrabber = new LocalDirectoryGrabber(theUriList.elementAt(0).toString());
+//            theClassExtractor = new ClassExtractor(theJarGrabber);
+//        } catch (URISyntaxException ex) {
+//            System.out.print("Error making URI out of the path in LocalJarAgentEnvironmentLoader");
+//        }
+//    }
     
     public LocalJarAgentEnvironmentLoader(Vector<URI> uriList, EnvOrAgentType theLoaderType) {
         theUriList.addAll(uriList);
         this.theLoaderType = theLoaderType;
-        theJarGrabber = new LocalDirectoryJarGrabber(jarDirString);
-        theClassExtractor = new ClassExtractor(theJarGrabber);
+
+        CompositeResourceGrabber theCompJarGrabber = new CompositeResourceGrabber();
+        
+        FileFilter theJarFileFilter=new JarFileFilter();
+        for (URI uri : uriList) {
+            LocalDirectoryGrabber thisGrabber=new LocalDirectoryGrabber(uri);
+            thisGrabber.addFilter(theJarFileFilter);
+            
+            theCompJarGrabber.add(thisGrabber);
+        }
+
+        theClassExtractor = new ClassExtractor(theCompJarGrabber);
     }
 
     /**
     @param path Path to the main library dir of RLViz, like /.../library
     @param subDir 
      */
-    public LocalJarAgentEnvironmentLoader(String path) {
-        this(path, EnvOrAgentType.kBoth);
-    }
+//    public LocalJarAgentEnvironmentLoader(String path) {
+//        this(path, EnvOrAgentType.kBoth);
+//    }
 
     public boolean makeList() {
         theNames = new Vector<String>();
@@ -119,14 +132,17 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         
         File JarDir = new File(theUriList.elementAt(0).toString());
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
-            allMatching = theClassExtractor.gACTI(Environment.class);
-            allMatching.addAll(theClassExtractor.gACTI(Agent.class));
+            System.out.println("-------Loading both types");
+            allMatching = theClassExtractor.getAllClassesThatImplement(Environment.class);
+            allMatching.addAll(theClassExtractor.getAllClassesThatImplement(Agent.class));
         }
         if (theLoaderType.id() == EnvOrAgentType.kEnv.id()) {
-            allMatching = theClassExtractor.gACTI(Environment.class);
+            System.out.println("-------Loading kEnv types");
+            allMatching = theClassExtractor.getAllClassesThatImplement(Environment.class);
         }
         if (theLoaderType.id() == EnvOrAgentType.kAgent.id()) {
-            allMatching = theClassExtractor.gACTI(Agent.class);
+            System.out.println("-------Loading kAgent types");
+            allMatching = theClassExtractor.getAllClassesThatImplement(Agent.class);
         }
  
         for (Class<?> thisClass : allMatching) {

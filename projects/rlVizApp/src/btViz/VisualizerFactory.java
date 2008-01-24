@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 package btViz;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.Vector;
+import rlVizLib.dynamicLoading.AbstractResourceGrabber;
+import rlVizLib.dynamicLoading.ClassExtractor;
+import rlVizLib.dynamicLoading.JarFileFilter;
+import rlVizLib.dynamicLoading.LocalDirectoryGrabber;
 import rlVizLib.general.TinyGlue;
 import rlVizLib.visualization.AbstractVisualizer;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
-import rlVizLib.utilities.AbstractJarGrabber;
-import rlVizLib.utilities.LocalDirectoryJarGrabber;
-import rlVizLib.utilities.ClassExtractor;
 
 public class VisualizerFactory {
 
@@ -53,10 +53,12 @@ public class VisualizerFactory {
         String libPath = rlVizLib.utilities.UtilityShop.getLibraryPath();
         String envVizJarPath = libPath + "/" + subDirectory;
 
-        AbstractJarGrabber theJarGrabber = new LocalDirectoryJarGrabber(envVizJarPath);
+        LocalDirectoryGrabber theJarGrabber=new LocalDirectoryGrabber(envVizJarPath);
+        theJarGrabber.addFilter(new JarFileFilter());
+
         ClassExtractor theClassExtractor = new ClassExtractor(theJarGrabber);
 
-        Vector<Class<?>> allViz = theClassExtractor.gACTI(AbstractVisualizer.class);
+        Vector<Class<?>> allViz = theClassExtractor.getAllClassesThatImplement(AbstractVisualizer.class);
 
         Class<?> GenericVisualizer = null;
         Class<?> theClass = null;

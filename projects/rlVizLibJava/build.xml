@@ -21,9 +21,9 @@
     <target name="clean" depends="rl-clean" />
     
 <!-- Not using rl-compile in build-common.xml because we need RL-Glue.jar -->
-    <target name="compile">
+    <target name="compile" >
         <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="rlglue.classpath" /> 
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="rlglue.classpath" debug="${build.debug}" /> 
     </target>
 
     <target name="jar" depends="compile,get.svn.version" >

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
@@ -41,7 +42,7 @@ import rlglue.types.Random_seed_key;
 import rlglue.types.Reward_observation;
 import rlglue.types.State_key;
 
-public class EnvironmentShell implements Environment {
+public class EnvironmentShell implements Environment,Unloadable {
 
     protected String libDir;
     static {

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
@@ -35,9 +36,9 @@ import rlglue.types.Action;
 import rlglue.types.Observation;
 
 
-public class AgentShell implements Agent{
+public class AgentShell implements Agent, Unloadable{
 	static{
-		String rlVizVersion=rlVizLib.rlVizCore.getVersion();
+		String rlVizVersion=rlVizLib.rlVizCore.getSpecVersion();
 		String ourVersion=rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(AgentShell.class);
 		
 		if(!rlVizVersion.equals(ourVersion)){
@@ -61,10 +62,7 @@ public class AgentShell implements Agent{
 
 	public AgentShell(){
                 String libraryPath = System.getProperty("RLVIZ_LIB_PATH");
-                if(libraryPath==null)   
                     theAgentLoaders.add(new LocalJarAgentLoader());
-                else
-                    theAgentLoaders.add(new LocalJarAgentLoader(libraryPath));
 
                //Check if we should do CPP loading
                 String CPPAgentLoaderString = System.getProperty("CPPAgent");

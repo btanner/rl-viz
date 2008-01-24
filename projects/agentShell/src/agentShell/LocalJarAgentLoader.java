@@ -24,11 +24,7 @@ import rlglue.agent.Agent;
 public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implements AgentLoaderInterface{
 
     public LocalJarAgentLoader() {
-        super(EnvOrAgentType.kAgent);
-    }
-
-    public LocalJarAgentLoader(String path) {
-       super(path,EnvOrAgentType.kAgent);
+        super(AgentShellPreferences.getInstance().getList(),EnvOrAgentType.kAgent);
     }
 
 

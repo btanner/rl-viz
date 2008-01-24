@@ -60,6 +60,7 @@ public class EnvironmentShellPreferences {
     //        try {
                 envUriList.add(new File(jniLoaderLibDir).toURI());
                 envUriList.add(new File("/Users/mradkie/competition/rlcomplibrary/libraries/envJars/").toURI());
+                envUriList.add(new File("../../rlcomplibrary/libraries/envJars/").toURI());
                 envUriList.add(new File("../../rl-library/system/dist/").toURI());
                 envUriList.add(new File("../system/dist/").toURI());
 //                this.envUriList.add(new URI(jniLoaderLibDir+File.separator));

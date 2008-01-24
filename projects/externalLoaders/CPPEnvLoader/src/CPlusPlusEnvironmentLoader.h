@@ -5,6 +5,7 @@ typedef Task_specification(*envinit_t)();
 typedef Observation(*envstart_t)();
 typedef Reward_observation(*envstep_t)(Action a);
 typedef void (*envcleanup_t)();
+typedef void (*hamburgers_t)();
 typedef State_key(*envgetstate_t)();
 typedef void (*envsetstate_t)(State_key sk);
 typedef void (*envsetrandomseed_t)(Random_seed_key rsk);
@@ -30,12 +31,13 @@ struct envFuncs{
 typedef struct envFuncs envStruct;
 
 
-int loadEnvironment(std::string fileName, envStruct &theEnv);
+//int loadEnvironment(std::string fileName, envStruct &theEnv);
 void closeEnvironment(envStruct &theEnv);
 
 void* openFile(std::string fileName);
 void closeFile(void *theLocalHandle);
 //int checkEnv(std::string fileName);
+void setDefaultParams(envStruct &theEnvironment, const char *paramString);
 const char* getParameterHolder(std::string theFilePath);
 void printSymError(std::vector<std::string> &symnames);
 void checkValidHandle(void *theHandle);

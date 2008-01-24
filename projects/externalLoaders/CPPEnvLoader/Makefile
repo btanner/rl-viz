@@ -30,8 +30,7 @@ INCLUDE_PATH=$(BASE_PATH)/includes
 #Needed?
 GLUE_PATH=../../rl-glue/RL-Glue
 ENV_HEADERS=$(BASE_PATH)/dist
-#We should use PWD to get this path
-GET_BACK=../../../rl-viz/projects/externalLoaders/CPPEnvLoader
+
 
 # supported substrings of OSTYPE
 # The following words must be uppercase
@@ -52,7 +51,7 @@ endif
 
 CC=g++
 
-LIB_HEADERS=environmentShell_LocalCPlusPlusEnvironmentLoader.h environmentShell_JNIEnvironment.h environmentShell_DylibGrabber.h
+LIB_HEADERS=JNI_Env.h JNI_CPPEnvLoader.h DylibGrabber.h
 
 ifeq ("$(OSTYPE)","$(OSTYPE_MAC)")
 	SFLAGS := -dynamiclib 
@@ -63,20 +62,15 @@ endif
 
 CPPENV.dylib: $(LIB_HEADERS)
 	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
-	cd $(ENV_HEADERS) && rm -rf META-INF
-	cd $(ENV_HEADERS) && rm -rf environmentShell
 	
-environmentShell_JNIEnvironment.h:
-	cd $(ENV_HEADERS) && javah environmentShell.JNIEnvironment && mv environmentShell_JNIEnvironment.h $(GET_BACK)/src
+JNI_Env.h:
+	javah -o src/JNI_Env.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar environmentShell.JNIEnvironment
+	
+JNI_CPPEnvLoader.h:
+	javah -o src/JNI_CPPEnvLoader.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar environmentShell.LocalCPlusPlusEnvironmentLoader
 
-environmentShell_LocalCPlusPlusEnvironmentLoader.h:
-	cd $(ENV_HEADERS) && unzip EnvironmentShell.jar
-	cd $(ENV_HEADERS) && javah environmentShell.LocalCPlusPlusEnvironmentLoader && mv environmentShell_LocalCPlusPlusEnvironmentLoader.h $(GET_BACK)/src
-
-environmentShell_DylibGrabber.h:
-	cd $(ENV_HEADERS) && javah environmentShell.DylibGrabber && mv environmentShell_DylibGrabber.h $(GET_BACK)/src
+DylibGrabber.h:
+	javah -o src/JNI_DylibGrabber.h -classpath .:$(ENV_HEADERS)/RLVizLib.jar rlVizLib.dynamicLoading.DylibGrabber
 
 clean:
-	cd $(ENV_HEADERS) && rm -rf META-INF
-	cd $(ENV_HEADERS) && rm -rf environmentShell
 	rm -f $(OUT_PATH)/CPPENV.dylib

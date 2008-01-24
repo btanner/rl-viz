@@ -14,10 +14,11 @@
 
     <target name="clean" depends="rl-clean" />
     <target name="compile" depends="rl-compile" />
+    <target name="debug" depends="rl-debug, compile" />
 
     <target name="jar" depends="rl-jar" />
     <target name="clean-build" depends="clean,jar"/>
-	<target name="test" depends="rl-test-html" />
-	<target name="javadoc" depends="rl-javadoc" />
+    <target name="test" depends="rl-test-html" />
+    <target name="javadoc" depends="rl-javadoc" />
 </project>
 

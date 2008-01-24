@@ -1,24 +1,42 @@
 <project name="RLVizProject" basedir="." >
 
 <target name="RLVizLib" description="RLVizLib">
-   <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean-build"/>
+   <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean-build">
+	 <property name="build.debug" value="${build.debug}"/>
+	</ant>
+	
  </target>
 
 <target name="envShell" description="Build the Environment Shell Jar" depends="RLVizLib">
-   <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean-build"/>
+   <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean-build">
+	 <property name="build.debug" value="${build.debug}"/>
+	</ant>
 </target>
 
 <target name="agentShell" description="Build the Agent Shell Jar" depends="RLVizLib">
-   <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean-build"/>
+   <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean-build">
+	 <property name="build.debug" value="${build.debug}"/>
+	</ant>
 </target>
 
 <target name="rlVizApp" description="Build the Application" depends="RLVizLib,agentShell,envShell">
-   <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean-build"/>
+   <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean-build">
+	 <property name="build.debug" value="${build.debug}"/>
+	</ant>
 </target>
 
 <target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue" >
 	<echo message="Operating system name: 
         ${os.name}"/>
+</target>
+
+<target name="set-debug">
+	<property name="build.debug" value="on"/>
+</target>
+
+
+<target name="debug-all" description="DEBUG Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="set-debug,all" >
+	<echo message="Operating system name:  ${os.name}"/>
 </target>
 
 <target name="test" description="Builds all tests RLVizLib, and the agent and environment shells, and RLVizApp" >

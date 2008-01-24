@@ -1,8 +1,8 @@
 //
 #include "jni.h"
-#include "environmentShell_JNIEnvironment.h"
-#include "environmentShell_LocalCPlusPlusEnvironmentLoader.h"
-#include "environmentShell_DylibGrabber.h"
+#include "JNI_Env.h"
+#include "JNI_CPPEnvLoader.h"
+#include "JNI_DylibGrabber.h"
 
 #include <iostream>
 #include <unistd.h>
@@ -29,26 +29,23 @@ Reward_observation rewardObs;
 
 std::string theNullParamHolder("NULL");
 
+int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, std::string theFileLocation, jboolean printVerboseErrors=false);
 std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment);
 const char* getParameterHolder(std::string theFilePath);
 
 
 JNIEXPORT jboolean JNICALL Java_environmentShell_JNIEnvironment_JNIloadEnvironment(JNIEnv *env, jobject obj, jstring envFilePath, jstring theParamString) {
-    //make a C cipy of the java string
     std::string stdStringPath=std::string(env->GetStringUTFChars(envFilePath, 0));
-    
-        
-    theEnvironment.handle = dlopen(stdStringPath.c_str(), RTLD_NOW | RTLD_LOCAL);
-    
-    std::vector<std::string> symFailures=loadEnvironmentToStruct(theEnvironment);
 
-    if(symFailures.size()>0){
-        printSymError(&symFailures);
-        closeFile(theEnvironment.handle);
-        return false;
-    }
+    loadEnvironmentToStructFromFile(theEnvironment, stdStringPath);
     
-//    theEnvironment.env_setDefaultParameters = (envsetparams_t) dlsym(handle, "env_setDefaultParameters");
+    
+    int status = loadEnvironmentToStructFromFile(theEnvironment,stdStringPath);
+
+
+    if(status!=DLSYM_SUCCESS)return false;
+
+    setDefaultParams(theEnvironment, env->GetStringUTFChars(theParamString, 0));
 //    if(theEnvironment.env_setDefaultParameters){
 //        //const char *theParamCString=NULL;
 //        //theParamCString = env->GetStringUTFChars(theParamString, 0);
@@ -162,12 +159,11 @@ JNIEXPORT jint JNICALL Java_environmentShell_JNIEnvironment_JNIgetTerminal(JNIEn
 
 
 //This mehtod makes a list of C/C++ environment names and parameter holders.
-JNIEXPORT jint JNICALL Java_environmentShell_DylibGrabber_jniIsThisAValidEnv(JNIEnv *env, jobject obj, jstring envFilePath) {
+JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValidEnv(JNIEnv *env, jobject obj, jstring envFilePath, jboolean verboseErrors) {
     std::string stdStringPath=std::string(env->GetStringUTFChars(envFilePath, 0));
 
     envStruct tmpEnvironment;
-    
-    int errorCode=loadEnvironment(stdStringPath,tmpEnvironment);
+    int errorCode=loadEnvironmentToStructFromFile(tmpEnvironment, stdStringPath,verboseErrors);
     closeEnvironment(tmpEnvironment);
     
     return errorCode;
@@ -182,19 +178,6 @@ JNIEXPORT jstring JNICALL Java_environmentShell_LocalCPlusPlusEnvironmentLoader_
     return env->NewStringUTF(paramHolderString);
 }
 
-int loadEnvironment(std::string fileName, envStruct &theEnv){
-    theEnv.handle=openFile(fileName);
-    
-    if(!theEnv.handle)return DLSYM_HANDLE_ERROR;
-    
-    
-
-    std::vector<std::string> symFailures=loadEnvironmentToStruct(theEnv);
-
-    if(symFailures.size()>0)return DLSYM_FUNCTIONS_MISSING;
-
-    return DLSYM_SUCCESS;
-}
 
 void closeEnvironment(envStruct &theEnv){
         closeFile(theEnv.handle);
@@ -223,8 +206,41 @@ void checkEnvironmentStruct(envStruct &thisEnvironment, std::vector<std::string>
     if(!thisEnvironment.env_message)symFailures.push_back("env_message");
 }
 
+int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, std::string theFileLocation,jboolean verboseErrors){
+        thisEnvironment.handle = openFile(theFileLocation);
+        
+        if(!thisEnvironment.handle){
+            if(verboseErrors){
+                std::cout<<"JNI ::Failed to load file: "<<theFileLocation<<std::endl;
+                std::cout<<"JNI ::Failure getting handle from dlopen(): "<<dlerror()<<std::endl;
+            }
+            return DLSYM_HANDLE_ERROR;
+        }
+        
+        std::vector<std::string> symFailures=loadEnvironmentToStruct(thisEnvironment);
+        
+        if(symFailures.size()>0){
+            if(verboseErrors){
+                std::cout<<"JNI ::Failed to dlsym all required functions from file: "<<theFileLocation<<std::endl;
+                std::cout<<"JNI ::Undefined required functions:"<<std::endl;
+                for(unsigned int i=0;i<symFailures.size();i++)
+                    std::cout<<"\t\t"<<symFailures[i]<<std::endl;
+            }
+
+            return DLSYM_FUNCTIONS_MISSING;
+        }
+        
+        return DLSYM_SUCCESS;
+}
+
 std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment){
     std::vector<std::string> symFailures;
+    
+    if(!thisEnvironment.handle){
+        std::cout<<"WTF NO HANDLE!"<<std::endl;
+        exit(1);
+    }
+        
     
     thisEnvironment.env_start = (envstart_t) dlsym(thisEnvironment.handle, "env_start");
     thisEnvironment.env_init = (envinit_t) dlsym(thisEnvironment.handle, "env_init");
@@ -239,6 +255,7 @@ std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment){
     thisEnvironment.env_setDefaultParameters = (envsetparams_t) dlsym(thisEnvironment.handle, "env_setDefaultParameters");
     thisEnvironment.env_getDefaultParameters = (envgetparams_t) dlsym(thisEnvironment.handle, "env_getDefaultParameters");
     
+
     checkEnvironmentStruct(thisEnvironment, symFailures);
         
     return symFailures;
@@ -285,63 +302,29 @@ std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment){
 //}
 
 const char* getParameterHolder(std::string theFilePath){
-    envStruct tmpEnviroment={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const char* thePHString = theNullParamHolder.c_str();
-    bool failed=false;
-    
-    tmpEnviroment.handle=dlopen(theFilePath.c_str(), RTLD_NOW | RTLD_LOCAL);
-    
-    
-    if(!tmpEnviroment.handle){
-        failed=true;
-    }
-    
-    
-    if(!failed){
-         loadEnvironmentToStruct(tmpEnviroment, NULL);
 
-         if(!tmpEnviroment.env_getDefaultParameters){
-            std::cout<<"\t\tcouldn't dlsym getDefaultParameters"<<std::endl;
-            failed=true;
-        }
-    }
-    
-    if(!failed){
-        thePHString=tmpEnviroment.env_getDefaultParameters();
-    }
-    std::cerr<<"the param string is:" << thePHString << "and failed is " << failed << std::endl;
-    closeFile(tmpEnviroment.handle);
-    
+    envStruct tmpEnvironment;
+    int errorCode=loadEnvironmentToStructFromFile(tmpEnvironment, theFilePath);
+
+    if (errorCode==DLSYM_SUCCESS)
+         if(tmpEnvironment.env_getDefaultParameters)
+            thePHString=tmpEnvironment.env_getDefaultParameters();
+
+    closeEnvironment(tmpEnvironment);
     return thePHString;
 }
 
-//
-//void setParams(JNIEnv *env, jstring paramString){
-//    static const char *theParamCString=NULL;
-//    //get rid of the old message
-//    if(theParamCString!=NULL){
-//        free((char *)theParamCString);
-//        theParamCString=NULL;
-//    }
-//    //ensure the handle is still valid
-//    checkValidEnvironment(thisEnvironment);
-//    
-//    if(!thisEnvironment.env_setDefaultParameters){
-//        std::cerr << "'env_setDefaultParameters' is not implemented by this environment (or we lost the function pointer)! " << dlerror() << '\n';
-//        return;
-//    }
-//    theParamCString = env.GetStringUTFChars(paramString, 0);
-//    std::cout << "setting params with: " << theParamCString << std::endl;
-//    //might be an ERROR here... need testing to verify
-//    //ParameterHolder newParamHolder = ParameterHolder(std::string(theparams));
-//    thisEnvironment.env_setDefaultParameters(theParamCString);
-//}
+
+void setDefaultParams(envStruct &thisEnvironment, const char *paramString){
+    if(thisEnvironment.env_setDefaultParameters)
+        thisEnvironment.env_setDefaultParameters(paramString);
+}
 
 
 void printSymError(std::vector<std::string> &symnames){
     std::cerr << "Cannot load all required symbols"<<std::endl;
     for(unsigned int i=0;i<symnames.size();i++){
         std::cerr<<symnames[i]<<" was missing"<<std::endl;
-    }
     }
 }
