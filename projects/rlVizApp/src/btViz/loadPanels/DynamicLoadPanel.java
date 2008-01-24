@@ -38,8 +38,10 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -229,7 +231,9 @@ public abstract class DynamicLoadPanel implements ActionListener, LoadPanelInter
     private JPanel makeDescriptionPanel(ParameterHolder P) {
         JPanel newPanel = new JPanel();
 
-        newPanel.setLayout(new BoxLayout(newPanel, BoxLayout.Y_AXIS));
+        newPanel.setLayout(new BoxLayout(newPanel, BoxLayout.PAGE_AXIS));
+
+        
 
         String name="Default";
         if (P.isParamSet("###name")) {
@@ -282,6 +286,12 @@ public abstract class DynamicLoadPanel implements ActionListener, LoadPanelInter
             newPanel.add(urlLabel,Component.LEFT_ALIGNMENT);
         }
         
+        //Add the about button
+        JButton theAboutButton=new JButton("More info...");
+        theAboutButton.addActionListener(new AgentEnvDetailsBox(P));
+        newPanel.add(theAboutButton,Component.CENTER_ALIGNMENT); 
+
+        
         if(newPanel.getComponentCount()>0){
                     TitledBorder titled = null;
         Border loweredetched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
@@ -293,6 +303,8 @@ public abstract class DynamicLoadPanel implements ActionListener, LoadPanelInter
         return newPanel;
 
     }
+    
+
     
     //  This will allow selection and copy to work but still retain the label look
 	private void makeTextAreaLookLikeLable (JTextArea textArea)  {

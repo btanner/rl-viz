@@ -43,24 +43,6 @@ static {
         thisId = nextId;
         nextId++;
         otherFrames = new Vector<GenericVizFrame>();
-
-        /*  This code is used to bring all frames to the front
-         *  when the main frame is clicked, this was taken out because
-         *  it may have been causing a flickering problem in windows.
-         
-        addWindowListener(new WindowAdapter() {
-           @Override
-           public void windowActivated(WindowEvent e) {
-              for (GenericVizFrame otherVizFrame : otherFrames) {
-                  if (otherVizFrame != null) {
-                      otherVizFrame.setAlwaysOnTop(true);
-                      otherVizFrame.setAlwaysOnTop(false);
-                  }
-               }
-               setAlwaysOnTop(true);
-               setAlwaysOnTop(false);
-             };
-        }); */
     }
 
     GenericVizFrame() {
