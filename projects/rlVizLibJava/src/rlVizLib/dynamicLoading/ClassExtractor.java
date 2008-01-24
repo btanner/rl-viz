@@ -50,15 +50,15 @@ public class ClassExtractor {
      * getAllClassesThatImplement stands for get All Classes That Implement.
      * 
      * This method checks all Jars in theJardDir for classes that implement
-     * theInterface. 
+     * toMatch. 
      * 
      * @param theJarDir
-     * @param theInterface
-     * @return a vector of classes that implement theInterface found in
+     * @param toMatch
+     * @return a vector of classes that implement toMatch found in
      *         theJarDir
      * 
      */
-    public Vector<Class<?>> getAllClassesThatImplement(Class<?> theInterface) {
+    public Vector<Class<?>> getAllClassesThatImplement(Vector<Class<?>> toMatch,Vector<Class<?>> toExclude) {
         
         
         Vector<Class<?>> allClasses = new Vector<Class<?>>();
@@ -68,11 +68,25 @@ public class ClassExtractor {
             allClasses.addAll(getAllClassesFromJar(thisURI));
         }
         for (Class<?> thisClass : allClasses) {
-            if (checkIfDescendantOf(thisClass, theInterface)) {
+            if (checkIfDescendantOf(thisClass, toMatch,toExclude)) {
                 matchingClasses.add(thisClass);
             }
         }
         return matchingClasses;
+    }
+
+    public Vector<Class<?>> getAllClassesThatImplement(Class<?> toMatch, Class<?> toFilter){
+        Vector<Class<?>> theFilterVector=new Vector<Class<?>>();
+        Vector<Class<?>> theMatchVector=new Vector<Class<?>>();
+        theFilterVector.add(toFilter);
+        theMatchVector.add(toMatch);
+        return getAllClassesThatImplement(theMatchVector,theFilterVector);
+    }
+
+    public Vector<Class<?>> getAllClassesThatImplement(Class<?> toMatch){
+        Vector<Class<?>> theMatchVector=new Vector<Class<?>>();
+        theMatchVector.add(toMatch);
+        return getAllClassesThatImplement(theMatchVector,new Vector<Class<?>>());
     }
 
 
@@ -114,17 +128,32 @@ public class ClassExtractor {
     /**
      * This Method calls getInterfaceNames to get a list of all interfaces 
      * implemented by thisEntry. If this set of interfaceNames contains
-     * theInterface.getname() (the name of the interface to see of thisEntry 
+     * toMatch.getname() (the name of the interface to see of thisEntry 
      * implements) true is returned, otherwise false.
      * 
      * @param thisEntry - the class file we wish to check
      * @param theURL - the jar file the class file is located in
-     * @param theInterface - the interface we want to check if thisEntry implements+
+     * @param toMatch - the interface we want to check if thisEntry implements+
      * @return
      */
-    public boolean checkIfDescendantOf(Class<?> sourceClass, Class<?> theAncestor) {
+    public boolean checkIfDescendantOf(Class<?> sourceClass, Vector<Class<?>> toMatch,Vector<Class<?>> toExclude) {
         Set<String> ancestorSet = getAncestorNames(sourceClass);
-        return ancestorSet.contains(theAncestor.getName());
+        
+        Set<String> matchNames=new TreeSet<String>();
+        for (Class<?> thisMatch : toMatch) {
+            matchNames.add(thisMatch.getName());
+        }
+
+        boolean matchesAnyExcludes=false;
+        for (Class<?> thisExclude : toExclude) {
+            String thisExcludeName=thisExclude.getName();
+            matchesAnyExcludes|=ancestorSet.contains(thisExcludeName);
+        }
+        
+        boolean matchesAll=ancestorSet.containsAll(matchNames);
+        
+        return matchesAll&&!matchesAnyExcludes;
+
     }
 
     /**
