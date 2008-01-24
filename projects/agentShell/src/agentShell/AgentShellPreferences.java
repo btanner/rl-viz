@@ -18,7 +18,6 @@
 package agentShell;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -59,11 +58,7 @@ public class AgentShellPreferences {
     public Vector<URI> getList(){
         if(this.agentLocationList.isEmpty()){
                 agentLocationList.add(new File(jniLoaderLibDir).toURI());
-                agentLocationList.add(new File("/Users/mradkie/competition/rlcomplibrary/libraries/agentJars/").toURI());
-                agentLocationList.add(new File("../../rlcomplibrary/libraries/agentJars/").toURI());
                 agentLocationList.add(new File("../../rl-library/system/dist/").toURI());
-                agentLocationList.add(new File("../../rl-library/system/dist/agentJars/").toURI());
-                agentLocationList.add(new File("../system/dist/").toURI());
         }
         return this.agentLocationList;
     }

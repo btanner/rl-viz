@@ -32,28 +32,26 @@ public class VisualizerFactory {
     static String defaultAgentVisualizerClassName = "visualizers.Generic.GenericAgentVisualizer";
 
     public static AbstractVisualizer createEnvVisualizerFromClassName(String VizClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
-        return createVisualizerFromClassName(VizClassName, "envVizJars", defaultEnvVisualizerClassName, theGlueState, theControlTarget);
+        return createVisualizerFromClassName(VizClassName, defaultEnvVisualizerClassName, theGlueState, theControlTarget);
     }
 
     public static AbstractVisualizer createAgentVisualizerFromClassName(String VizClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
-        return createVisualizerFromClassName(VizClassName, "agentVizJars", defaultAgentVisualizerClassName, theGlueState, theControlTarget);
+        return createVisualizerFromClassName(VizClassName, defaultAgentVisualizerClassName, theGlueState, theControlTarget);
     }
 
-    private static AbstractVisualizer createVisualizerFromClassName(String theVisualizerClassName, String subDirectory, String defaultClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
+    private static AbstractVisualizer createVisualizerFromClassName(String theVisualizerClassName, String defaultClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
         boolean debugThis = false;
 
         if (debugThis){
             System.out.println("AbstractVisualizer::createVisualizerFromClassName");
             System.out.println("\t\t theVisualizerClassName=" + theVisualizerClassName);
-            System.out.println("\t\t subDirectory=" + subDirectory);
             System.out.println("\t\t defaultClassName=" + defaultClassName);
         }
 
         AbstractVisualizer theViz = null;
         String libPath = rlVizLib.utilities.UtilityShop.getLibraryPath();
-        String envVizJarPath = libPath + "/" + subDirectory;
 
-        LocalDirectoryGrabber theJarGrabber=new LocalDirectoryGrabber(envVizJarPath);
+        LocalDirectoryGrabber theJarGrabber=new LocalDirectoryGrabber(libPath);
         theJarGrabber.addFilter(new JarFileFilter());
 
         ClassExtractor theClassExtractor = new ClassExtractor(theJarGrabber);

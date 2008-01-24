@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 package environmentShell;
 
-import java.io.File;
 import java.util.Map;
 
 import java.util.TreeMap;
@@ -46,7 +45,7 @@ public class EnvironmentShell implements Environment,Unloadable {
 
     protected String libDir;
     static {
-        String rlVizVersion = rlVizLib.rlVizCore.getVersion();
+        String rlVizVersion = rlVizLib.rlVizCore.getSpecVersion();
         String ourVersion = rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(EnvironmentShell.class);
 
         if (!rlVizVersion.equals(ourVersion)) {
