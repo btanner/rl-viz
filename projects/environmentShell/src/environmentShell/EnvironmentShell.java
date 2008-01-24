@@ -79,7 +79,7 @@ public class EnvironmentShell implements Environment {
             try {
                 theEnvironmentLoaders.add(new LocalCPlusPlusEnvironmentLoader());
             } catch (UnsatisfiedLinkError failure) {
-                System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments");
+                System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments: "+failure);
             }
         }
     }
@@ -205,5 +205,9 @@ public class EnvironmentShell implements Environment {
     public Reward_observation env_step(Action arg0) {
         Reward_observation ro = theEnvironment.env_step(arg0);
         return ro;
+    }
+    
+    public static void main(String[] args){
+        EnvironmentShell e = new EnvironmentShell();
     }
 }

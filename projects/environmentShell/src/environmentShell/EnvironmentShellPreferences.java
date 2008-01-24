@@ -17,8 +17,11 @@
  */
 package environmentShell;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,13 +34,22 @@ public class EnvironmentShellPreferences {
 
     private static EnvironmentShellPreferences ourInstance = new EnvironmentShellPreferences();
     private Vector<URI> envUriList = new Vector<URI>();
-    private String libDir = "";
+    private String jniLoaderLibDir = null;
     
     public static EnvironmentShellPreferences getInstance() {
         return ourInstance;
     }
 
+    /**
+     * Set's a default path to the same place as where this jar be livin'
+     */
     private EnvironmentShellPreferences() {
+        try {
+            URL thisJarUrl = this.getClass().getProtectionDomain().getCodeSource().getLocation();
+           jniLoaderLibDir = new File(thisJarUrl.toURI()).getParent();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(EnvironmentShellPreferences.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void addToList(URI theURI){
@@ -45,19 +57,23 @@ public class EnvironmentShellPreferences {
     }
     public Vector<URI> getList(){
         if(this.envUriList.isEmpty()){
-            try {
-                this.envUriList.add(new URI(libDir));
-                this.envUriList.add(new URI("/Users/mradkie/competition/rlcomplibrary/libraries/envJars/"));
-            } catch (URISyntaxException ex) {
-                System.err.println("Failed to add default location of " + libDir);
-            }
+    //        try {
+                envUriList.add(new File(jniLoaderLibDir).toURI());
+                envUriList.add(new File("/Users/mradkie/competition/rlcomplibrary/libraries/envJars/").toURI());
+                envUriList.add(new File("../../rl-library/system/dist/").toURI());
+                envUriList.add(new File("../system/dist/").toURI());
+//                this.envUriList.add(new URI(jniLoaderLibDir+File.separator));
+//                this.envUriList.add(new URI("/Users/mradkie/competition/rlcomplibrary/libraries/envJars/"));
+//            } catch (URISyntaxException ex) {
+//                System.err.println("Failed to add default location of " + jniLoaderLibDir);
+  //          }
         }
         return this.envUriList;
     }
-    public String getLibDir(){
-        return this.libDir;
+    public String getJNILoaderLibDir(){
+        return this.jniLoaderLibDir;
     }
-    public void setLibDir(String path){
-        this.libDir = path;
+    public void setJNILoaderLibDir(String path){
+        this.jniLoaderLibDir = path;
     }
 }

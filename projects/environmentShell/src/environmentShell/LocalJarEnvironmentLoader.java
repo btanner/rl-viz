@@ -25,11 +25,11 @@ import rlglue.environment.Environment;
 public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface{
 
     public LocalJarEnvironmentLoader() {
-        super("envJars", EnvOrAgentType.kEnv);
+        super(EnvOrAgentType.kEnv);
     }
 
     public LocalJarEnvironmentLoader(String path) {
-       super(path,"envJars",EnvOrAgentType.kEnv);
+       super(path,EnvOrAgentType.kEnv);
     }
 
     public Environment loadEnvironment(String requestedName, ParameterHolder theParams) {

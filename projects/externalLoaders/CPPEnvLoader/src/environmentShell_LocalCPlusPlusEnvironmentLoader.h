@@ -9,35 +9,11 @@ extern "C" {
 #endif
 /*
  * Class:     environmentShell_LocalCPlusPlusEnvironmentLoader
- * Method:    JNImakeEnvList
- * Signature: (Ljava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_environmentShell_LocalCPlusPlusEnvironmentLoader_JNImakeEnvList
-  (JNIEnv *, jobject, jstring);
-
-/*
- * Class:     environmentShell_LocalCPlusPlusEnvironmentLoader
- * Method:    JNIgetEnvName
- * Signature: (I)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_environmentShell_LocalCPlusPlusEnvironmentLoader_JNIgetEnvName
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     environmentShell_LocalCPlusPlusEnvironmentLoader
  * Method:    JNIgetEnvParams
- * Signature: (I)Ljava/lang/String;
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_environmentShell_LocalCPlusPlusEnvironmentLoader_JNIgetEnvParams
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     environmentShell_LocalCPlusPlusEnvironmentLoader
- * Method:    JNIgetEnvCount
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_environmentShell_LocalCPlusPlusEnvironmentLoader_JNIgetEnvCount
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
 }

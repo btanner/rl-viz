@@ -21,6 +21,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import java.lang.reflect.Modifier;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -35,7 +37,6 @@ import rlglue.environment.Environment;
 import rlVizLib.utilities.ClassExtractor;
 import rlVizLib.utilities.AbstractJarGrabber;
 import rlVizLib.utilities.LocalDirectoryJarGrabber;
-import rlVizLib.visualization.AbstractVisualizer;
 
 /**
  * @author btanner
@@ -53,7 +54,7 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     private String jarDirString;
     private Map<String, String> publicNameToFullName = new TreeMap<String, String>();
     private Set<String> allFullClassName = new TreeSet<String>();
-    
+    private Vector<URI> theUriList = new Vector<URI>(); 
     private AbstractJarGrabber theJarGrabber;
     private ClassExtractor theClassExtractor;
 
@@ -70,23 +71,32 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     //return theName;
     }
 
-    public LocalJarAgentEnvironmentLoader(String subDir) {
-        this(rlVizLib.utilities.UtilityShop.getLibraryPath(), subDir, EnvOrAgentType.kBoth);
-    }
-
     /**
     @param subDir The directory for these specific Jars, like envJars or agentJars
      */
-    public LocalJarAgentEnvironmentLoader(String subDir, EnvOrAgentType theLoaderType) {
-        this(rlVizLib.utilities.UtilityShop.getLibraryPath(), subDir, theLoaderType);
+    public LocalJarAgentEnvironmentLoader(EnvOrAgentType theLoaderType) {
+        this((rlVizLib.utilities.UtilityShop.getLibraryPath()), EnvOrAgentType.kBoth);
     }
 
     /**
     @param path Path to the main library dir of RLViz, like /.../library
     @param subDir 
      */
-    public LocalJarAgentEnvironmentLoader(String path, String subDir, EnvOrAgentType theLoaderType) {
-        jarDirString = path + "/" + subDir;
+    public LocalJarAgentEnvironmentLoader(String path, EnvOrAgentType theLoaderType) {
+        try {
+            System.out.println(path);
+            theUriList.add(new URI(path));
+            this.theLoaderType = theLoaderType;
+            /** TODO: write the composite jar grabber */
+            theJarGrabber = new LocalDirectoryJarGrabber(theUriList.elementAt(0).toString());
+            theClassExtractor = new ClassExtractor(theJarGrabber);
+        } catch (URISyntaxException ex) {
+            System.out.print("Error making URI out of the path in LocalJarAgentEnvironmentLoader");
+        }
+    }
+    
+    public LocalJarAgentEnvironmentLoader(Vector<URI> uriList, EnvOrAgentType theLoaderType) {
+        theUriList.addAll(uriList);
         this.theLoaderType = theLoaderType;
         theJarGrabber = new LocalDirectoryJarGrabber(jarDirString);
         theClassExtractor = new ClassExtractor(theJarGrabber);
@@ -96,8 +106,8 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     @param path Path to the main library dir of RLViz, like /.../library
     @param subDir 
      */
-    public LocalJarAgentEnvironmentLoader(String path, String subDir) {
-        this(path, subDir, EnvOrAgentType.kBoth);
+    public LocalJarAgentEnvironmentLoader(String path) {
+        this(path, EnvOrAgentType.kBoth);
     }
 
     public boolean makeList() {
@@ -107,7 +117,7 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
 
         Vector <Class<?>> allMatching = new Vector<Class<?>>();
         
-        File JarDir = new File(jarDirString);
+        File JarDir = new File(theUriList.elementAt(0).toString());
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
             allMatching = theClassExtractor.gACTI(Environment.class);
             allMatching.addAll(theClassExtractor.gACTI(Agent.class));

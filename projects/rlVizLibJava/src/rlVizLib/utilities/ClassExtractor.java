@@ -101,7 +101,7 @@ public class ClassExtractor {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(ClassExtractor.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("IO Exception in gACFJ");
         }
         
         return theClasses;

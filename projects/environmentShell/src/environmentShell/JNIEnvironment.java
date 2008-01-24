@@ -34,7 +34,7 @@ import rlglue.types.State_key;
 
 public class JNIEnvironment implements Environment {
 
-    public native boolean JNIloadEnvironment(String s, String theParams);
+    public native boolean JNIloadEnvironment(String theFilePath, String theParams);
     public native String JNIenvinit();
     public native void JNIenvstart();
     public native void JNIenvstep(int numI, int numD, int[] intArray, double[] doubleArray);
@@ -50,13 +50,13 @@ public class JNIEnvironment implements Environment {
     public native int JNIgetTerminal();
     public  boolean validEnv = false;
 
-    private void load_environment(String s, ParameterHolder theParams) {
-        validEnv = JNIloadEnvironment(s, theParams.stringSerialize());
-       // if(!validEnv) JNIloadEnvironment(null,null);
+    private void load_environment(String theFullFilePath, ParameterHolder theParams) {
+        System.out.println("Loading: " + theFullFilePath + " with Param holder: " + theParams.stringSerialize());
+        validEnv = JNIloadEnvironment(theFullFilePath, theParams.stringSerialize());
     }
 
-    public JNIEnvironment(String envName, ParameterHolder theParams) {
-        load_environment(envName, theParams);
+    public JNIEnvironment(String theFullFilePath, ParameterHolder theParams) {
+        load_environment(theFullFilePath, theParams);
     }
 
     public String env_init() {
@@ -121,7 +121,6 @@ public class JNIEnvironment implements Environment {
 
     public void env_set_state(State_key key) {
         //return JNIenvsetstate();
-
     }
     
     public boolean isValid(){

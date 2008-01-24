@@ -25,7 +25,7 @@ ifndef JAVA_HEADER
 endif
 
 BASE_PATH=../../../system
-OUT_PATH=$(BASE_PATH)/dist/SharedLibraries
+OUT_PATH=$(BASE_PATH)/dist
 INCLUDE_PATH=$(BASE_PATH)/includes
 #Needed?
 GLUE_PATH=../../rl-glue/RL-Glue
@@ -52,7 +52,7 @@ endif
 
 CC=g++
 
-LIB_HEADERS=environmentShell_LocalCPlusPlusEnvironmentLoader.h environmentShell_JNIEnvironment.h
+LIB_HEADERS=environmentShell_LocalCPlusPlusEnvironmentLoader.h environmentShell_JNIEnvironment.h environmentShell_DylibGrabber.h
 
 ifeq ("$(OSTYPE)","$(OSTYPE_MAC)")
 	SFLAGS := -dynamiclib 
@@ -66,12 +66,15 @@ CPPENV.dylib: $(LIB_HEADERS)
 	cd $(ENV_HEADERS) && rm -rf META-INF
 	cd $(ENV_HEADERS) && rm -rf environmentShell
 	
-environmentShell_LocalCPlusPlusEnvironmentLoader.h:
-	cd $(ENV_HEADERS) && unzip EnvironmentShell.jar
+environmentShell_JNIEnvironment.h:
 	cd $(ENV_HEADERS) && javah environmentShell.JNIEnvironment && mv environmentShell_JNIEnvironment.h $(GET_BACK)/src
 
-environmentShell_JNIEnvironment.h:
+environmentShell_LocalCPlusPlusEnvironmentLoader.h:
+	cd $(ENV_HEADERS) && unzip EnvironmentShell.jar
 	cd $(ENV_HEADERS) && javah environmentShell.LocalCPlusPlusEnvironmentLoader && mv environmentShell_LocalCPlusPlusEnvironmentLoader.h $(GET_BACK)/src
+
+environmentShell_DylibGrabber.h:
+	cd $(ENV_HEADERS) && javah environmentShell.DylibGrabber && mv environmentShell_DylibGrabber.h $(GET_BACK)/src
 
 clean:
 	cd $(ENV_HEADERS) && rm -rf META-INF

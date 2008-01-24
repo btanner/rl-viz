@@ -18,13 +18,15 @@ package environmentShell;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import rlVizLib.general.ParameterHolder;
+import rlVizLib.utilities.UtilityShop;
 import rlglue.environment.Environment;
 
 /**
@@ -35,77 +37,55 @@ import rlglue.environment.Environment;
 public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterface {
 
     // C++ functions to be called from within Java
-    //public native void JNIloadEnvironment();
-    public native void JNImakeEnvList(String path);
+    public native String JNIgetEnvParams(String fullFilePath);
 
-    public native String JNIgetEnvName(int index);
-
-    public native String JNIgetEnvParams(int index);
-
-    public native int JNIgetEnvCount();
-    private String libDir;
-    private Vector<URI> envUriList = new Vector<URI>();
+    Vector<URI> allCPPEnvURIs = new Vector<URI>();
+    private Vector<String> theNames = new Vector<String>();
+    private Vector<ParameterHolder> theParamHolders = new Vector<ParameterHolder>();
+    private Map<String, URI> publicNameToFullName = new TreeMap<String, URI>();
+    private Set<URI> allFullURIName = new TreeSet<URI>();
 
     /**
      * CPPENV.dylib is assumed to be in the same directory as the envShell jar.
      */
     public LocalCPlusPlusEnvironmentLoader() {
-        libDir = getPathFromString(this.getClass().getProtectionDomain().getCodeSource().getLocation().toString());
-        EnvironmentShellPreferences.getInstance().setLibDir(libDir);
-        this.refreshEnvUrlList();
         loadLoader();
     }
 
-    /**
-     * path is the path to the CPPENV.dylib
-     * 
-     * @param path
-     */
-    public LocalCPlusPlusEnvironmentLoader(String path) {
-        libDir = path;
-        EnvironmentShellPreferences.getInstance().setLibDir(libDir);
-        loadLoader();
-    }
-
-    /**
-     * clear the envUriList and populate it with the list from the preferences
-     */
-    private void refreshEnvUrlList() {
-        envUriList.clear();
-        envUriList.addAll(EnvironmentShellPreferences.getInstance().getList());
-    }
-
-    /**
-     * .getClass().getProtectionDomain().getCodeSource().getLocation().toString()
-     * 
-     * returns a 
-     * @param input
-     * @return
-     */
-    private String getPathFromString(String input) {
-        String temp;
-        String thePath = new String();
-        thePath = "/";
-        if (input.endsWith(".jar")) {
-            StringTokenizer theTokenizer = new StringTokenizer(input, "/");
-            while (theTokenizer.hasMoreTokens()) {
-                temp = theTokenizer.nextToken();
-                if (!temp.endsWith(".jar") && !temp.endsWith(":")) {
-                    thePath += temp + "/";
-                }
-            }
-            return thePath;
-        } else {
-            return input;
-        }
-    }
 
     /**
      * The CPPENV.dylib is the library that allows the c++ environments to
      * be used in java
      */
     private void loadLoader() {
-        System.load(libDir + "CPPENV.dylib");
+        System.load(EnvironmentShellPreferences.getInstance().getJNILoaderLibDir() + File.separator+ "CPPENV.dylib");
+    }
+
+    private String getShortEnvNameFromURI(URI theURI) {
+        String pathAsString = theURI.getPath();
+
+        StringTokenizer toke = new StringTokenizer(pathAsString, File.separator);
+
+        String fileName = "";
+        while (toke.hasMoreTokens()) {
+            fileName = toke.nextToken();
+        }
+        return fileName;
+    }
+
+
+    private String addFullNameToMap(URI theURI) {
+        int num = 0;
+        String theEndName = getShortEnvNameFromURI(theURI);
+
+        String proposedShortName = theEndName;
+
+        while (publicNameToFullName.containsKey(proposedShortName)) {
+            num++;
+            proposedShortName = theEndName + "(" + num + ")";
+        }
+        publicNameToFullName.put(proposedShortName, theURI);
+        return proposedShortName;
     }
 
     /**
@@ -115,10 +95,22 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
      * @return true if there were no errors
      */
     public boolean makeList() {
-        this.refreshEnvUrlList();
-        for (URI thisDir : envUriList) {
-            JNImakeEnvList(thisDir.toString());
+        DylibGrabber theGrabber = new DylibGrabber();
+        allCPPEnvURIs = theGrabber.getValidEnvDylibURIs();
+        
+
+        for (URI thisURI : allCPPEnvURIs) {
+            allFullURIName.add(thisURI);
+            String shortName = addFullNameToMap(thisURI);
+            theNames.add(shortName);
+
+            String ParamHolderString = JNIgetEnvParams(thisURI.getPath());//JNI call like getParamHolderInStringFormat(i)
+            ParameterHolder thisParamHolder = new ParameterHolder(ParamHolderString);
+            theParamHolders.add(thisParamHolder);
+
+            String sourcePath = thisURI.getPath();
         }
+        System.out.println("Added a total of "+theNames.size()+" cpp envs");
         return true;
     }
 
@@ -129,14 +121,7 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
      * @return a Vector of env names
      */
     public Vector<String> getNames() {
-        Vector<String> theEnvNames = new Vector<String>();
-        int numEnvs = JNIgetEnvCount();//JNI call that returns the number of envs that were found with makeEnvList()
-
-        for (int i = 0; i < numEnvs; i++) {
-            String thisName = JNIgetEnvName(i);
-            theEnvNames.add(thisName);
-        }
-        return theEnvNames;
+        return theNames;
     }
 
     /**
@@ -144,16 +129,7 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
      * @return
      */
     public Vector<ParameterHolder> getParameters() {
-        Vector<ParameterHolder> theEnvParams = new Vector<ParameterHolder>();
-        int numEnvs = JNIgetEnvCount();
-
-        for (int i = 0; i < numEnvs; i++) {
-            String ParamHolderString = JNIgetEnvParams(i);//JNI call like getParamHolderInStringFormat(i)
-            ParameterHolder thisParamHolder = new ParameterHolder(ParamHolderString);
-            theEnvParams.add(thisParamHolder);
-        }
-        theEnvParams.add(null);
-        return theEnvParams;
+        return theParamHolders;
     }
 
     /**
@@ -163,8 +139,9 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
      * @return
      */
     public Environment loadEnvironment(String envName, ParameterHolder theParams) {
-        String thename = libDir + envName;
-        JNIEnvironment theEnv = new JNIEnvironment(thename, theParams);
+        URI theEnvURI=publicNameToFullName.get(envName);
+        
+        JNIEnvironment theEnv = new JNIEnvironment(theEnvURI.getPath(), theParams);
         if (theEnv.isValid()) {
             return theEnv;
         } else {

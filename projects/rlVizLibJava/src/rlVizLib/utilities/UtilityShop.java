@@ -247,4 +247,32 @@ public class UtilityShop {
 		A = A | B;
 		return A;
 	}
+        
+   /**
+     * .getClass().getProtectionDomain().getCodeSource().getLocation().toString()
+     * 
+     * returns a 
+     * @param input
+     * @return
+     */
+    private String getPathFromString(String input) {
+        
+        String temp;
+        String thePath = new String();
+        //Is this cross platform compatible
+        thePath = "/";
+        if (input.endsWith(".jar")) {
+            StringTokenizer theTokenizer = new StringTokenizer(input, File.separator);
+            while (theTokenizer.hasMoreTokens()) {
+                temp = theTokenizer.nextToken();
+                if (!temp.endsWith(".jar") && !temp.endsWith(":")) {
+                    thePath += temp + File.separator;
+                }
+            }
+            return thePath;
+        } else {
+            return input;
+        }
+    }
+
 }
