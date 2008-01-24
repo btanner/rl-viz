@@ -36,17 +36,15 @@ const char* getParameterHolder(std::string theFilePath);
 
 JNIEXPORT jboolean JNICALL Java_environmentShell_JNIEnvironment_JNIloadEnvironment(JNIEnv *env, jobject obj, jstring envFilePath, jstring theParamString) {
     std::string stdStringPath=std::string(env->GetStringUTFChars(envFilePath, 0));
-
+    
     loadEnvironmentToStructFromFile(theEnvironment, stdStringPath);
+    int status = loadEnvironmentToStructFromFile(theEnvironment, stdStringPath);
     
     
-    int status = loadEnvironmentToStructFromFile(theEnvironment,stdStringPath);
-
-
     if(status!=DLSYM_SUCCESS)return false;
-
+    
     setDefaultParams(theEnvironment, env->GetStringUTFChars(theParamString, 0));
-
+    
     return true;
 }
 
@@ -155,9 +153,9 @@ JNIEXPORT jint JNICALL Java_environmentShell_JNIEnvironment_JNIgetTerminal(JNIEn
 //This mehtod makes a list of C/C++ environment names and parameter holders.
 JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValidEnv(JNIEnv *env, jobject obj, jstring envFilePath, jboolean verboseErrors) {
     std::string stdStringPath=std::string(env->GetStringUTFChars(envFilePath, 0));
-
+    
     envStruct tmpEnvironment;
-    int errorCode=loadEnvironmentToStructFromFile(tmpEnvironment, stdStringPath,verboseErrors);
+    int errorCode=loadEnvironmentToStructFromFile(tmpEnvironment, stdStringPath, verboseErrors);
     closeEnvironment(tmpEnvironment);
     
     return errorCode;
@@ -174,7 +172,7 @@ JNIEXPORT jstring JNICALL Java_environmentShell_LocalCPlusPlusEnvironmentLoader_
 
 
 void closeEnvironment(envStruct &theEnv){
-        closeFile(theEnv.handle);
+    closeFile(theEnv.handle);
 }
 
 
@@ -200,31 +198,31 @@ void checkEnvironmentStruct(envStruct &thisEnvironment, std::vector<std::string>
     if(!thisEnvironment.env_message)symFailures.push_back("env_message");
 }
 
-int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, std::string theFileLocation,jboolean verboseErrors){
-        thisEnvironment.handle = openFile(theFileLocation);
-        
-        if(!thisEnvironment.handle){
-            if(verboseErrors){
-                std::cout<<"JNI ::Failed to load file: "<<theFileLocation<<std::endl;
-                std::cout<<"JNI ::Failure getting handle from dlopen(): "<<dlerror()<<std::endl;
-            }
-            return DLSYM_HANDLE_ERROR;
+int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, std::string theFileLocation, jboolean verboseErrors){
+    thisEnvironment.handle = openFile(theFileLocation);
+    
+    if(!thisEnvironment.handle){
+        if(verboseErrors){
+            std::cout<<"JNI ::Failed to load file: "<<theFileLocation<<std::endl;
+            std::cout<<"JNI ::Failure getting handle from dlopen(): "<<dlerror()<<std::endl;
+        }
+        return DLSYM_HANDLE_ERROR;
+    }
+    
+    std::vector<std::string> symFailures=loadEnvironmentToStruct(thisEnvironment);
+    
+    if(symFailures.size()>0){
+        if(verboseErrors){
+            std::cout<<"JNI ::Failed to dlsym all required functions from file: "<<theFileLocation<<std::endl;
+            std::cout<<"JNI ::Undefined required functions:"<<std::endl;
+            for(unsigned int i=0;i<symFailures.size();i++)
+                std::cout<<"\t\t"<<symFailures[i]<<std::endl;
         }
         
-        std::vector<std::string> symFailures=loadEnvironmentToStruct(thisEnvironment);
-        
-        if(symFailures.size()>0){
-            if(verboseErrors){
-                std::cout<<"JNI ::Failed to dlsym all required functions from file: "<<theFileLocation<<std::endl;
-                std::cout<<"JNI ::Undefined required functions:"<<std::endl;
-                for(unsigned int i=0;i<symFailures.size();i++)
-                    std::cout<<"\t\t"<<symFailures[i]<<std::endl;
-            }
-
-            return DLSYM_FUNCTIONS_MISSING;
-        }
-        
-        return DLSYM_SUCCESS;
+        return DLSYM_FUNCTIONS_MISSING;
+    }
+    
+    return DLSYM_SUCCESS;
 }
 
 std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment){
@@ -234,7 +232,7 @@ std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment){
         std::cout<<"WTF NO HANDLE!"<<std::endl;
         exit(1);
     }
-        
+    
     
     thisEnvironment.env_start = (envstart_t) dlsym(thisEnvironment.handle, "env_start");
     thisEnvironment.env_init = (envinit_t) dlsym(thisEnvironment.handle, "env_init");
@@ -249,23 +247,23 @@ std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment){
     thisEnvironment.env_setDefaultParameters = (envsetparams_t) dlsym(thisEnvironment.handle, "env_setDefaultParameters");
     thisEnvironment.env_getDefaultParameters = (envgetparams_t) dlsym(thisEnvironment.handle, "env_getDefaultParameters");
     
-
+    
     checkEnvironmentStruct(thisEnvironment, symFailures);
-        
+    
     return symFailures;
 }
 
 
 const char* getParameterHolder(std::string theFilePath){
     const char* thePHString = theNullParamHolder.c_str();
-
+    
     envStruct tmpEnvironment;
     int errorCode=loadEnvironmentToStructFromFile(tmpEnvironment, theFilePath);
-
+    
     if (errorCode==DLSYM_SUCCESS)
-         if(tmpEnvironment.env_getDefaultParameters)
+        if(tmpEnvironment.env_getDefaultParameters)
             thePHString=tmpEnvironment.env_getDefaultParameters();
-
+    
     closeEnvironment(tmpEnvironment);
     return thePHString;
 }

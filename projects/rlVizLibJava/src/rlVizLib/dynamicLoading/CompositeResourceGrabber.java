@@ -23,14 +23,14 @@ import java.util.Vector;
  * @author Brian Tanner
  */
 public class CompositeResourceGrabber extends AbstractResourceGrabber{
-Vector<AbstractResourceGrabber> theJarGrabbers=new Vector<AbstractResourceGrabber>();
+Vector<AbstractResourceGrabber> theResourceGrabbers=new Vector<AbstractResourceGrabber>();
 
 public void add(AbstractResourceGrabber newGrabber){
-    theJarGrabbers.add(newGrabber);
+    theResourceGrabbers.add(newGrabber);
 }
     @Override
     public void refreshURIList() {
-        for (AbstractResourceGrabber thisGrabber : theJarGrabbers) {
+        for (AbstractResourceGrabber thisGrabber : theResourceGrabbers) {
             thisGrabber.refreshURIList();
             super.validResourceURIs.addAll(thisGrabber.getAllResourceURIs());
         }

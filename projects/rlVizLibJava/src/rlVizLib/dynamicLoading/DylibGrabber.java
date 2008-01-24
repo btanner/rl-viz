@@ -39,50 +39,10 @@ public class DylibGrabber extends LocalDirectoryGrabber{
                     invalidDylibs.add(thisFileURI);
                 }
             }
-            
             super.validResourceURIs.removeAll(invalidDylibs);
         }
 
     
-//
-//    public Vector<URI> getValidEnvDylibURIs() {
-//        //These are directories
-//        Vector<URI> allHidingPlaces = EnvironmentShellPreferences.getInstance().getList();
-//        Vector<URI> validDylibURIs = new Vector<URI>();
-//
-//        for (URI thisURI : allHidingPlaces) {
-//
-//            File F = new File(thisURI);
-//            Vector<URI> allDylibsInThisDir = getAllDylibs(F);
-//            for (URI thisFileURI : allDylibsInThisDir) {
-//                if (isReallyAnEnvDylib(thisFileURI)) {
-//                    validDylibURIs.add(thisFileURI);
-//                }
-//            }
-//
-//
-//        }
-//        return validDylibURIs;
-//    }
-//
-//    private Vector<URI> getAllDylibs(File F) {
-//        Vector<URI> allFileURIs = new Vector<URI>();
-//
-//        
-//        File[] theFiles = F.listFiles(new DylibFileFilter());
-//
-//        System.out.println("Looking in: "+F.toString());
-//        
-//        if (theFiles != null) {
-//            System.out.println(""+theFiles.length+" files");
-//            for (File thisFile : theFiles) {
-//                allFileURIs.add(thisFile.toURI());
-//            }
-//        }else{
-//            System.out.println(" 0 files");
-//        }
-//        return allFileURIs;
-//    }
 
     private boolean isReallyAnEnvDylib(URI thisFileURI) {
         int errorCode = jniIsThisAValidEnv(thisFileURI.getPath(),DEBUG);

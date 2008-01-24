@@ -15,7 +15,7 @@ import java.util.Vector;
  * @author mradkie
  */
 public class LocalDirectoryGrabber extends AbstractResourceGrabber {
-    private boolean DEBUG=true;
+    private boolean DEBUG=false;
     
     String theDirectoryString = ".";
 
