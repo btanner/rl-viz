@@ -95,16 +95,16 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         
         File JarDir = new File(theUriList.elementAt(0).toString());
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
-            System.out.println("-------Loading both types");
+            //System.out.println("-------Loading both types");
             allMatching = theClassExtractor.getAllClassesThatImplement(Environment.class, Unloadable.class);
             allMatching.addAll(theClassExtractor.getAllClassesThatImplement(Agent.class, Unloadable.class));
         }
         if (theLoaderType.id() == EnvOrAgentType.kEnv.id()) {
-            System.out.println("-------Loading kEnv types");
+            //System.out.println("-------Loading kEnv types");
             allMatching = theClassExtractor.getAllClassesThatImplement(Environment.class, Unloadable.class);
         }
         if (theLoaderType.id() == EnvOrAgentType.kAgent.id()) {
-            System.out.println("-------Loading kAgent types");
+            //System.out.println("-------Loading kAgent types");
             allMatching = theClassExtractor.getAllClassesThatImplement(Agent.class, Unloadable.class);
         }
  
