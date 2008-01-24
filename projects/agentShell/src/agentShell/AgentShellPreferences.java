@@ -57,8 +57,9 @@ public class AgentShellPreferences {
     }
     public Vector<URI> getList(){
         if(this.agentLocationList.isEmpty()){
-                agentLocationList.add(new File(jniLoaderLibDir).toURI());
-                agentLocationList.add(new File("../../rl-library/system/dist/").toURI());
+//                agentLocationList.add(new File(jniLoaderLibDir).toURI());
+//                agentLocationList.add(new File("../../rl-library/system/dist/").toURI());
+                  agentLocationList.add(new File(rlVizLib.utilities.UtilityShop.getLibraryPath()).toURI());
         }
         return this.agentLocationList;
     }

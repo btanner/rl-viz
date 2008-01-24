@@ -57,10 +57,11 @@ public class EnvironmentShellPreferences {
     }
     public Vector<URI> getList(){
         if(this.envUriList.isEmpty()){
-                envUriList.add(new File(jniLoaderLibDir).toURI());
+//                envUriList.add(new File(jniLoaderLibDir).toURI());
   //              envUriList.add(new File("/Users/mradkie/competition/rlcomplibrary/libraries/envJars/").toURI());
 //                envUriList.add(new File("../../rlcomplibrary/libraries/envJars/").toURI());
-                envUriList.add(new File("../../rl-library/system/dist/").toURI());
+  //              envUriList.add(new File("../../rl-library/system/dist/").toURI());
+                  envUriList.add(new File(rlVizLib.utilities.UtilityShop.getLibraryPath()).toURI());
         }
         return this.envUriList;
     }
