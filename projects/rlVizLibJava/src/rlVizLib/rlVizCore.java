@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import rlVizLib.general.RLVizVersion;
 
 /**
  * rlVizCore is a new class as part of the professionalism refactoring, leading to the first official release of RL-Viz.
@@ -36,10 +37,22 @@ public final class rlVizCore {
  * Get the Specification (Interface) version of rlVizLib as set in the Manifest file.  
  * @return String representation of current rlVizLib Interface version.
  * @since 1.2
+ * @deprecated
  */
         public static String getSpecVersion(){
 		return rlVizCore.class.getPackage().getSpecificationVersion();
         }
+/**
+ * Get the Specification (Interface) version of rlVizLib as set in the Manifest file.  
+ * @return String representation of current rlVizLib Interface version.
+ * @since 1.3
+ * 
+ */
+        public static RLVizVersion getRLVizSpecVersion(){
+                String specAsString=rlVizCore.class.getPackage().getSpecificationVersion();
+                return new RLVizVersion(specAsString);
+        }
+        
 /**
  * Get the Implementation (Build) version of rlVizLib as set in the Manifest file.  
  * @return String representation of current rlVizLib Build version.
@@ -62,6 +75,7 @@ public final class rlVizCore {
  * 
  * @param theClass Class file that you want to find out the RLVizLib compile version of.
  * @return The value of the RLVizLib-Link-Version attribute.
+ * @deprecated
  */
 public static String getRLVizLinkVersionOfClass(Class<?> theClass){
 	String rlVizLinkVersion="unknown (before 1.1?)";
@@ -84,6 +98,27 @@ public static String getRLVizLinkVersionOfClass(Class<?> theClass){
 	return rlVizLinkVersion;
 }//getRLVizLinkVersionOfClass
 
+public static RLVizVersion getRLVizSpecVersionOfClassWhenCompiled(Class<?> theClass){
+	String rlVizLinkVersion="unknown (before 1.1?)";
+	URL codeBase = theClass.getProtectionDomain().getCodeSource().getLocation();
+	if(codeBase.getPath().endsWith(".jar")) {	
+		String jarFileName=codeBase.getFile();
+
+	try {
+		JarFile theJarFile=new JarFile(new File(jarFileName));
+		Manifest theManifest  = theJarFile.getManifest();
+	      
+	      Attributes as = theManifest.getMainAttributes();
+	      String manifestRLVizLinkVersion = as.getValue("RLVizLib-Link-Version");
+	      if(manifestRLVizLinkVersion!=null)rlVizLinkVersion=manifestRLVizLinkVersion;
+	} catch (IOException e) {
+		System.err.println("Exception when trying to look up values from the manifest of Jar which created class: "+theClass);
+		e.printStackTrace();
+	}
+}//If statement
+	return new RLVizVersion(rlVizLinkVersion);
+}//getRLVizLinkVersionOfClass
+
 private static void printHelp() {
    System.out.println("--------------------------------");
    System.out.println("RLVizLib main diagnostic program");
@@ -92,7 +127,7 @@ private static void printHelp() {
 }
 
 private static void printVersion(){
-    System.out.println(rlVizCore.getSpecVersion());
+    System.out.println(rlVizCore.getRLVizSpecVersion());
 }
 /*
  * Print out the current interface version of RLVizLib.  We'll make it do more interesting things with commandline parameters later

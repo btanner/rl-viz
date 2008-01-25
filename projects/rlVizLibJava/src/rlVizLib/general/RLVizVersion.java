@@ -17,13 +17,18 @@
 package rlVizLib.general;
 
 import java.util.StringTokenizer;
+import rlVizLib.rlVizCore;
 
 public class RLVizVersion implements Comparable<RLVizVersion>{
 	int majorRevision;
 	int minorRevision;
 	
 	public static final RLVizVersion NOVERSION=new RLVizVersion(0,0);
-	public static final RLVizVersion CURRENTVERSION=new RLVizVersion(1,0);
+	public static final RLVizVersion CURRENTVERSION;
+        
+        static{
+            CURRENTVERSION=rlVizCore.getRLVizSpecVersion();
+        }
 	
 	public RLVizVersion(int majorRevision, int minorRevision){
 		this.majorRevision=majorRevision;
@@ -31,9 +36,15 @@ public class RLVizVersion implements Comparable<RLVizVersion>{
 	}
 	
 	public RLVizVersion(String serialized){
-		StringTokenizer theTokenizer=new StringTokenizer(serialized,"_");
+            try {
+		StringTokenizer theTokenizer=new StringTokenizer(serialized,".");
 		majorRevision=Integer.parseInt(theTokenizer.nextToken());
 		minorRevision=Integer.parseInt(theTokenizer.nextToken());
+            } catch (Exception exception) {
+                majorRevision=NOVERSION.majorRevision;
+                minorRevision=NOVERSION.minorRevision;
+            }
+
 	}
 
 	public int getMajorRevision() {
@@ -45,9 +56,14 @@ public class RLVizVersion implements Comparable<RLVizVersion>{
 	}
 	
 	public String serialize(){
-		String theString=majorRevision+"_"+minorRevision;
+		String theString=majorRevision+"."+minorRevision;
 		return theString;
 	}
+        
+    @Override
+        public String toString(){
+            return ""+getMajorRevision()+"."+getMinorRevision();
+        }
 
 	public int compareTo(RLVizVersion otherVersion) {
 		

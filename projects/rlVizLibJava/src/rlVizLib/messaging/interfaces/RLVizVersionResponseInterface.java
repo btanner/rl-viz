@@ -18,6 +18,14 @@ package rlVizLib.messaging.interfaces;
 
 import rlVizLib.general.RLVizVersion;
 
+/**
+ * We used to hard code certain things about versions, but now we actually
+ * use the manifest files to store what version of RLViz we compiled against
+ * and which one we are currently using, so we can automate this stuff and no
+ * longer require agents and envs to do anything.
+ * @author btanner
+ * @deprecated
+ */
 public interface RLVizVersionResponseInterface {
 	public RLVizVersion getTheVersionISupport();
 }

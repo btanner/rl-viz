@@ -25,6 +25,7 @@ import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.RLVizVersionResponseInterface;
+import rlVizLib.rlVizCore;
 import rlglue.environment.Environment;
 
 public class EnvVersionSupportedRequest extends EnvironmentMessages{
@@ -55,14 +56,14 @@ public class EnvVersionSupportedRequest extends EnvironmentMessages{
 
 	@Override
 	public String handleAutomatically(Environment theEnvironment) {
-		RLVizVersionResponseInterface castedEnv = (RLVizVersionResponseInterface)theEnvironment;
-		EnvVersionSupportedResponse theResponse=new EnvVersionSupportedResponse(castedEnv.getTheVersionISupport());
+                RLVizVersion theVersion=rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(theEnvironment.getClass());
+		EnvVersionSupportedResponse theResponse=new EnvVersionSupportedResponse(theVersion);
 		return theResponse.makeStringResponse();
 	}
 
 	@Override
 	public boolean canHandleAutomatically(Object theEnvironment) {
-		return (theEnvironment instanceof RLVizVersionResponseInterface);
+		return (true);
 	}
 	
 	

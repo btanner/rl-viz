@@ -25,6 +25,7 @@ import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.RLVizVersionResponseInterface;
+import rlVizLib.rlVizCore;
 import rlglue.agent.Agent;
 
 
@@ -56,15 +57,14 @@ public class AgentVersionSupportedRequest extends AgentMessages{
 
 	@Override
 	public String handleAutomatically(Agent theAgent) {
-		RLVizVersionResponseInterface castedAgent = (RLVizVersionResponseInterface)theAgent;
-		AgentVersionSupportedResponse theResponse=new AgentVersionSupportedResponse(castedAgent.getTheVersionISupport());
+                RLVizVersion theVersion=rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(theAgent.getClass());
+		AgentVersionSupportedResponse theResponse=new AgentVersionSupportedResponse(theVersion);
 		return theResponse.makeStringResponse();
 	}
 
 	@Override
 	public boolean canHandleAutomatically(Object theAgent) {
-                boolean canHandle=theAgent instanceof RLVizVersionResponseInterface;
-                return canHandle;
+            return true;
 	}
 	
 	
