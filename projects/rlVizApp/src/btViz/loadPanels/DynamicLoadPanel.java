@@ -230,10 +230,7 @@ public abstract class DynamicLoadPanel implements ActionListener, LoadPanelInter
 
     private JPanel makeDescriptionPanel(ParameterHolder P) {
         JPanel newPanel = new JPanel();
-
         newPanel.setLayout(new BoxLayout(newPanel, BoxLayout.PAGE_AXIS));
-
-        
 
         String name="Default";
         if (P.isParamSet("###name")) {
@@ -268,23 +265,24 @@ public abstract class DynamicLoadPanel implements ActionListener, LoadPanelInter
             newPanel.add(Box.createRigidArea(new Dimension(10,10)));
             newPanel.add(authorLabel);
         }
-        if (P.isParamSet("###url")) {
-            String url = P.getStringParam("###url");
-            
-            
-            //Roughly.. this is a hack
-            int numRows = url.length()/20;
-
-            JTextArea urlLabel = new JTextArea(url,numRows,20);
-
-            makeTextAreaLookLikeLable(urlLabel);
-
-            Font theFont = new Font("Verdana",Font.PLAIN,10);
-            urlLabel.setFont(theFont);
-
-            newPanel.add(Box.createRigidArea(new Dimension(10,10)));
-            newPanel.add(urlLabel,Component.LEFT_ALIGNMENT);
-        }
+        //Btanner Jan 25/08.  Removed this cause it wraps and is ugly and its in the more info box.
+//        if (P.isParamSet("###url")) {
+//            String url = P.getStringParam("###url");
+//            
+//            
+//            //Roughly.. this is a hack
+//            int numRows = url.length()/20;
+//
+//            JTextArea urlLabel = new JTextArea(url,numRows,20);
+//
+//            makeTextAreaLookLikeLable(urlLabel);
+//
+//            Font theFont = new Font("Verdana",Font.PLAIN,10);
+//            urlLabel.setFont(theFont);
+//
+//            newPanel.add(Box.createRigidArea(new Dimension(10,10)));
+//            newPanel.add(urlLabel,Component.LEFT_ALIGNMENT);
+//        }
         
         //Add the about button
         JButton theAboutButton=new JButton("More info...");

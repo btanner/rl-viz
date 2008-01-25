@@ -24,7 +24,6 @@ import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
-import rlVizLib.messaging.interfaces.RLVizVersionResponseInterface;
 import rlVizLib.rlVizCore;
 import rlglue.environment.Environment;
 

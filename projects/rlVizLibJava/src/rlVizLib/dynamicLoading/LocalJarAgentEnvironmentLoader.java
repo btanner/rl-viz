@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 
 import java.lang.reflect.Modifier;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -31,6 +32,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import rlVizLib.general.ParameterHolder;
+import rlVizLib.general.RLVizVersion;
 import rlVizLib.utilities.UtilityShop;
 import rlglue.agent.Agent;
 import rlglue.environment.Environment;
@@ -48,11 +50,9 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     private Vector<String> theNames = null;
     private Vector<Class<?>> theClasses = null;
     private Vector<ParameterHolder> theParamHolders = null;
-
     private Map<String, String> publicNameToFullName = new TreeMap<String, String>();
     private Set<String> allFullClassName = new TreeSet<String>();
-    private Vector<URI> theUriList = new Vector<URI>(); 
-
+    private Vector<URI> theUriList = new Vector<URI>();
     private ClassExtractor theClassExtractor;
 
     //This seems like we're breaking OO rules
@@ -61,38 +61,36 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     public String getClassName(String theName) {
         StringTokenizer theTokenizer = new StringTokenizer(theName, ".");
         String name = "undefined";
-        while(theTokenizer.hasMoreTokens()){
+        while (theTokenizer.hasMoreTokens()) {
             name = theTokenizer.nextToken();
         }
         return name;
     }
-
 
     public LocalJarAgentEnvironmentLoader(Vector<URI> uriList, EnvOrAgentType theLoaderType) {
         theUriList.addAll(uriList);
         this.theLoaderType = theLoaderType;
 
         CompositeResourceGrabber theCompJarGrabber = new CompositeResourceGrabber();
-        
-        FileFilter theJarFileFilter=new JarFileFilter();
-        for (URI uri : uriList) {
-            LocalDirectoryGrabber thisGrabber=new LocalDirectoryGrabber(uri);
-            thisGrabber.addFilter(theJarFileFilter);
-            
-            theCompJarGrabber.add(thisGrabber);
-        }
 
+        FileFilter theJarFileFilter = new JarFileFilter();
+        for (URI uri : uriList) {
+            LocalDirectoryGrabber thisGrabber = new LocalDirectoryGrabber(uri);
+            thisGrabber.addFilter(theJarFileFilter);
+
+            theCompJarGrabber.add(thisGrabber);
+            
+        }
         theClassExtractor = new ClassExtractor(theCompJarGrabber);
     }
-
 
     public boolean makeList() {
         theNames = new Vector<String>();
         theClasses = new Vector<Class<?>>();
         theParamHolders = new Vector<ParameterHolder>();
 
-        Vector <Class<?>> allMatching = new Vector<Class<?>>();
-        
+        Vector<Class<?>> allMatching = new Vector<Class<?>>();
+
         File JarDir = new File(theUriList.elementAt(0).toString());
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
             //System.out.println("-------Loading both types");
@@ -107,17 +105,25 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
             //System.out.println("-------Loading kAgent types");
             allMatching = theClassExtractor.getAllClassesThatImplement(Agent.class, Unloadable.class);
         }
- 
+
         for (Class<?> thisClass : allMatching) {
             if ((!allFullClassName.contains(thisClass.getName())) && !isAbstractClass(thisClass)) {
                 allFullClassName.add(thisClass.getName());
                 String shortName = addFullNameToMap(thisClass.getName());
                 theClasses.add(thisClass);
                 theNames.add(shortName);
+
                 
+                checkVersions(thisClass);
                 ParameterHolder thisP = loadParameterHolderFromFile(thisClass);
-                //FIX THIS
-                String sourceJarPath=thisClass.getProtectionDomain().getCodeSource().getLocation().getPath();
+                
+                String sourceJarPath="unknown";
+                try{
+                    sourceJarPath = thisClass.getProtectionDomain().getCodeSource().getLocation().toURI().normalize().toString();
+                }catch(URISyntaxException e){
+                    sourceJarPath+=" :: couldn't parse URI";
+                }
+                
                 UtilityShop.addSourceDetails(thisP, thisClass.getName(), sourceJarPath);
                 theParamHolders.add(thisP);
             }
@@ -212,17 +218,25 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
             theModule = (Object) paramBasedConstructor.newInstance(theParams);
         } catch (Exception paramBasedE) {
             //There is no ParameterHolder constructor
+
+
             if (theParams != null) {
                 if (!theParams.isNull()) {
                     System.err.println("Loading Class: " + theClass.getName() + " :: A parameter holder was provided, but the JAR doesn't have a constructor that takes a parameter holder");
+                    System.err.println(paramBasedE);
+                    System.err.println("Nested exception: " + paramBasedE.getCause());
                 }
             }
             try {
                 Constructor<?> emptyConstructor = theClass.getConstructor();
+                if (emptyConstructor == null) {
+                    System.err.println("WTF emptyConstructor is null");
+                }
                 theModule = (Object) emptyConstructor.newInstance();
             } catch (Exception noParamsE) {
                 System.err.println("Could't load instance of: " + theClass.getName() + " with parameters or without");
-                System.err.println(noParamsE);
+                System.err.println("Exception was: " + noParamsE);
+                System.err.println("\tNested exception: " + noParamsE.getCause());
             }
 
 
@@ -232,15 +246,15 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     }
 
     private boolean checkVersions(Class<?> theClass) {
-        String rlVizVersion = rlVizLib.rlVizCore.getVersion();
-        String thisClassVersion = rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(theClass);
-
-        if (!rlVizVersion.equals(thisClassVersion)) {
-            System.err.println("Warning :: Possible RLVizLib Incompatibility");
-            System.err.println("Warning :: Runtime version used by the Loader is:  " + rlVizVersion);
-            System.err.println("Warning :: Compile version used to build " + theClass + " is:  " + thisClassVersion);
-            return false;
-        }
+		RLVizVersion theLinkedLibraryVizVersion=rlVizLib.rlVizCore.getRLVizSpecVersion();
+		RLVizVersion ourCompileVersion=rlVizLib.rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(theClass);
+		
+		if(!theLinkedLibraryVizVersion.equals(ourCompileVersion)){
+			System.err.println("Warning :: Possible RLVizLib Incompatibility");
+			System.err.println("Warning :: Runtime version used by "+theClass.getName()+" is:  "+theLinkedLibraryVizVersion);
+			System.err.println("Warning :: Compile version used to build "+theClass.getName()+" is:  "+ourCompileVersion);
+                        return false;
+                }
         return true;
     }
 

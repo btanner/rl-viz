@@ -3,6 +3,7 @@
 <target name="RLVizLib" description="RLVizLib">
    <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean-build">
 	 <property name="build.debug" value="${build.debug}"/>
+	 <property name="build.deprecation" value="${build.deprecation}" />
 	</ant>
 	
  </target>
@@ -10,18 +11,21 @@
 <target name="envShell" description="Build the Environment Shell Jar" depends="RLVizLib">
    <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean-build">
 	 <property name="build.debug" value="${build.debug}"/>
+	<property name="build.deprecation" value="${build.deprecation}" />
 	</ant>
 </target>
 
 <target name="agentShell" description="Build the Agent Shell Jar" depends="RLVizLib">
    <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean-build">
 	 <property name="build.debug" value="${build.debug}"/>
+	<property name="build.deprecation" value="${build.deprecation}" />
 	</ant>
 </target>
 
 <target name="rlVizApp" description="Build the Application" depends="RLVizLib,agentShell,envShell">
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean-build">
 	 <property name="build.debug" value="${build.debug}"/>
+	<property name="build.deprecation" value="${build.deprecation}" />
 	</ant>
 </target>
 
@@ -32,6 +36,7 @@
 
 <target name="set-debug">
 	<property name="build.debug" value="on"/>
+	<property name="build.deprecation" value="on" />
 </target>
 
 

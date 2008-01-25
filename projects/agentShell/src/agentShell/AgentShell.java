@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
+import rlVizLib.general.RLVizVersion;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.NotAnRLVizMessageException;
@@ -38,13 +39,13 @@ import rlglue.types.Observation;
 
 public class AgentShell implements Agent, Unloadable{
 	static{
-		String rlVizVersion=rlVizLib.rlVizCore.getSpecVersion();
-		String ourVersion=rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(AgentShell.class);
+		RLVizVersion theLinkedLibraryVizVersion=rlVizLib.rlVizCore.getRLVizSpecVersion();
+		RLVizVersion ourCompileVersion=rlVizLib.rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(AgentShell.class);
 		
-		if(!rlVizVersion.equals(ourVersion)){
+		if(!theLinkedLibraryVizVersion.equals(ourCompileVersion)){
 			System.err.println("Warning :: Possible RLVizLib Incompatibility");
-			System.err.println("Warning :: Runtime version used by AgentShell is:  "+rlVizVersion);
-			System.err.println("Warning :: Compile version used to build AgentShell is:  "+ourVersion);
+			System.err.println("Warning :: Runtime version used by AgentShell is:  "+theLinkedLibraryVizVersion);
+			System.err.println("Warning :: Compile version used to build AgentShell is:  "+ourCompileVersion);
 		}
 	}
 

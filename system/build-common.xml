@@ -82,7 +82,7 @@ We'll try and rely on minimal variables from above.
 			<property name="useOSXclasses" value="true"/>
 		</then>
 	</if>
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="${build.debug}">
+    <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="${build.debug}" deprecation="${build.deprecation}">
 	    <classpath>
             <path refid="rlvizlib.classpath" />
  		    <path refid="project.extra.classpath" />

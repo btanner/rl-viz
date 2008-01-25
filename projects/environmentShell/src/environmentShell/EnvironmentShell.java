@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
+import rlVizLib.general.RLVizVersion;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.NotAnRLVizMessageException;
@@ -41,17 +42,18 @@ import rlglue.types.Random_seed_key;
 import rlglue.types.Reward_observation;
 import rlglue.types.State_key;
 
-public class EnvironmentShell implements Environment,Unloadable {
+public class EnvironmentShell implements Environment, Unloadable {
 
     protected String libDir;
-    static {
-        String rlVizVersion = rlVizLib.rlVizCore.getSpecVersion();
-        String ourVersion = rlVizLib.rlVizCore.getRLVizLinkVersionOfClass(EnvironmentShell.class);
 
-        if (!rlVizVersion.equals(ourVersion)) {
+    static {
+        RLVizVersion theLinkedLibraryVizVersion = rlVizLib.rlVizCore.getRLVizSpecVersion();
+        RLVizVersion ourCompileVersion = rlVizLib.rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(EnvironmentShell.class);
+
+        if (!theLinkedLibraryVizVersion.equals(ourCompileVersion)) {
             System.err.println("Warning :: Possible RLVizLib Incompatibility");
-            System.err.println("Warning :: Runtime version used by EnvironmentShell is:  " + rlVizVersion);
-            System.err.println("Warning :: Compile version used to build EnvironmentShell is:  " + ourVersion);
+            System.err.println("Warning :: Runtime version used by AgentShell is:  " + theLinkedLibraryVizVersion);
+            System.err.println("Warning :: Compile version used to build AgentShell is:  " + ourCompileVersion);
         }
     }
     private Environment theEnvironment = null;
@@ -79,7 +81,7 @@ public class EnvironmentShell implements Environment,Unloadable {
             try {
                 theEnvironmentLoaders.add(new LocalCPlusPlusEnvironmentLoader());
             } catch (UnsatisfiedLinkError failure) {
-                System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments: "+failure);
+                System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments: " + failure);
             }
         }
     }
@@ -206,8 +208,8 @@ public class EnvironmentShell implements Environment,Unloadable {
         Reward_observation ro = theEnvironment.env_step(arg0);
         return ro;
     }
-    
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         EnvironmentShell e = new EnvironmentShell();
     }
 }

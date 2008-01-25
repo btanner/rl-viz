@@ -168,12 +168,15 @@ public class ParameterHolderPanel{
 
 
 	public void addParamFieldsToBuilder(DefaultFormBuilder builder) {
-      
+                int realParams=0;
+                
 		for(int i=0;i<currentParamHolder.getParamCount();i++){
 			int thisParamType=currentParamHolder.getParamType(i);
 			String thisParamName=currentParamHolder.getParamName(i);
                         if(thisParamName.toLowerCase().startsWith("###"))
                             continue;
+                        
+                        realParams++;
 			Component newField=null;
 			switch (thisParamType) {
 			case ParameterHolder.boolParam:
@@ -195,7 +198,7 @@ public class ParameterHolderPanel{
                 for (Component component : allComponents)component.setFont(pFont);
 
 
-                if(currentParamHolder.getParamCount()==0){
+                if(realParams==0){
                     addLabel(builder, "No configurable Parameters");
                 }
 	}

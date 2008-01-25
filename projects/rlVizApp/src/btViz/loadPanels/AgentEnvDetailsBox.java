@@ -78,6 +78,8 @@ ParameterHolder theParamHolder;
         theMessage += "\nFull Qualified: "+loadName;
         theMessage += "\nLoaded From: "+loadSource;
         
+        theMessage+="";
+        
         
 
         JOptionPane.showMessageDialog(null, theMessage, "About "+name, JOptionPane.INFORMATION_MESSAGE);

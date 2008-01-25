@@ -65,7 +65,15 @@ public class RLVizVersion implements Comparable<RLVizVersion>{
             return ""+getMajorRevision()+"."+getMinorRevision();
         }
 
-	public int compareTo(RLVizVersion otherVersion) {
+
+    @Override
+    public boolean equals(Object otherObject){
+        if(otherObject instanceof RLVizVersion)
+            return compareTo((RLVizVersion)otherObject)==0;
+        return false;
+    }
+
+    public int compareTo(RLVizVersion otherVersion) {
 		
 		if(otherVersion.getMajorRevision()<getMajorRevision())
 			return 1;
