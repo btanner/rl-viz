@@ -73,6 +73,14 @@ public class RLVizVersion implements Comparable<RLVizVersion>{
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + this.majorRevision;
+        hash = 29 * hash + this.minorRevision;
+        return hash;
+    }
+
     public int compareTo(RLVizVersion otherVersion) {
 		
 		if(otherVersion.getMajorRevision()<getMajorRevision())
