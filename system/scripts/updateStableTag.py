@@ -20,11 +20,11 @@ def updateStable(baseRepoURL):
 	cleanCommand="ant clean";
 	buildAllCommand="ant all";
 	commitCommand="svn commit -m 'committing latest changes'";
-	tagVersionCommand="svn rm "+trunkURL+" "+versionURL+" -m 'removing the stable tag'";
+	removeStableVersionCommand="svn rm "+trunkURL+" "+versionURL+" -m 'removing the stable tag'";
 	tagVersionCommand="svn cp "+trunkURL+" "+versionURL+" -m 'Updating the stable tag'";
 
 
-	Commands=[cleanCommand, buildAllCommand,commitCommand,tagVersionCommand];
+	Commands=[cleanCommand, buildAllCommand,commitCommand,removeStableVersionCommand,tagVersionCommand];
 	
 	
 
