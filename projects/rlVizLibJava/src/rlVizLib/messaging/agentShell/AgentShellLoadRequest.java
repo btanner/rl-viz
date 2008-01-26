@@ -66,7 +66,7 @@ public class AgentShellLoadRequest extends AgentShellMessages{
 
 	}
 	public static AgentShellLoadResponse Execute(String agentName){
-            return Execute(agentName);
+            return Execute(agentName,null);
         }
 	public static AgentShellLoadResponse Execute(String agentName, ParameterHolder theParams){
 		String theRequestString=getRequestMessage(agentName,theParams);
