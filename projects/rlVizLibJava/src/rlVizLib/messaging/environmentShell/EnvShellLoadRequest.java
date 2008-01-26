@@ -66,10 +66,6 @@ public class EnvShellLoadRequest extends EnvironmentShellMessages{
 				payLoadString);
 
 	}
-        
-	public static EnvShellLoadResponse Execute(String envName){
-            return Execute(envName, null);
-        }
 
         public static EnvShellLoadResponse Execute(String envName, ParameterHolder theParams){
 		String theRequestString=getRequestMessage(envName,theParams);

@@ -65,10 +65,8 @@ public class AgentShellLoadRequest extends AgentShellMessages{
 				payLoadString);
 
 	}
-	public static AgentShellLoadResponse Execute(String agentName){
-            return Execute(agentName,null);
-        }
-	public static AgentShellLoadResponse Execute(String agentName, ParameterHolder theParams){
+
+        public static AgentShellLoadResponse Execute(String agentName, ParameterHolder theParams){
 		String theRequestString=getRequestMessage(agentName,theParams);
 
 		String responseMessage=RLGlueProxy.RL_agent_message(theRequestString);
