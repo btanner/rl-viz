@@ -28,7 +28,6 @@ import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
-import rlglue.RLGlue;
 
 public class AgentShellLoadRequest extends AgentShellMessages{
 	private String agentName;
@@ -66,6 +65,9 @@ public class AgentShellLoadRequest extends AgentShellMessages{
 				payLoadString);
 
 	}
+	public static AgentShellLoadResponse Execute(String agentName){
+            return Execute(agentName);
+        }
 	public static AgentShellLoadResponse Execute(String agentName, ParameterHolder theParams){
 		String theRequestString=getRequestMessage(agentName,theParams);
 
