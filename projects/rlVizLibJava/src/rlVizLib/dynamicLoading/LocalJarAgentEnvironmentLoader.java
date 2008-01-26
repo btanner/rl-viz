@@ -53,8 +53,8 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     private Vector<String> theNames = null;
     private Vector<Class<?>> theClasses = null;
     private Vector<ParameterHolder> theParamHolders = null;
-    private Map<String, String> publicNameToFullName = new TreeMap<String, String>();
-    private Set<String> allFullClassName = new TreeSet<String>();
+    private Map<String, String> publicNameToFullName = null;
+    private Set<String> allFullClassName = null;
     private Vector<URI> theUriList = new Vector<URI>();
     private ClassExtractor theClassExtractor;
 
@@ -91,8 +91,9 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         theNames = new Vector<String>();
         theClasses = new Vector<Class<?>>();
         theParamHolders = new Vector<ParameterHolder>();
-
+        allFullClassName = new TreeSet<String>();
         Vector<Class<?>> allMatching = new Vector<Class<?>>();
+        publicNameToFullName=new TreeMap<String, String>();
 
         File JarDir = new File(theUriList.elementAt(0).toString());
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {

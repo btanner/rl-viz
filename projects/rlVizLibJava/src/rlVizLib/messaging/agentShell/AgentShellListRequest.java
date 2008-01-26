@@ -33,17 +33,20 @@ public class AgentShellListRequest extends AgentShellMessages{
 		super(theMessageObject);
 	}
 	
-	
-
-	public static AgentShellListResponse Execute(){
+        static String makeRequest(){
 		String theRequest=AbstractMessage.makeMessage(
 				MessageUser.kAgentShell.id(),
 				MessageUser.kBenchmark.id(),
 				AgentShellMessageType.kAgentShellListRequest.id(),
 				MessageValueType.kNone.id(),
 				"NULL");
+                
+                return theRequest;
+        }
 
+	public static AgentShellListResponse Execute(){
 
+                String theRequest=makeRequest();
 		String responseMessage=RLGlueProxy.RL_agent_message(theRequest);
 		
 		AgentShellListResponse theResponse;

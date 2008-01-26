@@ -91,14 +91,13 @@ public class AgentShell implements Agent, Unloadable{
 			return "I only respond to RL-Viz messages!";
 		}
 		if(theGenericMessage.getTo().id()==MessageUser.kAgentShell.id()){
-
 			//Its for me
 			AgentShellMessages theMessageObject=AgentShellMessageParser.makeMessage(theGenericMessage);
 
 			//Handle a request for the list of agents
 			if(theMessageObject.getTheMessageType()==AgentShellMessageType.kAgentShellListRequest.id()){
-				Vector<String> envNameVector=new Vector<String>();
-				Vector<ParameterHolder> envParamVector=new Vector<ParameterHolder>();
+				Vector<String> agentNameVector=new Vector<String>();
+				Vector<ParameterHolder> agentParamVector=new Vector<ParameterHolder>();
 
 				for (AgentLoaderInterface thisAgentLoader : theAgentLoaders) {
 					thisAgentLoader.makeList();
@@ -106,19 +105,18 @@ public class AgentShell implements Agent, Unloadable{
 					Vector<String> thisAgentNameVector=thisAgentLoader.getNames();
 					for (String localName : thisAgentNameVector) {
 						String uniqueName=localName+" "+thisAgentLoader.getTypeSuffix();
-						envNameVector.add(uniqueName);
+						agentNameVector.add(uniqueName);
 						mapFromUniqueNameToLocalName.put(uniqueName,localName);
 						mapFromUniqueNameToLoader.put(uniqueName,thisAgentLoader);
 					}
 					
 					Vector<ParameterHolder> thisParameterVector=thisAgentLoader.getParameters();
 					for (ParameterHolder thisParam : thisParameterVector) {
-						envParamVector.add(thisParam);
+						agentParamVector.add(thisParam);
 					}
 
 				}
-				AgentShellListResponse theResponse=new AgentShellListResponse(envNameVector,envParamVector);
-
+				AgentShellListResponse theResponse=new AgentShellListResponse(agentNameVector,agentParamVector);
 				return theResponse.makeStringResponse();
 			}
 

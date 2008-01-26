@@ -30,9 +30,6 @@ public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader im
         super(EnvironmentShellPreferences.getInstance().getList(),EnvOrAgentType.kEnv);
     }
 
-//    public LocalJarEnvironmentLoader(String path) {
-//       super(path,EnvOrAgentType.kEnv);
-//    }
 
     public Environment loadEnvironment(String requestedName, ParameterHolder theParams) {
         Object theEnvObject=load(requestedName, theParams);
