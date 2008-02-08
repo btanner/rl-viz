@@ -190,8 +190,8 @@ public class ClassExtractor {
         if (thisEntry.getName().endsWith(".class")) {
             //Cut off the .class
             String thisClassName = thisEntry.getName().substring(0, thisEntry.getName().length() - 6);
-            thisClassName = thisClassName.replace(File.separator, ".");
-
+            thisClassName = thisClassName.replace("/", ".");
+            thisClassName = thisClassName.replace("\\", ".");
             //Load the class file first and make sure it works
             Class<?> theClass = rlVizLib.general.JarClassLoader.loadClassFromFileQuiet(thisFileURI, thisClassName, debugClassLoading);
             return theClass;

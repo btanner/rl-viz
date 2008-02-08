@@ -152,7 +152,6 @@ public class UtilityShop {
 			String workSpaceDirString = parentDirectoryFile.getParent();
 			libraryPath = workSpaceDirString + "/libraries";
 		}
-                System.out.println(libraryPath);
 		return libraryPath;
 	}
 
