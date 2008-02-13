@@ -44,6 +44,8 @@ public class JNIEnvironment implements Environment, Unloadable {
     public native void JNIenvcleanup();
     public native void JNIenvsetrandomseed(int numI, double numD, int[] intArray, double[] doubleArray);
     public native void JNIgetrandomseed();
+    public native void JNIenvsetstate(int numI, double numD, int[] intArray, double[] doubleArray);
+    public native void JNIgetstate();   
     public native String JNIenvmessage(String s);
     public native int JNIgetInt();
     public native int[] JNIgetIntArray();
@@ -109,21 +111,37 @@ public class JNIEnvironment implements Environment, Unloadable {
     }
 
     public Random_seed_key env_get_random_seed() {
-        // TODO Auto-generated method stub
-        return null;
+        int numI = JNIgetInt();
+        int numD = JNIgetDouble();
+        
+        Random_seed_key rsk = new Random_seed_key(numI, numD);
+        int[] theInts = JNIgetIntArray();
+        double[] theDoubles = JNIgetDoubleArray();
+
+        System.arraycopy(theInts, 0, rsk.intArray, 0, numI);
+        System.arraycopy(theDoubles, 0, rsk.doubleArray, 0, numD);
+        return rsk;
     }
 
     public State_key env_get_state() {
-        // TODO Auto-generated method stub
-        return null;
+        int numI = JNIgetInt();
+        int numD = JNIgetDouble();
+        
+        State_key sk = new State_key(numI, numD);
+        int[] theInts = JNIgetIntArray();
+        double[] theDoubles = JNIgetDoubleArray();
+
+        System.arraycopy(theInts, 0, sk.intArray, 0, numI);
+        System.arraycopy(theDoubles, 0, sk.doubleArray, 0, numD);
+        return sk;
     }
 
     public String env_message(String message) {
         return JNIenvmessage(message);
     }
 
-    public void env_set_state(State_key key) {
-        //return JNIenvsetstate();
+    public void env_set_state(State_key sk) {
+        JNIenvsetstate(sk.intArray.length, sk.doubleArray.length, sk.intArray, sk.doubleArray);
     }
     
     public boolean isValid(){
