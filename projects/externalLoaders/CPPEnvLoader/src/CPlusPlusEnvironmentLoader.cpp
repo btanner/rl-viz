@@ -90,12 +90,16 @@ JNIEXPORT void JNICALL Java_environmentShell_JNIEnvironment_JNIenvcleanup(JNIEnv
     theEnvironment.env_cleanup();
 }
 
-JNIEXPORT void JNICALL Java_environmentShell_JNIEnvironment_JNIsetstate(JNIEnv *env, jobject obj) {
-    std::cerr<<"setState not implemented in JNI"<<std::endl;
+JNIEXPORT void JNICALL Java_environmentShell_JNIEnvironment_JNIsetstate(JNIEnv *env, jobject obj, jint numInts, jint numDoubles, jintArray intArray, jdoubleArray doubleArray) {
+    State_key sk;
+    env->GetIntArrayRegion(intArray, 0, numInts, (jint*) sk.intArray);
+    env->GetDoubleArrayRegion(doubleArray, 0, numDoubles, (jdouble*) sk.doubleArray);
+
+	theEnvironment.env_set_state(sk);
 }
 
 JNIEXPORT void JNICALL Java_environmentShell_JNIEnvironment_JNIgetstate(JNIEnv *env, jobject obj) {
-    std::cerr<<"getState not implemented in JNI"<<std::endl;
+     genericReturn = theEnvironment.env_get_random_seed();
 }
 
 JNIEXPORT jstring JNICALL Java_environmentShell_JNIEnvironment_JNIenvmessage(JNIEnv *env, jobject obj, jstring themessage) {
@@ -161,16 +165,16 @@ JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValid
     return errorCode;
 }
 
-/*
- *	Simple C accessor methods, that allow Java to get the returns from this C library
- */
+
 JNIEXPORT jstring JNICALL Java_environmentShell_LocalCPlusPlusEnvironmentLoader_JNIgetEnvParams(JNIEnv *env, jobject obj, jstring envFilePath) {
     std::string stdStringFileLocation(env->GetStringUTFChars(envFilePath, 0));
     const char* paramHolderString=getParameterHolder(stdStringFileLocation);
     return env->NewStringUTF(paramHolderString);
 }
 
-
+/*
+ *	Simple C accessor methods, that allow Java to get the returns from this C library
+ */
 void closeEnvironment(envStruct &theEnv){
     closeFile(theEnv.handle);
 }
