@@ -21,7 +21,6 @@ package btViz;
 
 import java.lang.reflect.Constructor;
 import java.util.Vector;
-import rlVizLib.dynamicLoading.AbstractResourceGrabber;
 import rlVizLib.dynamicLoading.ClassExtractor;
 import rlVizLib.dynamicLoading.JarFileFilter;
 import rlVizLib.dynamicLoading.LocalDirectoryGrabber;
@@ -32,7 +31,7 @@ import rlVizLib.visualization.interfaces.DynamicControlTarget;
 
 public class VisualizerFactory {
 
-    static String defaultEnvVisualizerClassName = "visualizers.Generic.GenericEnvVisualizer";
+    static String defaultEnvVisualizerClassName = "org.rlcommunity.visualizers.generic.GenericEnvVisualizer";
     static String defaultAgentVisualizerClassName = "visualizers.Generic.GenericAgentVisualizer";
 
     public static AbstractVisualizer createEnvVisualizerFromClassName(String VizClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {

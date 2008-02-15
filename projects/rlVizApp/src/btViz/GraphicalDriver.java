@@ -23,7 +23,13 @@ import btViz.frames.RLVizFrame;
 import java.io.IOException;
 
 import rlVizLib.glueProxy.RLGlueProxy;
-
+/**
+ * I don't want to erase this class because people us it, but its poorly named.
+ * I've made a new copy called NetGraphicalDriverDynamicEnvStandardAgent.  Use that
+ * instead.
+ * @deprecated
+ * @author btanner
+ */
 public class GraphicalDriver {
 
 	public static void main(String [] args) throws IOException {
