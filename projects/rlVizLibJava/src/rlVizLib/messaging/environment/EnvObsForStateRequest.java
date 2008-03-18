@@ -40,7 +40,7 @@ public class EnvObsForStateRequest extends EnvironmentMessages{
 	public EnvObsForStateRequest(GenericMessage theMessageObject) {
 		super(theMessageObject);
 
-		String thePayLoad=super.getPayLoad();
+		String thePayLoad=super.getPayload();
 
 		StringTokenizer obsTokenizer = new StringTokenizer(thePayLoad, ":");
 

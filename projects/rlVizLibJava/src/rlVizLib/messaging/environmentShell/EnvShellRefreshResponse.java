@@ -42,7 +42,7 @@ public class EnvShellRefreshResponse extends AbstractResponse{
 	public EnvShellRefreshResponse(String theMessage) throws NotAnRLVizMessageException {
 		GenericMessage theGenericResponse=new GenericMessage(theMessage);
 
-		String thePayLoadString=theGenericResponse.getPayLoad();
+		String thePayLoadString=theGenericResponse.getPayload();
 
 		StringTokenizer obsTokenizer = new StringTokenizer(thePayLoadString, ":");
 

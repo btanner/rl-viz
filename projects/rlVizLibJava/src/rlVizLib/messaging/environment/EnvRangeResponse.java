@@ -43,7 +43,7 @@ public class EnvRangeResponse extends AbstractResponse{
 
 		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
 
-		String thePayLoadString=theGenericResponse.getPayLoad();
+		String thePayLoadString=theGenericResponse.getPayload();
 
 		StringTokenizer obsTokenizer = new StringTokenizer(thePayLoadString, ":");
 

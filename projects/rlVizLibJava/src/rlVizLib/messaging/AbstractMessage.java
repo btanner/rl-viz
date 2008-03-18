@@ -42,9 +42,17 @@ public class AbstractMessage {
 	public String getFromName() {
 		return MessageUser.name(getFrom());
 	}
-
-	public String getPayLoadTypeName() {
-		return MessageValueType.name(getPayLoadType());
+        
+	/**
+         * @deprecate
+         * @return
+         */
+        public String getPayLoadTypeName() {
+		return getPayloadTypeName();
+	}
+        
+        public String getPayloadTypeName() {
+		return MessageValueType.name(getPayloadType());
 	}
 
 	/**
@@ -69,19 +77,29 @@ public class AbstractMessage {
 	}
 
 	/**
+         * @deprecate
 	 * @return the payLoadType
 	 */
 	public MessageValueType getPayLoadType() {
-		return theRealMessageObject.getPayLoadType();
+		return getPayloadType();
 	}
 
+        public MessageValueType getPayloadType() {
+		return theRealMessageObject.getPayloadType();
+	}
+        
 	/**
+         * @deprecate
 	 * @return the payLoad
 	 */
 	public String getPayLoad() {
-		return theRealMessageObject.getPayLoad();
+		return getPayload();
 	}
 
+        public String getPayload() {
+		return theRealMessageObject.getPayload();
+	}
+        
 	/*
 	 * Override this if you can handle automatically given a queryable
 	 * environment or agent

@@ -43,7 +43,7 @@ public class AgentMessages extends AbstractMessage {
         returnString += "\tTo: " + getToName();
         returnString += "\tFrom: " + getToName();
         returnString += "\tType: " + getMessageTypeName();
-        returnString += "\tValType: " + getPayLoadTypeName();
+        returnString += "\tValType: " + getPayloadTypeName();
         return returnString;
     }
 }

@@ -47,7 +47,7 @@ class EpisodeSummaryChunkResponse extends AbstractResponse {
     
         public EpisodeSummaryChunkResponse(String responseMessage) throws NotAnRLVizMessageException {
         GenericMessage theGenericResponse = new GenericMessage(responseMessage);
-        String thePayLoad = theGenericResponse.getPayLoad();
+        String thePayLoad = theGenericResponse.getPayload();
 
         this.theLogData=thePayLoad;
     }

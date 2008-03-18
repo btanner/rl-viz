@@ -61,7 +61,7 @@ public class EpisodeSummaryRequest extends EnvironmentMessages {
 
     public EpisodeSummaryRequest(GenericMessage theMessageObject) {
         super(theMessageObject);
-        String thePayLoad = super.getPayLoad();
+        String thePayLoad = super.getPayload();
         StringTokenizer paramTokenizer = new StringTokenizer(thePayLoad, ":");
         this.theChunkSize = Integer.parseInt(paramTokenizer.nextToken());
         this.theStartCharacter = Long.parseLong(paramTokenizer.nextToken());

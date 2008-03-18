@@ -44,7 +44,7 @@ public class AgentVisualizerNameResponse extends AbstractResponse{
 
 	static public AgentVisualizerNameResponse AgentVisualizerNameResponseFromResponseString(String responseMessage) throws NotAnRLVizMessageException {
 		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
-		String theVisualizerClassName=theGenericResponse.getPayLoad();
+		String theVisualizerClassName=theGenericResponse.getPayload();
 		
 		AgentVisualizerNameResponse theResponse=new AgentVisualizerNameResponse(theVisualizerClassName);
 		return theResponse;

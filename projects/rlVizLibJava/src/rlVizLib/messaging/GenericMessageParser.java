@@ -74,12 +74,21 @@ public class GenericMessageParser {
 			System.exit(1);
 			return null;
 		}
+                
+                /**
+                 * @deprecate
+                 * @param payloadString
+                 * @return
+                 */
+		public static String parsePayLoad(String payloadString) {
+                    return parsePayload(payloadString);
+                }
+                
+                public static String parsePayload(String payloadString) {
+                        int firstEqualPos=payloadString.indexOf("=");
+                        String payload=payloadString.substring(firstEqualPos+1);
 
-		public static String parsePayLoad(String payLoadString) {
-                        int firstEqualPos=payLoadString.indexOf("=");
-                        String payLoad=payLoadString.substring(firstEqualPos+1);
 
-
-			return payLoad;
+			return payload;
 		}
 }

@@ -38,7 +38,7 @@ public class AgentShellListResponse extends AbstractResponse{
 	public AgentShellListResponse(String responseMessage) throws NotAnRLVizMessageException {
 		GenericMessage theGenericResponse=new GenericMessage(responseMessage);
 
-		String thePayLoadString=theGenericResponse.getPayLoad();
+		String thePayLoadString=theGenericResponse.getPayload();
 
 		StringTokenizer agentListTokenizer = new StringTokenizer(thePayLoadString, ":");
 

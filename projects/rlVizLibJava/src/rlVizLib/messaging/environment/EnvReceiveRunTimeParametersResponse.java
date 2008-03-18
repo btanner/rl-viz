@@ -39,7 +39,7 @@ public class EnvReceiveRunTimeParametersResponse extends AbstractResponse{
 	public EnvReceiveRunTimeParametersResponse(String responseMessage) throws NotAnRLVizMessageException {
 		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
 
-		String thePayLoadString=theGenericResponse.getPayLoad();
+		String thePayLoadString=theGenericResponse.getPayload();
 		
 		this.accepted=Boolean.parseBoolean(thePayLoadString);
 	}

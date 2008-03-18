@@ -44,13 +44,13 @@ import rlVizLib.messaging.environmentShell.EnvShellMessageType;
  * <br />
  * The interpreted type of <b>theMessageType</b> varies from subclass to subclass {@link AgentMessageType}, {@link EnvMessageType}, {@link EnvShellMessageType}, {@link AgentShellMessageType}
  * <p>
- * <b>payLoadType</b>: formatting hints about the payload of the message
+ * <b>payloadType</b>: formatting hints about the payload of the message
  * <br />
- * The type of <b>payLoadType</b> is {@link MessageValueType}
+ * The type of <b>payloadType</b> is {@link MessageValueType}
  * <p>
- * <b>payLoad</b>: formatted string with the deliverable aspect of this message
+ * <b>payload</b>: formatted string with the deliverable aspect of this message
  * <br />
- * The type of <b>payLoad</b> is {@link String}
+ * The type of <b>payload</b> is {@link String}
  * 
  * @author Brian Tanner
  * @since The Beginning
@@ -61,8 +61,8 @@ public class GenericMessage {
 	private int theMessageType;
 	protected MessageUser from;
 	protected MessageUser to;
-	protected MessageValueType payLoadType;
-	protected String payLoad;
+	protected MessageValueType payloadType;
+	protected String payload;
 
 	public GenericMessage(String theMessage) throws NotAnRLVizMessageException{
 		try {
@@ -73,14 +73,14 @@ public class GenericMessage {
 			String fromString=theTokenizer.nextToken();
 			String typeString=theTokenizer.nextToken();
 			String valueString=theTokenizer.nextToken();
-			String payLoadString=theTokenizer.nextToken("\f");
+			String payloadString=theTokenizer.nextToken("\f");
 
 			from=GenericMessageParser.parseUser(fromString);
 			to=GenericMessageParser.parseUser(toString);
 
 			theMessageType=GenericMessageParser.parseInt(typeString);
-			payLoadType=GenericMessageParser.parseValueType(valueString);
-			payLoad=GenericMessageParser.parsePayLoad(payLoadString);
+			payloadType=GenericMessageParser.parseValueType(valueString);
+			payload=GenericMessageParser.parsePayload(payloadString);
 		} catch (Exception e) {
 			//The message was NOT what we expected!
 			throw new NotAnRLVizMessageException();
@@ -110,17 +110,27 @@ public class GenericMessage {
 	}
 
 	/**
-	 * @return the payLoadType
+         * @deprecate
+	 * @return the payloadType
 	 */
-	public MessageValueType getPayLoadType() {
-		return payLoadType;
+        public MessageValueType getPayLoadType() {
+                return getPayloadType();
+        }
+        
+	public MessageValueType getPayloadType() {
+		return payloadType;
 	}
 
 	/**
-	 * @return the payLoad
+         * @deprecate
+	 * @return the payload
 	 */
 	public String getPayLoad() {
-		return payLoad;
+            return getPayload();
+        }
+        
+        public String getPayload() {
+		return payload;
 	}
 
 }

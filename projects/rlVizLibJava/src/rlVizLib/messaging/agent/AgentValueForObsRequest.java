@@ -45,7 +45,7 @@ public class AgentValueForObsRequest extends AgentMessages {
     public AgentValueForObsRequest(GenericMessage theMessageObject) {
         super(theMessageObject);
 
-        String thePayLoad = super.getPayLoad();
+        String thePayLoad = super.getPayload();
 
         StringTokenizer obsTokenizer = new StringTokenizer(thePayLoad, ":");
 

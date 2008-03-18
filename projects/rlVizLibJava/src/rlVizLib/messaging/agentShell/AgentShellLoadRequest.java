@@ -36,7 +36,7 @@ public class AgentShellLoadRequest extends AgentShellMessages{
 	public AgentShellLoadRequest(GenericMessage theMessageObject) {
 		super(theMessageObject);
 
-		StringTokenizer st=new StringTokenizer(super.getPayLoad(),":");
+		StringTokenizer st=new StringTokenizer(super.getPayload(),":");
 		agentName=st.nextToken();
 		theParams=new ParameterHolder(st.nextToken());
 	}

@@ -37,7 +37,7 @@ ParameterHolder theParams=null;
 public EnvReceiveRunTimeParametersRequest(GenericMessage theMessageObject){
 		super(theMessageObject);
 		
-		theParams=new ParameterHolder(super.getPayLoad());
+		theParams=new ParameterHolder(super.getPayload());
 	}
 
 	public static EnvReceiveRunTimeParametersResponse Execute(ParameterHolder theParams){

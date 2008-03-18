@@ -44,7 +44,7 @@ public class AgentValueForObsResponse extends AbstractResponse{
 	public AgentValueForObsResponse(String responseMessage) throws NotAnRLVizMessageException {
 		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
 
-		String thePayLoadString=theGenericResponse.getPayLoad();
+		String thePayLoadString=theGenericResponse.getPayload();
 
 		StringTokenizer valueTokenizer = new StringTokenizer(thePayLoadString, ":");
 		theValues = new Vector<Double>();

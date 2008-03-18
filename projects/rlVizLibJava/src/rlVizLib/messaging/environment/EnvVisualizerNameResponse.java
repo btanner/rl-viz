@@ -44,7 +44,7 @@ public class EnvVisualizerNameResponse extends AbstractResponse{
 
 	static public EnvVisualizerNameResponse EnvVisualizerNameResponseFromResponseString(String responseMessage) throws NotAnRLVizMessageException {
 		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
-		String theVisualizerClassName=theGenericResponse.getPayLoad();
+		String theVisualizerClassName=theGenericResponse.getPayload();
 		
 		EnvVisualizerNameResponse theResponse=new EnvVisualizerNameResponse(theVisualizerClassName);
 		return theResponse;

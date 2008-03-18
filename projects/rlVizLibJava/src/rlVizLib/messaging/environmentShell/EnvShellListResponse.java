@@ -38,7 +38,7 @@ public class EnvShellListResponse extends AbstractResponse{
 	public EnvShellListResponse(String responseMessage) throws NotAnRLVizMessageException {
 		GenericMessage theGenericResponse=new GenericMessage(responseMessage);
 
-		String thePayLoadString=theGenericResponse.getPayLoad();
+		String thePayLoadString=theGenericResponse.getPayload();
 
 		StringTokenizer envListTokenizer = new StringTokenizer(thePayLoadString, ":");
 

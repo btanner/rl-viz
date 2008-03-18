@@ -45,7 +45,7 @@ public class EnvVersionSupportedResponse extends AbstractResponse{
 		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
 
 		
-		String thePayLoadString=theGenericResponse.getPayLoad();
+		String thePayLoadString=theGenericResponse.getPayload();
 
 		StringTokenizer versionTokenizer = new StringTokenizer(thePayLoadString, ":");
 

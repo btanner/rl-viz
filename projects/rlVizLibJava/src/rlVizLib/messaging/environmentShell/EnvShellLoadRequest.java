@@ -36,7 +36,7 @@ public class EnvShellLoadRequest extends EnvironmentShellMessages{
 	public EnvShellLoadRequest(GenericMessage theMessageObject) {
 		super(theMessageObject);
 
-		StringTokenizer st=new StringTokenizer(super.getPayLoad(),":");
+		StringTokenizer st=new StringTokenizer(super.getPayload(),":");
 		this.envName=st.nextToken();
 		theParams=new ParameterHolder(st.nextToken());
 	}
