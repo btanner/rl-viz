@@ -55,6 +55,9 @@
 	  <exec executable="make" dir="projects/rl-glue">
 		<arg value="rl-glue"/>
 	</exec>
+	 <exec executable="make" dir="projects/rl-glue/RL-Glue/Java/" />
+	<copy file="projects/rl-glue/RL-Glue/Java/RL-Glue.jar" todir="system/libs"/>
+	
 </target>
 
 <target name="externalLoaders" description="Make external Loaders">
