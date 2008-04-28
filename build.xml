@@ -29,7 +29,7 @@
 	</ant>
 </target>
 
-<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp,rl-glue" >
+<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="rl-glue,RLVizLib,envShell,agentShell,rlVizApp" >
 	<echo message="Operating system name: 
         ${os.name}"/>
 </target>
@@ -51,7 +51,7 @@
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="test"/>
 </target>
 
-<target name="rl-glue" description="Build RL-Glue executable">
+<target name="rl-glue" description="Build RL-Glue executable and Jar">
 	  <exec executable="make" dir="projects/rl-glue">
 		<arg value="rl-glue"/>
 	</exec>
