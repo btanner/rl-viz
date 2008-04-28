@@ -33,12 +33,20 @@ public class RLVizFrame extends GenericVizFrame{
     RLGlueLogic theGlueConnection = null;
     static String programName = "RLVizApp";
     private static final long serialVersionUID = 1L;
+    
+    private boolean useEnvVisualizer = false;
+    private boolean useAgentVisualizer = false;
 
-    public RLVizFrame() {
+    public RLVizFrame(){
+        this(true, false);
+    }
+    
+    public RLVizFrame(boolean useEnvVisualizer, boolean useAgentVisualizer) {
         super();
 
-        boolean useEnvVisualizer = true;
-        boolean useAgentVisualizer = false;
+        this.useEnvVisualizer=useEnvVisualizer;
+        this.useAgentVisualizer=useAgentVisualizer;
+        
 
 
         theGlueConnection = RLGlueLogic.getGlobalGlueLogic();
