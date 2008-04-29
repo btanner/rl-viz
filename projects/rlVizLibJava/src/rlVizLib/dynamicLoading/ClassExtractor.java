@@ -36,7 +36,6 @@ public class ClassExtractor {
         theJarURIs = new Vector<URI>();
         
         refreshJars();
-        
     }
 
     public void refreshJars(){

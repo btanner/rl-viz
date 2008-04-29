@@ -32,7 +32,8 @@ public class AgentMessageParser extends GenericMessageParser{
 		if(cmdId==AgentMessageType.kAgentQueryValuesForObs.id())return new AgentValueForObsRequest(theGenericMessage);
 		if(cmdId==AgentMessageType.kAgentQueryVisualizerName.id())return new AgentVisualizerNameRequest(theGenericMessage);
 		if(cmdId==AgentMessageType.kAgentQuerySupportedVersion.id())return new AgentVersionSupportedRequest(theGenericMessage);
-
+                if(cmdId==AgentMessageType.kAgentCustom.id())return new AgentCustomRequest(theGenericMessage);
+                
 	System.out.println("AgentMessageParser - unknown query type: "+theMessage);
 	Thread.dumpStack();
 	System.exit(1);
