@@ -1,19 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author mradkie
+Copyright 2008 Matt Radkie
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
  */
 package rlVizLib.utilities;
 
 import java.util.StringTokenizer;
-/**
- * 
- * @deprecated
- */
-public class TaskSpecObject {
+
+class TaskSpecV3 extends TaskSpecDelegate {
 
     public double version;
     public char episodic;
@@ -31,53 +32,53 @@ public class TaskSpecObject {
     public double[] action_maxs;
     public double reward_max;
     public double reward_min;
-    static final int parser_version = 2;
-
-    //Test program
-    public static void main(String[] args) throws Exception {
-
-        String taskSpec = "2:e:2_[f,f]_[-1.2,0.6]_[-0.07,0.07]:1_[i]_[0,2]";
-
-        TaskSpecObject taskObject = new TaskSpecObject(taskSpec);
-        System.err.println(taskObject);
-
-    }
-
-    // Empty constructor is for environment building a task spec
-    public TaskSpecObject() {
-    }
+    public String extraString;
+    static final int parser_version = 3;
 
     //As we discussed, the TaskSpecObject should parse in its constructor
-    public TaskSpecObject(String taskSpecString) {
-        /* Break the task spec into its four component parts
+    public TaskSpecV3(String taskSpecString) {
+        /* Break the task spec into its six component parts
          * The version number
          * The task style (episodic/continuous)
          * The observation data
-         * The action data 
+         * The action data
+         * The reward data (if version >= 2)
+         * The extra data (if version >=3)
          */
-        taskSpecString = this.removeWhiteSpace(taskSpecString);
+        //taskSpecString = this.removeWhiteSpace(taskSpecString);
+
+
         StringTokenizer tokenizer = new StringTokenizer(taskSpecString, ":");
 
-        String versionString = tokenizer.nextToken();
-        String taskStyle = tokenizer.nextToken();
-        String observationString = tokenizer.nextToken();
-        String actionString = tokenizer.nextToken();
-        String rewardString;
 
+        int numberOfTokens = tokenizer.countTokens();
+        if (numberOfTokens < 6) {
+            throw new IllegalArgumentException("TaskSpecV3 shouldn't parse task specs with less than 6 sections");
+        }
+
+        String versionString = this.removeWhiteSpace(tokenizer.nextToken());
+        String taskStyle = this.removeWhiteSpace(tokenizer.nextToken());
+        String observationString = this.removeWhiteSpace(tokenizer.nextToken());
+        String actionString = this.removeWhiteSpace(tokenizer.nextToken());
+        String rewardString;
+        extraString = new String("");
         version = Double.parseDouble(versionString);
 
         // Task specs of version > 1 have reward info that needs to be parsed
-        if (version >= parser_version) {
-            if (tokenizer.hasMoreTokens()) {
-                rewardString = tokenizer.nextToken();
-            } else {
-                rewardString = "[]";
-            }
+
+        // pull off the reward
+        if (tokenizer.hasMoreTokens()) {
+            rewardString = this.removeWhiteSpace(tokenizer.nextToken());
         } else {
-            System.err.println("WARNING: task spec parser is version: " + parser_version + " Your task spec is: " + version);
-            System.err.println("Attempting to parse anyway!");
-            rewardString = "";
+            rewardString = "[]";
         }
+
+        String thetoken = "";
+        while (tokenizer.hasMoreTokens()) {
+            thetoken = tokenizer.nextToken();
+            extraString += thetoken;
+        }
+
 
         episodic = taskStyle.charAt(0);
         // check to make sure this is a valid task type
@@ -89,9 +90,7 @@ public class TaskSpecObject {
         try {
             parseObservations(observationString);
             parseActions(actionString);
-            if (version >= parser_version) {
-                parseRewards(rewardString);
-            }
+            parseRewards(rewardString);
             constraintCheck();
         } catch (Exception e) {
             System.err.println("Error parsing the Task Spec");
@@ -99,6 +98,10 @@ public class TaskSpecObject {
             System.err.println("Exception was: " + e);
             e.printStackTrace();
         }
+    }
+
+    TaskSpecV3() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     protected void parseObservationTypesAndDimensions(String obsTypesString) throws Exception {
@@ -365,7 +368,62 @@ public class TaskSpecObject {
 
     }
 
-    public String toString() {
+    //todo
+    public String getStringRepresentation() {
+        //2:e:2_[f,f]_[-1.2,0.6]_[-0.07,0.07]:1_[i]_[0,2]:[0,3]:extrastringhere
+        String taskSpec = "";
+        taskSpec += (int) this.version + ":";
+        taskSpec += this.episodic + ":";
+        //add the observations
+        taskSpec += buildObsString();
+        //add the actions
+        taskSpec += buildActionString();
+        //add the reward
+        taskSpec += "[" + this.reward_min + "," + this.reward_max + "]";
+        //add the extra string
+        taskSpec += ":" + this.extraString;
+
+        return taskSpec;
+
+    }
+
+    private String buildActionString() {
+        String actionsString = "";
+        int numactions = num_continuous_action_dims + num_discrete_action_dims;
+        actionsString += (numactions) + "_[";
+
+        int contIndex = 0;
+        int descIndex = 0;
+        for (int i = 0; i < numactions; i++) {
+            actionsString += action_types[i] + ",";
+        }
+        actionsString = actionsString.substring(0, actionsString.length() - 1);//pull off extra ,
+        actionsString += "]";
+        for (int i = 0; i < numactions; i++) {
+            actionsString += "_[" + action_mins[i] + "," + action_maxs[i] + "]";
+        }
+        return actionsString + ":";
+    }
+
+    private String buildObsString() {
+        String obsString = "";
+        int numObs = num_continuous_obs_dims + num_discrete_obs_dims;
+        obsString += (numObs) + "_[";
+
+        int contIndex = 0;
+        int descIndex = 0;
+        for (int i = 0; i < numObs; i++) {
+            obsString += obs_types[i] + ",";
+        }
+        obsString = obsString.substring(0, obsString.length() - 1);//pull off extra ,
+        obsString += "]";
+        for (int i = 0; i < numObs; i++) {
+            obsString += "_[" + obs_mins[i] + "," + obs_maxs[i] + "]";
+        }
+        return obsString + ":";
+    }
+
+    public String dump() {
         String obs_types_string = "";
         for (int i = 0; i < obs_types.length; ++i) {
             obs_types_string += obs_types[i] + " ";
@@ -415,5 +473,143 @@ public class TaskSpecObject {
                 "reward_max: " + this.reward_max;
 
         return taskSpecObject;
+    }
+
+    public double getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public char getEpisodic() {
+        return this.episodic;
+    }
+
+    public void setEpisodic(char episodic) {
+        this.episodic = episodic;
+    }
+
+    public int getObsDim() {
+        return this.obs_dim;
+    }
+
+    public void setObsDim(int dim) {
+        this.obs_dim = dim;
+    }
+
+    public int getNumDiscreteObsDims() {
+        return this.num_discrete_obs_dims;
+    }
+
+    public void setNumDiscreteObsDims(int numDisc) {
+        this.num_discrete_obs_dims = numDisc;
+    }
+
+    public int getNumContinuousObsDims() {
+        return this.num_continuous_obs_dims;
+    }
+
+    public void setNumContinuousObsDims(int numCont) {
+        this.num_continuous_obs_dims = numCont;
+    }
+
+    public char[] getObsTypes() {
+        return this.obs_types;
+    }
+
+    public void setObsTypes(char[] types) {
+        this.obs_types = types.clone();
+    }
+
+    public double[] getObsMins() {
+        return this.obs_mins;
+    }
+
+    public void setObsMins(double[] mins) {
+        this.obs_mins = mins.clone();
+    }
+
+    public double[] getObsMaxs() {
+        return this.obs_maxs;
+    }
+
+    public void setObsMaxs(double[] maxs) {
+        this.obs_maxs = maxs.clone();
+    }
+    public int getActionDim() {
+        return this.action_dim;
+    }
+
+    public void setActionDim(int dim) {
+        this.action_dim = dim;
+    }
+
+    public int getNumDiscreteActionDims() {
+        return this.num_discrete_action_dims;
+    }
+
+    public void setNumDiscreteActionDims(int numDisc) {
+        this.num_discrete_action_dims = numDisc;
+    }
+
+    public int getNumContinuousActionDims() {
+        return this.num_continuous_action_dims;
+    }
+
+    public void setNumContinuousActionDims(int numCont) {
+        this.num_continuous_action_dims = numCont;
+    }
+
+    public char[] getActionTypes() {
+        return this.action_types;
+    }
+
+    public void setActionTypes(char[] types) {
+        this.action_types = types.clone();
+    }
+
+    public double[] getActionMins() {
+        return this.action_mins;
+    }
+
+    public void setActionMins(double[] mins) {
+        this.action_mins = mins.clone();
+    }
+
+    public double[] getActionMaxs() {
+        return this.action_maxs;
+    }
+
+    public void setActionMaxs(double[] maxs) {
+        this.action_maxs = maxs.clone();
+    }
+    public double getRewardMax() {
+        return this.reward_max;
+    }
+
+    public void setRewardMax(double max) {
+        this.reward_max = max;
+    }
+
+    public double getRewardMin() {
+        return this.reward_min;
+    }
+
+    public void setRewardMin(double min) {
+        this.reward_min = min;
+    }
+
+    public String getExtraString() {
+        return this.extraString;
+    }
+
+    public void setExtraString(String newString) {
+        this.extraString = newString;
+    }
+
+    public int getParserVersion() {
+        return this.parser_version;
     }
 }
