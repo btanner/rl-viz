@@ -1,20 +1,8 @@
-/*
-Copyright 2008 Matt Radkie
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
 package rlVizLib.utilities;
 
 import java.util.StringTokenizer;
 
-class TaskSpecObject extends TaskSpecDelegate {
+public class TaskSpecObject {
 
     public double version;
     public char episodic;
@@ -36,9 +24,16 @@ class TaskSpecObject extends TaskSpecDelegate {
 
     //Test program
     public static void main(String[] args) throws Exception {
-//Write some test code here?
-//                 String taskSpec = "2:e:2_[f,f]_[-1.2,0.6]_[-0.07,0.07]:1_[i]_[0,2]";
-//		TaskSpecObject taskObject = new TaskSpecObject(taskSpec);
+
+        String taskSpec = "2:e:2_[f,f]_[-1.2,0.6]_[-0.07,0.07]:1_[i]_[0,2]";
+
+        TaskSpecObject taskObject = new TaskSpecObject(taskSpec);
+        System.err.println(taskObject);
+
+    }
+
+    // Empty constructor is for environment building a task spec
+    public TaskSpecObject() {
     }
 
     //As we discussed, the TaskSpecObject should parse in its constructor
@@ -49,17 +44,8 @@ class TaskSpecObject extends TaskSpecDelegate {
          * The observation data
          * The action data 
          */
-
         taskSpecString = this.removeWhiteSpace(taskSpecString);
         StringTokenizer tokenizer = new StringTokenizer(taskSpecString, ":");
-
-        int numberOfTokens = tokenizer.countTokens();
-        if (numberOfTokens > 5) {
-            throw new IllegalArgumentException("TaskSpecV2 shouldn't parse task specs with more than 5 sections");
-        }
-        if (numberOfTokens < 4) {
-            throw new IllegalArgumentException("TaskSpecV2 shouldn't parse task specs with less than 4 sections");
-        }
 
         String versionString = tokenizer.nextToken();
         String taskStyle = tokenizer.nextToken();
@@ -418,137 +404,5 @@ class TaskSpecObject extends TaskSpecDelegate {
                 "reward_max: " + this.reward_max;
 
         return taskSpecObject;
-    }
-
-    public double getVersion() {
-        return this.version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public char getEpisodic() {
-        return this.episodic;
-    }
-
-    public void setEpisodic(char episodic) {
-        this.episodic = episodic;
-    }
-
-    public int getObsDim() {
-        return this.obs_dim;
-    }
-
-    public void setObsDim(int dim) {
-        this.obs_dim = dim;
-    }
-
-    public int getNumDiscreteObsDims() {
-        return this.num_discrete_obs_dims;
-    }
-
-    public void setNumDiscreteObsDims(int numDisc) {
-        this.num_discrete_obs_dims = numDisc;
-    }
-
-    public int getNumContinuousObsDims() {
-        return this.num_continuous_obs_dims;
-    }
-
-    public void setNumContinuousObsDims(int numCont) {
-        this.num_continuous_obs_dims = numCont;
-    }
-
-    public char[] getObsTypes() {
-        return this.obs_types;
-    }
-
-    public void setObsTypes(char[] types) {
-        this.obs_types = types.clone();
-    }
-
-    public double[] getObsMins() {
-        return this.obs_mins;
-    }
-
-    public void setObsMins(double[] mins) {
-        this.obs_mins = mins.clone();
-    }
-
-    public double[] getObsMaxs() {
-        return this.obs_maxs;
-    }
-
-    public void setObsMaxs(double[] maxs) {
-        this.obs_maxs = maxs.clone();
-    }
-
-    public int getActionDim() {
-        return this.action_dim;
-    }
-
-    public void setActionDim(int dim) {
-        this.action_dim = dim;
-    }
-
-    public int getNumDiscreteActionDims() {
-        return this.num_discrete_action_dims;
-    }
-
-    public void setNumDiscreteActionDims(int numDisc) {
-        this.num_discrete_action_dims = numDisc;
-    }
-
-    public int getNumContinuousActionDims() {
-        return this.num_continuous_action_dims;
-    }
-
-    public void setNumContinuousActionDims(int numCont) {
-        this.num_continuous_action_dims = numCont;
-    }
-
-    public char[] getActionTypes() {
-        return this.action_types;
-    }
-
-    public void setActionTypes(char[] types) {
-        this.action_types = types.clone();
-    }
-
-    public double[] getActionMins() {
-        return this.action_mins;
-    }
-
-    public void setActionMins(double[] mins) {
-        this.action_mins = mins.clone();
-    }
-
-    public double[] getActionMaxs() {
-        return this.action_maxs;
-    }
-
-    public void setActionMaxs(double[] maxs) {
-        this.action_maxs = maxs.clone();
-    }
-
-    public double getRewardMax() {
-        return this.reward_max;
-    }
-
-    public void setRewardMax(double max) {
-        this.reward_max = max;
-    }
-
-    public double getRewardMin() {
-        return this.reward_min;
-    }
-
-    public void setRewardMin(double min) {
-        this.reward_min = min;
-    }
-
-    public int getParserVersion() {
-        return this.parser_version;
     }
 }
