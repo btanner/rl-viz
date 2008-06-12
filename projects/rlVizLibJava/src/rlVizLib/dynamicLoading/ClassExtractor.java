@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
  */
 public class ClassExtractor {
 
-    private boolean debugClassLoading = false;
+    private static boolean debugClassLoading = false;
     
     private AbstractResourceGrabber theJarGrabber;
    
@@ -97,7 +97,7 @@ public class ClassExtractor {
      * @param theJar - the jar to get classes from
      * @return
      */
-    public Vector<Class<?>> getAllClassesFromJar(URI theURI) {
+    public static Vector<Class<?>> getAllClassesFromJar(URI theURI) {
         Vector<Class<?>> theClasses = new Vector<Class<?>>();
         
         try {
@@ -185,7 +185,7 @@ public class ClassExtractor {
      * @param theURL - the jar file to load it from
      * @return
      */
-    public Class<?> getClassFromJarEntry(JarEntry thisEntry, URI thisFileURI) {
+    public static Class<?> getClassFromJarEntry(JarEntry thisEntry, URI thisFileURI) {
         if (thisEntry.getName().endsWith(".class")) {
             //Cut off the .class
             String thisClassName = thisEntry.getName().substring(0, thisEntry.getName().length() - 6);
