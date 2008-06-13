@@ -51,9 +51,12 @@ public class AgentShell implements Agent, Unloadable {
         }
     }
     private Agent theAgent = null;
-    Map<String, AgentLoaderInterface> mapFromUniqueNameToLoader = new TreeMap<String, AgentLoaderInterface>();
-    Map<String, String> mapFromUniqueNameToLocalName = new TreeMap<String, String>();
-    Vector<AgentLoaderInterface> theAgentLoaders = new Vector<AgentLoaderInterface>();
+    Map<String, AgentLoaderInterface> mapFromUniqueNameToLoader = null;
+    Map<String, String> mapFromUniqueNameToLocalName = null;
+    Vector<AgentLoaderInterface> theAgentLoaders = null;
+    
+    Vector<String> agentNameVector = null;
+    Vector<ParameterHolder> agentParamVector = null;
 
     public void agent_cleanup() {
         theAgent.agent_cleanup();
@@ -64,7 +67,11 @@ public class AgentShell implements Agent, Unloadable {
     }
 
     public void refreshList() {
-        if (!theAgentLoaders.isEmpty()) {
+    mapFromUniqueNameToLoader =  new TreeMap<String, AgentLoaderInterface>();
+    mapFromUniqueNameToLocalName = new TreeMap<String, String>();
+    theAgentLoaders = new Vector<AgentLoaderInterface>();
+
+    if (!theAgentLoaders.isEmpty()) {
             theAgentLoaders.clear();
         }
         //See if the environment variable for the path to the Jars has been defined
@@ -81,6 +88,27 @@ public class AgentShell implements Agent, Unloadable {
                 System.err.println("Unable to load CPPAgent.dylib, unable to load C/C++ agents: " + failure);
             }
         }
+               agentNameVector = new Vector<String>();
+                agentParamVector = new Vector<ParameterHolder>();
+
+        for (AgentLoaderInterface thisAgentLoader : theAgentLoaders) {
+            thisAgentLoader.makeList();
+
+            Vector<String> thisAgentNameVector = thisAgentLoader.getNames();
+            for (String localName : thisAgentNameVector) {
+                String uniqueName = localName + " " + thisAgentLoader.getTypeSuffix();
+                agentNameVector.add(uniqueName);
+                mapFromUniqueNameToLocalName.put(uniqueName, localName);
+                mapFromUniqueNameToLoader.put(uniqueName, thisAgentLoader);
+            }
+
+            Vector<ParameterHolder> thisParameterVector = thisAgentLoader.getParameters();
+            for (ParameterHolder thisParam : thisParameterVector) {
+                agentParamVector.add(thisParam);
+            }
+
+        }
+
     }
 
     public String agent_message(String theMessage) {
@@ -102,23 +130,6 @@ public class AgentShell implements Agent, Unloadable {
                 Vector<ParameterHolder> agentParamVector = new Vector<ParameterHolder>();
 
                 this.refreshList();
-                for (AgentLoaderInterface thisAgentLoader : theAgentLoaders) {
-                    thisAgentLoader.makeList();
-
-                    Vector<String> thisAgentNameVector = thisAgentLoader.getNames();
-                    for (String localName : thisAgentNameVector) {
-                        String uniqueName = localName + " " + thisAgentLoader.getTypeSuffix();
-                        agentNameVector.add(uniqueName);
-                        mapFromUniqueNameToLocalName.put(uniqueName, localName);
-                        mapFromUniqueNameToLoader.put(uniqueName, thisAgentLoader);
-                    }
-
-                    Vector<ParameterHolder> thisParameterVector = thisAgentLoader.getParameters();
-                    for (ParameterHolder thisParam : thisParameterVector) {
-                        agentParamVector.add(thisParam);
-                    }
-
-                }
                 AgentShellListResponse theResponse = new AgentShellListResponse(agentNameVector, agentParamVector);
                 return theResponse.makeStringResponse();
             }
@@ -157,9 +168,9 @@ public class AgentShell implements Agent, Unloadable {
 
     }
 
-    private Agent loadAgent(String uniqueEnvName, ParameterHolder theParams) {
-        AgentLoaderInterface thisAgentLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
-        String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
+    private Agent loadAgent(String uniqueAgentName, ParameterHolder theParams) {
+        AgentLoaderInterface thisAgentLoader = mapFromUniqueNameToLoader.get(uniqueAgentName);
+        String localName = mapFromUniqueNameToLocalName.get(uniqueAgentName);
         return thisAgentLoader.loadAgent(localName, theParams);
     }
 

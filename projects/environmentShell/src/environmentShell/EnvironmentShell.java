@@ -3,19 +3,18 @@ Copyright 2007 Brian Tanner
 brian@tannerpages.com
 http://brian.tannerpages.com
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
 package environmentShell;
 
 import java.util.Map;
@@ -47,6 +46,7 @@ import rlglue.types.State_key;
 public class EnvironmentShell implements Environment, Unloadable {
 
     protected String libDir;
+    
 
     static {
         RLVizVersion theLinkedLibraryVizVersion = rlVizLib.rlVizCore.getRLVizSpecVersion();
@@ -59,9 +59,11 @@ public class EnvironmentShell implements Environment, Unloadable {
         }
     }
     private Environment theEnvironment = null;
-    Map<String, EnvironmentLoaderInterface> mapFromUniqueNameToLoader = new TreeMap<String, EnvironmentLoaderInterface>();
-    Map<String, String> mapFromUniqueNameToLocalName = new TreeMap<String, String>();
-    Vector<EnvironmentLoaderInterface> theEnvironmentLoaders = new Vector<EnvironmentLoaderInterface>();
+    Map<String, EnvironmentLoaderInterface> mapFromUniqueNameToLoader = null;
+    Map<String, String> mapFromUniqueNameToLocalName = null;
+    Vector<EnvironmentLoaderInterface> theEnvironmentLoaders = null;
+    Vector<String> envNameVector = null;
+    Vector<ParameterHolder> envParamVector = null;
 
     public EnvironmentShell() {
         //See if the environment variable for the path to the Jars has been defined
@@ -69,6 +71,12 @@ public class EnvironmentShell implements Environment, Unloadable {
     }
 
     public void refreshList() {
+        mapFromUniqueNameToLoader = new TreeMap<String, EnvironmentLoaderInterface>();
+        mapFromUniqueNameToLocalName = new TreeMap<String, String>();
+        theEnvironmentLoaders = new Vector<EnvironmentLoaderInterface>();
+        envNameVector = new Vector<String>();
+        envParamVector = new Vector<ParameterHolder>();
+
         if (!theEnvironmentLoaders.isEmpty()) {
             theEnvironmentLoaders.clear();
         }
@@ -85,6 +93,23 @@ public class EnvironmentShell implements Environment, Unloadable {
             } catch (UnsatisfiedLinkError failure) {
                 System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments: " + failure);
             }
+        }
+
+        for (EnvironmentLoaderInterface thisEnvLoader : theEnvironmentLoaders) {
+            thisEnvLoader.makeList();
+            Vector<String> thisEnvNameVector = thisEnvLoader.getNames();
+            for (String localName : thisEnvNameVector) {
+                String uniqueName = localName + " " + thisEnvLoader.getTypeSuffix();
+                envNameVector.add(uniqueName);
+                mapFromUniqueNameToLocalName.put(uniqueName, localName);
+                mapFromUniqueNameToLoader.put(uniqueName, thisEnvLoader);
+            }
+
+            Vector<ParameterHolder> thisParameterVector = thisEnvLoader.getParameters();
+            for (ParameterHolder thisParam : thisParameterVector) {
+                envParamVector.add(thisParam);
+            }
+
         }
     }
 
@@ -120,27 +145,10 @@ public class EnvironmentShell implements Environment, Unloadable {
 
             //Handle a request for the list of environments
             if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellListQuery.id()) {
-                Vector<String> envNameVector = new Vector<String>();
-                Vector<ParameterHolder> envParamVector = new Vector<ParameterHolder>();
 
                 this.refreshList();
 
-                for (EnvironmentLoaderInterface thisEnvLoader : theEnvironmentLoaders) {
-                    thisEnvLoader.makeList();
-                    Vector<String> thisEnvNameVector = thisEnvLoader.getNames();
-                    for (String localName : thisEnvNameVector) {
-                        String uniqueName = localName + " " + thisEnvLoader.getTypeSuffix();
-                        envNameVector.add(uniqueName);
-                        mapFromUniqueNameToLocalName.put(uniqueName, localName);
-                        mapFromUniqueNameToLoader.put(uniqueName, thisEnvLoader);
-                    }
 
-                    Vector<ParameterHolder> thisParameterVector = thisEnvLoader.getParameters();
-                    for (ParameterHolder thisParam : thisParameterVector) {
-                        envParamVector.add(thisParam);
-                    }
-
-                }
                 EnvShellListResponse theResponse = new EnvShellListResponse(envNameVector, envParamVector);
 
                 return theResponse.makeStringResponse();
