@@ -54,7 +54,6 @@ public class AgentShell implements Agent, Unloadable {
     Map<String, AgentLoaderInterface> mapFromUniqueNameToLoader = null;
     Map<String, String> mapFromUniqueNameToLocalName = null;
     Vector<AgentLoaderInterface> theAgentLoaders = null;
-    
     Vector<String> agentNameVector = null;
     Vector<ParameterHolder> agentParamVector = null;
 
@@ -67,11 +66,13 @@ public class AgentShell implements Agent, Unloadable {
     }
 
     public void refreshList() {
-    mapFromUniqueNameToLoader =  new TreeMap<String, AgentLoaderInterface>();
-    mapFromUniqueNameToLocalName = new TreeMap<String, String>();
-    theAgentLoaders = new Vector<AgentLoaderInterface>();
+        mapFromUniqueNameToLoader = new TreeMap<String, AgentLoaderInterface>();
+        mapFromUniqueNameToLocalName = new TreeMap<String, String>();
+        theAgentLoaders = new Vector<AgentLoaderInterface>();
+        agentNameVector = new Vector<String>();
+        agentParamVector = new Vector<ParameterHolder>();
 
-    if (!theAgentLoaders.isEmpty()) {
+        if (!theAgentLoaders.isEmpty()) {
             theAgentLoaders.clear();
         }
         //See if the environment variable for the path to the Jars has been defined
@@ -88,8 +89,6 @@ public class AgentShell implements Agent, Unloadable {
                 System.err.println("Unable to load CPPAgent.dylib, unable to load C/C++ agents: " + failure);
             }
         }
-               agentNameVector = new Vector<String>();
-                agentParamVector = new Vector<ParameterHolder>();
 
         for (AgentLoaderInterface thisAgentLoader : theAgentLoaders) {
             thisAgentLoader.makeList();
@@ -106,9 +105,7 @@ public class AgentShell implements Agent, Unloadable {
             for (ParameterHolder thisParam : thisParameterVector) {
                 agentParamVector.add(thisParam);
             }
-
         }
-
     }
 
     public String agent_message(String theMessage) {
@@ -126,9 +123,6 @@ public class AgentShell implements Agent, Unloadable {
 
             //Handle a request for the list of agents
             if (theMessageObject.getTheMessageType() == AgentShellMessageType.kAgentShellListRequest.id()) {
-                Vector<String> agentNameVector = new Vector<String>();
-                Vector<ParameterHolder> agentParamVector = new Vector<ParameterHolder>();
-
                 this.refreshList();
                 AgentShellListResponse theResponse = new AgentShellListResponse(agentNameVector, agentParamVector);
                 return theResponse.makeStringResponse();

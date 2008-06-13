@@ -33,8 +33,6 @@ public class AgentShellTest {
     @Test
     public void TestEnvList(){
 //        String theQuery=rlVizLib.messaging.agentShell.AgentShellListRequest.Execute();
-        
-        
         assertTrue(true);
     }
 

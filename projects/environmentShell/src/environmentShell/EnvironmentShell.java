@@ -147,8 +147,6 @@ public class EnvironmentShell implements Environment, Unloadable {
             if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellListQuery.id()) {
 
                 this.refreshList();
-
-
                 EnvShellListResponse theResponse = new EnvShellListResponse(envNameVector, envParamVector);
 
                 return theResponse.makeStringResponse();
