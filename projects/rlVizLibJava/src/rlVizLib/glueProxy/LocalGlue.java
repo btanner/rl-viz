@@ -102,26 +102,6 @@ public class LocalGlue implements RLGlueProxyInterface {
 		for(currentStep=1;!isTerminal &&(maxStepsThisEpisode<=0 || currentStep < maxStepsThisEpisode ) ; currentStep++){
 			RL_step();
 		}
-		//Old code below.  New code is nicer, hopefully it works.
-		
-/*		Observation o=E.env_start();
-		lastAction=A.agent_start(o);
-
-		int whatStep=1;
-		boolean terminal=false;
-		
-		while(!terminal&&(whatStep<numSteps || numSteps<0)){
-			Reward_observation RO=E.env_step(lastAction);
-			terminal=(RO.terminal==1);
-			if(terminal){
-				A.agent_end(RO.r);
-			}else{
-				whatStep++;
-				lastAction=A.agent_step(RO.r, RO.o);
-			}
-		}
-		steps=whatStep;
-*/
 	}
 
 	public synchronized void RL_freeze() { 

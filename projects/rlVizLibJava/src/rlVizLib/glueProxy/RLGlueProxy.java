@@ -35,6 +35,14 @@ public class RLGlueProxy{
 
 	static boolean currentEpisodeOver=true;
 
+        
+        static public void restGlueProxy(){
+            instance=null;
+            localGlue=false;
+            netGlue=true;
+            inited=false;
+            currentEpisodeOver=true;
+        }
 	static public boolean isLocal(){
 		return localGlue;
 	}

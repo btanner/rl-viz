@@ -19,9 +19,6 @@ http://brian.tannerpages.com
   
 package rlVizLib.glueProxy;
 
-import java.io.IOException;
-
-import rlglue.network.Network;
 import rlglue.types.Observation_action;
 import rlglue.types.Random_seed_key;
 import rlglue.types.Reward_observation_action_terminal;
