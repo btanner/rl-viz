@@ -36,7 +36,7 @@ public class RLGlueProxy{
 	static boolean currentEpisodeOver=true;
 
         
-        static public void restGlueProxy(){
+        static public void resetGlueProxy(){
             instance=null;
             localGlue=false;
             netGlue=true;
