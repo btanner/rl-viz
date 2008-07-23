@@ -56,8 +56,8 @@ public class JarClassLoader {
             urlLoader = new URLClassLoader(new URL[]{theFileURI.toURL()});
             theClass = urlLoader.loadClass(className);
         } catch (Throwable e) {
-            //String errorString = "SERIOUS ERROR: When JarClassLoader tried to load class: " + className + " from file: " + theFileURI.toString();
-            //throw new CouldNotLoadJarException(errorString, e);
+            String errorString = "SERIOUS ERROR: When JarClassLoader tried to load class: " + className + " from file: " + theFileURI.toString();
+            throw new CouldNotLoadJarException(errorString, e);
         }
         return theClass;
     }
