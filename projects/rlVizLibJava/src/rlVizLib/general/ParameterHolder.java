@@ -19,6 +19,7 @@ http://brian.tannerpages.com
   
 package rlVizLib.general;
 
+import java.security.InvalidParameterException;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -421,6 +422,66 @@ public static void main(String [] args){
 
 		return intParams.get(name);
 	}
+        
+        public void setParamByMagicFromString(String theAlias, String theValue){
+                        String name=getAlias(theAlias);
+            //This doesn't quite seem right.
+            if(!allParams.containsKey(name)){System.out.println("Careful, you are setting the value of parameter: "+name+" but the parameter hasn't been added...");System.exit(1);}
+            
+            int thisType=getParamTypeByName(name);
+            switch(thisType){
+                case intParam:
+                       setIntegerParam(name, Integer.parseInt(theValue));
+                       break;
+                case doubleParam:
+                       setDoubleParam(name, Double.parseDouble(theValue));
+                       break;
+                case boolParam:
+                       setBooleanParam(name, Boolean.parseBoolean(theValue));
+                       break;
+                case stringParam:
+                      setStringParam(name, theValue);
+                       break;
+            }
+        }
+        
+        public String getParamAsString(String theAlias){
+            String name=getAlias(theAlias);
+            String theReturnValue=null;
+            //This doesn't quite seem right.
+            if(!allParams.containsKey(name)){System.out.println("Careful, you are getting the value of parameter: "+name+" but the parameter hasn't been added...");System.exit(1);}
+            
+            int thisType=getParamTypeByName(name);
+            switch(thisType){
+                case intParam:
+                       theReturnValue=((Integer)getIntegerParam(name)).toString();
+                       break;
+                case doubleParam:
+                       theReturnValue=((Double)getDoubleParam(name)).toString();
+                       break;
+                case boolParam:
+                       theReturnValue=((Boolean)getBooleanParam(name)).toString();
+                       break;
+                case stringParam:
+                       theReturnValue=getStringParam(name);
+                       break;
+            }
+            return theReturnValue;
+        }
+        
+        public int getParamTypeByName(String theAlias){
+            String name=getAlias(theAlias);
+            //This doesn't quite seem right.
+            if(!allParams.containsKey(name)){System.out.println("Careful, you are getting the value of parameter: "+name+" but the parameter hasn't been added...");System.exit(1);}
+            
+            if(intParams.containsKey(name))return intParam;
+            if(doubleParams.containsKey(name))return doubleParam;
+            if(boolParams.containsKey(name))return boolParam;
+            if(stringParams.containsKey(name))return stringParam;
+            
+            throw new InvalidParameterException("Couldn't figure out type of Parameter: "+theAlias);
+            
+        }
 
 public String toString(){
 	StringBuffer theBuffer=new StringBuffer();
