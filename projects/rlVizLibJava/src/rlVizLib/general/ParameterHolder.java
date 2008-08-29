@@ -197,6 +197,7 @@ public static void main(String [] args){
 		allParams.put(thisParamName,stringParam);
 		allParamTypes.add(stringParam);
 		genericNewParam(thisParamName);
+                setStringParam(thisParamName,null);
 	}
 
 	public void addIntegerParam(String thisParamName) {
@@ -208,6 +209,7 @@ public static void main(String [] args){
 		allParams.put(thisParamName,intParam);
 		allParamTypes.add(intParam);
 		genericNewParam(thisParamName);
+                setIntegerParam(thisParamName, null);
 	}
 
 	public void addDoubleParam(String thisParamName) {
@@ -219,10 +221,11 @@ public static void main(String [] args){
 		allParams.put(thisParamName,doubleParam);
 		allParamTypes.add(doubleParam);
 		genericNewParam(thisParamName);
+                setDoubleParam(thisParamName, null);
 	}
 
 
-	public void addDoubleParam(String thisParamName, double thisParamValue) {
+	public void addDoubleParam(String thisParamName, Double thisParamValue) {
 		if(thisParamName.contains(":")||thisParamName.contains("_")){
 			System.out.println("The ParameterName " + thisParamName + " cannot contain a : or _");
 			Thread.dumpStack();
@@ -233,7 +236,7 @@ public static void main(String [] args){
 	}
 
 
-	public void setDoubleParam(String thisParamAlias, double thisParamValue) {
+	public void setDoubleParam(String thisParamAlias, Double thisParamValue) {
 		if(thisParamAlias.contains(":")||thisParamAlias.contains("_")){
 			System.out.println("The ParameterAlias " + thisParamAlias + " cannot contain a : or _");
 			Thread.dumpStack();
@@ -257,10 +260,11 @@ public static void main(String [] args){
 		allParams.put(thisParamName,boolParam);
 		allParamTypes.add(boolParam);
 		genericNewParam(thisParamName);
+                setBooleanParam(thisParamName, null);
 	}
 
 
-	public void addBooleanParam(String thisParamName, boolean thisParamValue) {
+	public void addBooleanParam(String thisParamName, Boolean thisParamValue) {
 		if(thisParamName.contains(":")||thisParamName.contains("_")){
 			System.out.println("The ParameterName " + thisParamName + " cannot contain a : or _");
 			Thread.dumpStack();
@@ -271,7 +275,7 @@ public static void main(String [] args){
 	}
 
 
-	public void setBooleanParam(String thisParamAlias, boolean thisParamValue) {
+	public void setBooleanParam(String thisParamAlias, Boolean thisParamValue) {
 		if(thisParamAlias.contains(":")||thisParamAlias.contains("_")){
 			System.out.println("The ParameterAlias " + thisParamAlias + " cannot contain a : or _");
 			Thread.dumpStack();
@@ -284,7 +288,7 @@ public static void main(String [] args){
 		boolParams.put(name, thisParamValue);
 	}
 	
-	public void addIntegerParam(String thisParamName, int thisParamValue) {
+	public void addIntegerParam(String thisParamName, Integer thisParamValue) {
 		if(thisParamName.contains(":")||thisParamName.contains("_")){
 			System.out.println("The ParameterName " + thisParamName + " cannot contain a : or _");
 			Thread.dumpStack();
@@ -296,7 +300,7 @@ public static void main(String [] args){
 
 
 
-	public void setIntegerParam(String thisParamAlias,int thisParamValue) {
+	public void setIntegerParam(String thisParamAlias,Integer thisParamValue) {
 		if(thisParamAlias.contains(":")||thisParamAlias.contains("_")){
 			System.out.println("The ParameterAlias " + thisParamAlias + " cannot contain a : or _");
 			Thread.dumpStack();
