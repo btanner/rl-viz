@@ -293,12 +293,10 @@ public static void main(String [] args){
 			System.out.println("The ParameterName " + thisParamName + " cannot contain a : or _");
 			Thread.dumpStack();
 			System.exit(1);
-		}
+		} 
 		addIntegerParam(thisParamName);
 		setIntegerParam(thisParamName,thisParamValue);
 	}
-
-
 
 	public void setIntegerParam(String thisParamAlias,Integer thisParamValue) {
 		if(thisParamAlias.contains(":")||thisParamAlias.contains("_")){
