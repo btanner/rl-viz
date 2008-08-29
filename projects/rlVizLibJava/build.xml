@@ -16,12 +16,16 @@
 	<import file="${rl.viz.system.directory}/build-common.xml"/>
 
 
+	<target name="set-debug">
+		<property name="build.debug" value="on"/>
+		<property name="build.deprecation" value="on" />
+	</target>
 
 
     <target name="clean" depends="rl-clean" />
     
 <!-- Not using rl-compile in build-common.xml because we need RL-Glue.jar -->
-    <target name="compile" >
+    <target name="compile"  depends="set-debug">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="rlglue.classpath" debug="${build.debug}" deprecation="${build.deprecation}"/> 
     </target>

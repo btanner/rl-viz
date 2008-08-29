@@ -22,7 +22,7 @@ public class BitManipulationTest {
 		A = 5;
 		B = 7;
 		amount = 3;
-		offset = 10;
+		offset = 10; 
 		try {
 			packed = UtilityShop.putSomeBitsFromIntIntoInt(A,B,amount,offset);
 			unpacked = UtilityShop.extractSomeBitsAsIntFromInt(packed,amount,offset);
