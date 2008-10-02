@@ -1,6 +1,5 @@
 #/bin/bash
-glueRoot=../projects/rl-glue
-glueExe=$glueRoot/RL-Glue/bin/RL_glue
+glueExe=/usr/local/bin/rl_glue
 
 RLVizDir=../system/dist
 RLVizAppJar=$RLVizDir/RLVizApp.jar
@@ -11,7 +10,7 @@ AgentShellJar=$RLVizDir/AgentShell.jar
 
 
 $glueExe &
-java -Xmx128M -DRLVIZ_LIB_PATH=../../rl-library/system/dist/ -classpath $RLVizLibJar:$RLVizAppJar btViz.NetGraphicalDriverBothDynamic &
-java -Xmx128M -DRLVIZ_LIB_PATH=../../rl-library/system/dist/ -classpath $RLVizLibJar:$AgentShellJar rlglue.agent.AgentLoader agentShell.AgentShell &
-java -Xmx128M -DRLVIZ_LIB_PATH=../../rl-library/system/dist/ -classpath $RLVizLibJar:$EnvShellJar rlglue.environment.EnvironmentLoader environmentShell.EnvironmentShell 
+java -ea -Xmx128M -DRLVIZ_LIB_PATH=../../rl-library/system/dist/ -classpath $RLVizLibJar:$RLVizAppJar btViz.NetGraphicalDriverBothDynamic &
+java -ea  -Xmx128M -DRLVIZ_LIB_PATH=../../rl-library/system/dist/ -classpath $RLVizLibJar:$AgentShellJar org.rlcommunity.rlglue.codec.util.AgentLoader agentShell.AgentShell &
+java -ea  -Xmx128M -DRLVIZ_LIB_PATH=../../rl-library/system/dist/ -classpath $RLVizLibJar:$EnvShellJar org.rlcommunity.rlglue.codec.util.EnvironmentLoader environmentShell.EnvironmentShell 
 

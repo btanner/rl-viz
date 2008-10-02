@@ -22,7 +22,7 @@ package btViz;
 
 import btViz.frames.RLVizFrame;
 import java.io.IOException;
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 
 /**
  *
@@ -30,7 +30,6 @@ import rlVizLib.glueProxy.RLGlueProxy;
  */
 public class GraphicDriverNoDynamicLoading {
 	public static void main(String [] args) throws IOException {
-		RLGlueProxy.useNetGlue();
             //Setup what loaders we want
 		RLVizPreferences.getInstance().setDynamicAgentLoading(false);
 		RLVizPreferences.getInstance().setDynamicEnvironmentLoading(false);

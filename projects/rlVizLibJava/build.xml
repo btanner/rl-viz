@@ -24,14 +24,14 @@
 
     <target name="clean" depends="rl-clean" />
     
-<!-- Not using rl-compile in build-common.xml because we need RL-Glue.jar -->
+<!-- Not using rl-compile in build-common.xml because we need rlgluecodec.jar -->
     <target name="compile"  depends="set-debug">
         <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="rlglue.classpath" debug="${build.debug}" deprecation="${build.deprecation}"/> 
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="rlgluecodec.classpath" debug="${build.debug}" deprecation="${build.deprecation}"/> 
     </target>
 
     <target name="jar" depends="compile,get.svn.version" >
-        <unjar src="${rlglue.jar}" dest="${classes.dir}" />
+        <unjar src="${rlgluecodec.jar}" dest="${classes.dir}" />
         <mkdir dir="${dist.dir}" />
         <jar destfile="${result.jar}" basedir="${classes.dir}" >
             <manifest>
@@ -64,7 +64,7 @@
     
     <target name="run-test" depends="compile-tests,jar">
 		<mkdir dir="${test.raw}" />
-       <junit printsummary="withOutAndErr" showoutput="yes" >
+       <junit printsummary="withOutAndErr" haltonfailure="no" showoutput="yes" maxmemory="1024M">
             <classpath>
                 <path refid="junit.classpath" /> 
 				<path refid="result.jar.classpath" />
@@ -73,7 +73,7 @@
             </classpath>
             
             <batchtest fork="yes" todir="${test.raw}">
-                <formatter type="xml"/> 
+	                <formatter type="xml"/> 
                 <fileset dir="${test.dir}" includes="**/*Test.java"/>
             </batchtest>
         </junit>

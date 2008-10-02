@@ -20,13 +20,12 @@ http://brian.tannerpages.com
 package rlVizLib.messaging.agentShell;
 
 
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
-import rlglue.RLGlue;
 
 public class AgentShellUnLoadRequest extends AgentShellMessages{
 	public AgentShellUnLoadRequest(GenericMessage theMessageObject) {
@@ -44,7 +43,7 @@ public class AgentShellUnLoadRequest extends AgentShellMessages{
 				MessageValueType.kNone.id(),
 				"NULL");
 
-		String responseMessage=RLGlueProxy.RL_agent_message(theRequestString);
+		String responseMessage=RLGlue.RL_agent_message(theRequestString);
 
 		AgentShellUnLoadResponse theResponse;
 		try {

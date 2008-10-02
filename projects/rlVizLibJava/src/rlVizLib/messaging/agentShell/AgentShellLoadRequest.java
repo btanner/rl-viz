@@ -21,8 +21,8 @@ package rlVizLib.messaging.agentShell;
 
 import java.util.StringTokenizer;
 
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.general.ParameterHolder;
-import rlVizLib.glueProxy.RLGlueProxy;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
@@ -69,7 +69,7 @@ public class AgentShellLoadRequest extends AgentShellMessages{
         public static AgentShellLoadResponse Execute(String agentName, ParameterHolder theParams){
 		String theRequestString=getRequestMessage(agentName,theParams);
 
-		String responseMessage=RLGlueProxy.RL_agent_message(theRequestString);
+		String responseMessage=RLGlue.RL_agent_message(theRequestString);
 
 		AgentShellLoadResponse theResponse;
 		try {

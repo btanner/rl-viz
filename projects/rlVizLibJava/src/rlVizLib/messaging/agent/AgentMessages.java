@@ -21,7 +21,7 @@ package rlVizLib.messaging.agent;
 
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
-import rlglue.agent.Agent;
+import org.rlcommunity.rlglue.codec.AgentInterface;
 
 public class AgentMessages extends AbstractMessage {
 
@@ -29,7 +29,7 @@ public class AgentMessages extends AbstractMessage {
         super(theMessageObject);
     }
 
-    public String handleAutomatically(Agent theAgent) {
+    public String handleAutomatically(AgentInterface theAgent) {
         return "no response";
     }
 

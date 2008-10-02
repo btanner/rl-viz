@@ -33,7 +33,7 @@ import javax.swing.event.ChangeListener;
 import rlVizLib.visualization.interfaces.ValueFunctionDataProvider;
 import rlVizLib.utilities.UtilityShop;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
  *

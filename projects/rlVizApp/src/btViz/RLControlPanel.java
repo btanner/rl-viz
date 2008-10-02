@@ -41,7 +41,7 @@ import javax.swing.Box;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 
 
 

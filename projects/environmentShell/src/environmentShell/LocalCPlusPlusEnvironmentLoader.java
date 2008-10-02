@@ -30,7 +30,7 @@ import java.util.Vector;
 import rlVizLib.dynamicLoading.CompositeResourceGrabber;
 import rlVizLib.dynamicLoading.DylibGrabber;
 import rlVizLib.general.ParameterHolder;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 /**
  *	Java class to talk to a C++ counterpart, 
@@ -147,7 +147,7 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
      * @param theParams
      * @return
      */
-    public Environment loadEnvironment(String envName, ParameterHolder theParams) {
+    public EnvironmentInterface loadEnvironment(String envName, ParameterHolder theParams) {
         URI theEnvURI=publicNameToFullName.get(envName);
         
         JNIEnvironment theEnv = new JNIEnvironment(theEnvURI.getPath(), theParams);

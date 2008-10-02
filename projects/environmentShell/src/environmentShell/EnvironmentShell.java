@@ -36,14 +36,14 @@ import rlVizLib.messaging.environmentShell.EnvShellMessageType;
 import rlVizLib.messaging.environmentShell.EnvShellUnLoadResponse;
 import rlVizLib.messaging.environmentShell.EnvironmentShellMessageParser;
 import rlVizLib.messaging.environmentShell.EnvironmentShellMessages;
-import rlglue.environment.Environment;
-import rlglue.types.Action;
-import rlglue.types.Observation;
-import rlglue.types.Random_seed_key;
-import rlglue.types.Reward_observation;
-import rlglue.types.State_key;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Random_seed_key;
+import org.rlcommunity.rlglue.codec.types.Reward_observation;
+import org.rlcommunity.rlglue.codec.types.State_key;
 
-public class EnvironmentShell implements Environment, Unloadable {
+public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
     protected String libDir;
     
@@ -58,7 +58,7 @@ public class EnvironmentShell implements Environment, Unloadable {
             System.err.println("Warning :: Compile version used to build AgentShell is:  " + ourCompileVersion);
         }
     }
-    private Environment theEnvironment = null;
+    private EnvironmentInterface theEnvironment = null;
     Map<String, EnvironmentLoaderInterface> mapFromUniqueNameToLoader = null;
     Map<String, String> mapFromUniqueNameToLocalName = null;
     Vector<EnvironmentLoaderInterface> theEnvironmentLoaders = null;
@@ -130,7 +130,6 @@ public class EnvironmentShell implements Environment, Unloadable {
     }
 
     public String env_message(String theMessage) {
-
         GenericMessage theGenericMessage;
         try {
             theGenericMessage = new GenericMessage(theMessage);
@@ -193,7 +192,7 @@ public class EnvironmentShell implements Environment, Unloadable {
 
     }
 
-    private Environment loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
+    private EnvironmentInterface loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
         EnvironmentLoaderInterface thisEnvLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
         String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
         return thisEnvLoader.loadEnvironment(localName, theParams);

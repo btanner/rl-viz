@@ -19,13 +19,12 @@ http://brian.tannerpages.com
   
 package rlVizLib.messaging.environmentShell;
 
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
-import rlglue.RLGlue;
 
 public class EnvShellListRequest extends EnvironmentShellMessages{
 
@@ -44,7 +43,7 @@ public class EnvShellListRequest extends EnvironmentShellMessages{
 				"NULL");
 
 
-		String responseMessage=RLGlueProxy.RL_env_message(theRequest);
+		String responseMessage=RLGlue.RL_env_message(theRequest);
 		
 		EnvShellListResponse theResponse;
 		try {

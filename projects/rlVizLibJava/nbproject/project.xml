@@ -45,6 +45,32 @@
                     <target>clean</target>
                     <target>jar</target>
                 </action>
+                <action name="debug.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-selected-file-in-tests</target>
+                    <context>
+                        <property>debug.class</property>
+                        <folder>tests</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-tests</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>tests</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
             <view>
                 <items>
@@ -77,13 +103,13 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">../../system/libs/RL-Glue.jar</classpath>
+                <classpath mode="compile">/Users/btanner/Documents/Java-Projects/rl-viz/system/libs/RLGlueCodec/JavaRLGlueCodec.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>tests</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../system/libs/junit.jar:../../system/dist/RLVizLib.jar</classpath>
+                <classpath mode="compile">../../system/libs/junit.jar:../../system/dist/RLVizLib.jar:/Users/btanner/Documents/Java-Projects/rl-viz/system/libs/RLGlueCodec/JavaRLGlueCodec.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

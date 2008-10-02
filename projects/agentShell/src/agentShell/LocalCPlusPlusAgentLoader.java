@@ -22,7 +22,7 @@ import java.io.File;
 import java.util.Vector;
 
 import rlVizLib.general.ParameterHolder;
-import rlglue.agent.Agent;
+import org.rlcommunity.rlglue.codec.AgentInterface;
 
 //LocalCPlusPlusAgentLoader loads the c dynamic library factory. This library essentially wraps
 //an agent library providing information for the JNI api to allow the java rl-viz to make
@@ -88,9 +88,9 @@ public class LocalCPlusPlusAgentLoader implements AgentLoaderInterface {
 		return theAgentParams;
 	}
 	
-	public Agent loadAgent(String agentName, ParameterHolder theParams) {
+	public AgentInterface loadAgent(String agentName, ParameterHolder theParams) {
 		String thename = libDir + agentName;
-		Agent theAgent=new JNIAgent(thename,theParams);
+		AgentInterface theAgent=new JNIAgent(thename,theParams);
 		return theAgent;
 	}
 

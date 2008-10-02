@@ -19,7 +19,7 @@ http://brian.tannerpages.com
   
 package rlVizLib.visualization;
 
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 public interface QueryableAgent {
 	public double getValueForState(Observation theObservation);

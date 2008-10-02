@@ -22,7 +22,7 @@ package rlVizLib.messaging.environmentShell;
 import java.util.StringTokenizer;
 
 import rlVizLib.general.ParameterHolder;
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
@@ -69,7 +69,7 @@ public class EnvShellLoadRequest extends EnvironmentShellMessages{
         public static EnvShellLoadResponse Execute(String envName, ParameterHolder theParams){
 		String theRequestString=getRequestMessage(envName,theParams);
 
-		String responseMessage=RLGlueProxy.RL_env_message(theRequestString);
+		String responseMessage=RLGlue.RL_env_message(theRequestString);
 
 		EnvShellLoadResponse theResponse;
 		try {

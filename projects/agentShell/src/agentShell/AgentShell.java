@@ -34,11 +34,11 @@ import rlVizLib.messaging.agentShell.AgentShellMessageParser;
 import rlVizLib.messaging.agentShell.AgentShellMessageType;
 import rlVizLib.messaging.agentShell.AgentShellMessages;
 import rlVizLib.messaging.agentShell.AgentShellUnLoadResponse;
-import rlglue.agent.Agent;
-import rlglue.types.Action;
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
-public class AgentShell implements Agent, Unloadable {
+public class AgentShell implements AgentInterface, Unloadable {
 
     static {
         RLVizVersion theLinkedLibraryVizVersion = rlVizLib.rlVizCore.getRLVizSpecVersion();
@@ -50,7 +50,7 @@ public class AgentShell implements Agent, Unloadable {
             System.err.println("Warning :: Compile version used to build AgentShell is:  " + ourCompileVersion);
         }
     }
-    private Agent theAgent = null;
+    private AgentInterface theAgent = null;
     Map<String, AgentLoaderInterface> mapFromUniqueNameToLoader = null;
     Map<String, String> mapFromUniqueNameToLocalName = null;
     Vector<AgentLoaderInterface> theAgentLoaders = null;
@@ -162,7 +162,7 @@ public class AgentShell implements Agent, Unloadable {
 
     }
 
-    private Agent loadAgent(String uniqueAgentName, ParameterHolder theParams) {
+    private AgentInterface loadAgent(String uniqueAgentName, ParameterHolder theParams) {
         AgentLoaderInterface thisAgentLoader = mapFromUniqueNameToLoader.get(uniqueAgentName);
         String localName = mapFromUniqueNameToLocalName.get(uniqueAgentName);
         return thisAgentLoader.loadAgent(localName, theParams);
@@ -172,8 +172,12 @@ public class AgentShell implements Agent, Unloadable {
         theAgent.agent_end(reward);
     }
 
+    /**
+     * @deprecated
+     */
     public void agent_freeze() {
-        theAgent.agent_freeze();
+        System.err.println("agent_freeze is deprecated");
+        Thread.dumpStack();
     }
 
     public void agent_init(String taskSpecification) {

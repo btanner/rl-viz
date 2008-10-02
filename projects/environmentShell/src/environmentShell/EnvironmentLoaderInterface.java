@@ -18,11 +18,10 @@ http://brian.tannerpages.com
 
 package environmentShell;
 
-
 import rlVizLib.dynamicLoading.DynamicLoaderInterface;
 import rlVizLib.general.ParameterHolder;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 public interface EnvironmentLoaderInterface extends DynamicLoaderInterface{
-	public Environment loadEnvironment(String envName, ParameterHolder theParams);
+	public EnvironmentInterface loadEnvironment(String envName, ParameterHolder theParams);
 }

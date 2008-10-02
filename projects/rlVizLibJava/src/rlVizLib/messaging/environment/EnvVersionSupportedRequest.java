@@ -21,14 +21,14 @@ package rlVizLib.messaging.environment;
 
 
 import rlVizLib.general.RLVizVersion;
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.rlVizCore;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 public class EnvVersionSupportedRequest extends EnvironmentMessages{
 
@@ -44,7 +44,7 @@ public class EnvVersionSupportedRequest extends EnvironmentMessages{
 				MessageValueType.kNone.id(),
 				"NULL");
 
-		String responseMessage=RLGlueProxy.RL_env_message(theRequest);
+		String responseMessage=RLGlue.RL_env_message(theRequest);
 
 		EnvVersionSupportedResponse theResponse;
 		try {
@@ -57,7 +57,7 @@ public class EnvVersionSupportedRequest extends EnvironmentMessages{
 	}
 
 	@Override
-	public String handleAutomatically(Environment theEnvironment) {
+	public String handleAutomatically(EnvironmentInterface theEnvironment) {
                 RLVizVersion theVersion=rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(theEnvironment.getClass());
 		EnvVersionSupportedResponse theResponse=new EnvVersionSupportedResponse(theVersion);
 		return theResponse.makeStringResponse();

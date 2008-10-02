@@ -21,14 +21,14 @@ package rlVizLib.messaging.agent;
 
 
 import rlVizLib.general.RLVizVersion;
-import rlVizLib.glueProxy.RLGlueProxy;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.rlVizCore;
-import rlglue.agent.Agent;
+import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.RLGlue;
 
 
 public class AgentVersionSupportedRequest extends AgentMessages{
@@ -45,7 +45,7 @@ public class AgentVersionSupportedRequest extends AgentMessages{
 				MessageValueType.kNone.id(),
 				"NULL");
 
-		String responseMessage=RLGlueProxy.RL_agent_message(theRequest);
+		String responseMessage=RLGlue.RL_agent_message(theRequest);
 
 		AgentVersionSupportedResponse theResponse;
 		try {
@@ -58,7 +58,7 @@ public class AgentVersionSupportedRequest extends AgentMessages{
 	}
 
 	@Override
-	public String handleAutomatically(Agent theAgent) {
+	public String handleAutomatically(AgentInterface theAgent) {
                 RLVizVersion theVersion=rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(theAgent.getClass());
 		AgentVersionSupportedResponse theResponse=new AgentVersionSupportedResponse(theVersion);
 		return theResponse.makeStringResponse();

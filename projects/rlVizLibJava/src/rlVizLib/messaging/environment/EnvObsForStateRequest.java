@@ -23,7 +23,7 @@ package rlVizLib.messaging.environment;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
@@ -31,8 +31,8 @@ import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.getEnvObsForStateInterface;
 import rlVizLib.utilities.UtilityShop;
-import rlglue.environment.Environment;
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 public class EnvObsForStateRequest extends EnvironmentMessages{
 	Vector<Observation> theRequestStates=new Vector<Observation>();
@@ -75,7 +75,7 @@ public class EnvObsForStateRequest extends EnvironmentMessages{
 
 
 
-		String responseMessage=RLGlueProxy.RL_env_message(theRequest);
+		String responseMessage=RLGlue.RL_env_message(theRequest);
 
 		EnvObsForStateResponse theResponse;
 		try {
@@ -102,7 +102,7 @@ public class EnvObsForStateRequest extends EnvironmentMessages{
 	}
 
 	@Override
-	public String handleAutomatically(Environment theEnvironment) {
+	public String handleAutomatically(EnvironmentInterface theEnvironment) {
 		Vector<Observation> theObservations= new Vector<Observation>();
 		getEnvObsForStateInterface castedEnv=(getEnvObsForStateInterface)theEnvironment;
 		

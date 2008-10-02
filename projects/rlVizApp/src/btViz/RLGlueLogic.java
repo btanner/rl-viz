@@ -26,7 +26,7 @@ import java.util.Vector;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.RLVizVersion;
 import rlVizLib.general.TinyGlue;
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.agentShell.AgentShellListRequest;
 import rlVizLib.messaging.agentShell.AgentShellListResponse;
 import rlVizLib.messaging.agentShell.AgentShellLoadRequest;
@@ -200,7 +200,7 @@ public class RLGlueLogic {
     }
 
     void RL_init() {
-        RLGlueProxy.RL_init();
+        RLGlue.RL_init();
     }
 
     void startVisualizers() {
@@ -246,7 +246,7 @@ public class RLGlueLogic {
 		myGlueState=null;
 
 		//Only cleanup if we have inited before
-                if(RLGlueProxy.isInited())RLGlueProxy.RL_cleanup();
+                if(RLGlue.isInited())RLGlue.RL_cleanup();
 
 		finishUnloadEnvironment();
 		finishUnloadAgent();

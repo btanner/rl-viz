@@ -37,8 +37,8 @@ import java.util.Vector;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.RLVizVersion;
 import rlVizLib.utilities.UtilityShop;
-import rlglue.agent.Agent;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 /**
  * @author btanner
@@ -98,16 +98,16 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         File JarDir = new File(theUriList.elementAt(0).toString());
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
             //System.out.println("-------Loading both types");
-            allMatching = theClassExtractor.getAllClassesThatImplement(Environment.class, Unloadable.class);
-            allMatching.addAll(theClassExtractor.getAllClassesThatImplement(Agent.class, Unloadable.class));
+            allMatching = theClassExtractor.getAllClassesThatImplement(EnvironmentInterface.class, Unloadable.class);
+            allMatching.addAll(theClassExtractor.getAllClassesThatImplement(AgentInterface.class, Unloadable.class));
         }
         if (theLoaderType.id() == EnvOrAgentType.kEnv.id()) {
             //System.out.println("-------Loading kEnv types");
-            allMatching = theClassExtractor.getAllClassesThatImplement(Environment.class, Unloadable.class);
+            allMatching = theClassExtractor.getAllClassesThatImplement(EnvironmentInterface.class, Unloadable.class);
         }
         if (theLoaderType.id() == EnvOrAgentType.kAgent.id()) {
             //System.out.println("-------Loading kAgent types");
-            allMatching = theClassExtractor.getAllClassesThatImplement(Agent.class, Unloadable.class);
+            allMatching = theClassExtractor.getAllClassesThatImplement(AgentInterface.class, Unloadable.class);
         }
 
         for (Class<?> thisClass : allMatching) {

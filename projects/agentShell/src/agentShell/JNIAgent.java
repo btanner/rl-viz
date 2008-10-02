@@ -21,12 +21,12 @@ package agentShell;
 import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.visualization.QueryableAgent;
-import rlglue.agent.Agent;
-import rlglue.types.Action;
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 
-public class JNIAgent implements Agent, QueryableAgent, Unloadable {
+public class JNIAgent implements AgentInterface, QueryableAgent, Unloadable {
     private boolean debugThis=false;
     
 	public native boolean JNIloadAgent(String s);

@@ -20,12 +20,12 @@ package environmentShell;
 
 import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;
-import rlglue.environment.Environment;
-import rlglue.types.Action;
-import rlglue.types.Observation;
-import rlglue.types.Random_seed_key;
-import rlglue.types.Reward_observation;
-import rlglue.types.State_key;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Random_seed_key;
+import org.rlcommunity.rlglue.codec.types.Reward_observation;
+import org.rlcommunity.rlglue.codec.types.State_key;
 
 //
 //  JNIEnvironment.java
@@ -35,7 +35,7 @@ import rlglue.types.State_key;
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-public class JNIEnvironment implements Environment, Unloadable {
+public class JNIEnvironment implements EnvironmentInterface, Unloadable {
 
     public native boolean JNIloadEnvironment(String theFilePath, String theParams);
     public native String JNIenvinit();

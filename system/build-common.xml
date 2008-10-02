@@ -21,7 +21,7 @@ We'll try and rely on minimal variables from above.
 <property name="test.classes.dir" value="${build.dir}/testclasses"/>
 
 <property name="junit.jar" value="${rlviz.libs.dir}/junit.jar" />
-<property name="rlglue.jar" value="${rlviz.libs.dir}/RL-Glue.jar" />
+<property name="rlgluecodec.jar" value="${rlviz.libs.dir}/RLGlueCodec/JavaRLGlueCodec.jar" />
 
 <property name="test.reports"   value="reports"/>
 <property name="test.raw"   value="reports/raw"/>
@@ -32,7 +32,7 @@ We'll try and rely on minimal variables from above.
 <property name="rlvizlib.jar" value="${dist.dir}/RLVizLib.jar" />
 <path id="rlvizlib.classpath" location="${rlvizlib.jar}"/>
 <path id="junit.classpath" location="${junit.jar}"/>
-<path id="rlglue.classpath" location="${rlglue.jar}"/>
+<path id="rlgluecodec.classpath" location="${rlgluecodec.jar}"/>
 <path id="test.build.classpath" location="${test.classes.dir}"/>
 <path id="result.jar.classpath" location="${result.jar}"/>
 

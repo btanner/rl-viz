@@ -22,11 +22,12 @@ package btViz;
 import btViz.frames.RLVizFrame;
 import java.io.IOException;
 
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 
 import agentShell.AgentShell;
 
 import environmentShell.EnvironmentShell;
+import rlVizLib.glueProxy.LocalGlue;
 
 public class LocalGraphicalDriverBothDynamicBothViz {
 
@@ -39,7 +40,7 @@ public class LocalGraphicalDriverBothDynamicBothViz {
 
 		EnvironmentShell E= new EnvironmentShell();
 		AgentShell A = new AgentShell();
-		RLGlueProxy.useLocalGlue(E, A);
+		RLGlue.setGlue(new LocalGlue(E, A));
 		
 		
 

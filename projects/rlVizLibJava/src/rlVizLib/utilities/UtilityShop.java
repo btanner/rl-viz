@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.StringTokenizer;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.hasVersionDetails;
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
  * The Utility Shop is a useful dump for all sorts of odds and ends that come in

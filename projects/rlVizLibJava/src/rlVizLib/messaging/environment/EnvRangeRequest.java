@@ -21,14 +21,14 @@ package rlVizLib.messaging.environment;
 
 import java.util.Vector;
 
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.getEnvMaxMinsInterface;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 public class EnvRangeRequest extends EnvironmentMessages{
 
@@ -44,7 +44,7 @@ public class EnvRangeRequest extends EnvironmentMessages{
 				MessageValueType.kNone.id(),
 		"NULL");
 
-		String responseMessage=RLGlueProxy.RL_env_message(theRequest);
+		String responseMessage=RLGlue.RL_env_message(theRequest);
 
 		EnvRangeResponse theResponse;
 		try {
@@ -64,7 +64,7 @@ public class EnvRangeRequest extends EnvironmentMessages{
 	}
 
 	@Override
-	public String handleAutomatically(Environment theEnvironment) {
+	public String handleAutomatically(EnvironmentInterface theEnvironment) {
 		
 		getEnvMaxMinsInterface castedEnv = (getEnvMaxMinsInterface)theEnvironment;
 		//			//Handle a request for the ranges

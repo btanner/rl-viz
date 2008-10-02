@@ -19,7 +19,7 @@ http://brian.tannerpages.com
   
 package rlVizLib.messaging.interfaces;
 
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 
 public interface getEnvObsForStateInterface {

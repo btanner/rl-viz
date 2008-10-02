@@ -22,14 +22,14 @@ package btViz;
 import java.io.IOException;
 import java.util.Vector;
 
+import org.rlcommunity.rlglue.codec.RLGlue;
+import org.rlcommunity.rlglue.codec.types.Observation;
 import rlVizLib.messaging.agent.AgentValueForObsRequest;
 import rlVizLib.messaging.agent.AgentValueForObsResponse;
 import rlVizLib.messaging.environment.EnvObsForStateRequest;
 import rlVizLib.messaging.environment.EnvObsForStateResponse;
 import rlVizLib.messaging.environment.EnvRangeRequest;
 import rlVizLib.messaging.environment.EnvRangeResponse;
-import rlglue.RLGlue;
-import rlglue.types.Observation;
 
 
 public class Driver

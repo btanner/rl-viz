@@ -20,7 +20,7 @@ http://brian.tannerpages.com
 package rlVizLib.messaging.environment;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 
 	public class EnvironmentMessages extends AbstractMessage{
@@ -30,7 +30,7 @@ import rlglue.environment.Environment;
 		}
 
 		
-		public String handleAutomatically(Environment theEnvironment){
+		public String handleAutomatically(EnvironmentInterface theEnvironment){
 			return "no response";
 		}
 

@@ -29,7 +29,7 @@
 	</ant>
 </target>
 
-<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="rl-glue,RLVizLib,envShell,agentShell,rlVizApp" >
+<target name="all" description="Build RLVizLib, and the agent and environment shells, and RLVizApp" depends="RLVizLib,envShell,agentShell,rlVizApp" >
 	<echo message="Operating system name: 
         ${os.name}"/>
 </target>
@@ -51,15 +51,6 @@
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="test"/>
 </target>
 
-<target name="rl-glue" description="Build RL-Glue executable and Jar">
-	  <exec executable="make" dir="projects/rl-glue">
-		<arg value="rl-glue"/>
-	</exec>
-	 <exec executable="make" dir="projects/rl-glue/RL-Glue/Java/" />
-	<copy file="projects/rl-glue/RL-Glue/Java/RL-Glue.jar" todir="system/libs"/>
-	
-</target>
-
 <target name="externalLoaders" description="Make external Loaders">
 	<exec executable="make" dir="projects/externalLoaders" />
 </target>
@@ -71,9 +62,6 @@
    <ant antfile="build.xml" dir="projects/environmentShell" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/agentShell" inheritAll="false" target="clean"/>
    <ant antfile="build.xml" dir="projects/rlVizApp" inheritAll="false" target="clean"/>
-    <exec executable="make" dir="projects/rl-glue">
-		<arg value="clean"/>
-	</exec>
 	<exec executable="make" dir="projects/externalLoaders">
 		<arg value="clean"/>
 	</exec>

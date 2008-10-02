@@ -20,14 +20,14 @@ http://brian.tannerpages.com
 package rlVizLib.messaging.agent;
 
 
-import rlVizLib.glueProxy.RLGlueProxy;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
-import rlglue.agent.Agent;
+import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.RLGlue;
 
 public class AgentVisualizerNameRequest extends AgentMessages{
 
@@ -43,7 +43,7 @@ public class AgentVisualizerNameRequest extends AgentMessages{
 				MessageValueType.kNone.id(),
 				"NULL");
 
-		String responseMessage=RLGlueProxy.RL_agent_message(theRequest);
+		String responseMessage=RLGlue.RL_agent_message(theRequest);
 
 		AgentVisualizerNameResponse theResponse;
 		try {
@@ -56,7 +56,7 @@ public class AgentVisualizerNameRequest extends AgentMessages{
 	}
 
 	@Override
-	public String handleAutomatically(Agent theAgent) {
+	public String handleAutomatically(AgentInterface theAgent) {
 		HasAVisualizerInterface castedAgent = (HasAVisualizerInterface)theAgent;
 		AgentVisualizerNameResponse theResponse=new AgentVisualizerNameResponse(castedAgent.getVisualizerClassName());
 		return theResponse.makeStringResponse();

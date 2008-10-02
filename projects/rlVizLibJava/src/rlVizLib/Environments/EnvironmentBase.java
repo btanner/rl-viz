@@ -19,12 +19,11 @@ http://brian.tannerpages.com
   
 package rlVizLib.Environments;
 
-import rlglue.environment.Environment;
-import rlglue.types.Observation;
-import rlglue.types.Reward_observation;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import org.rlcommunity.rlglue.codec.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation;
 
-
-public abstract class EnvironmentBase implements Environment {
+public abstract class EnvironmentBase implements EnvironmentInterface {
 
 	abstract protected Observation makeObservation();
 	

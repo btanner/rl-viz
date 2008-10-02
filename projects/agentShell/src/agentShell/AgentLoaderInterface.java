@@ -21,8 +21,8 @@ package agentShell;
 
 import rlVizLib.dynamicLoading.DynamicLoaderInterface;
 import rlVizLib.general.ParameterHolder;
-import rlglue.agent.Agent;
+import org.rlcommunity.rlglue.codec.AgentInterface;
 
 public interface AgentLoaderInterface extends DynamicLoaderInterface{
-	public Agent loadAgent(String agentName, ParameterHolder theParams);
+	public AgentInterface loadAgent(String agentName, ParameterHolder theParams);
 }

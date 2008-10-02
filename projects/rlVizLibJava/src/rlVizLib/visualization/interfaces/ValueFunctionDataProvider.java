@@ -20,7 +20,7 @@ http://brian.tannerpages.com
 package rlVizLib.visualization.interfaces;
 import java.util.Vector;
 
-import rlglue.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 
 public interface ValueFunctionDataProvider {

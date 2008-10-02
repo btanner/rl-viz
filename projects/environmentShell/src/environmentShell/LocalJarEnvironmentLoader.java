@@ -22,7 +22,7 @@ package environmentShell;
 import rlVizLib.dynamicLoading.EnvOrAgentType;
 import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface{
 
@@ -31,9 +31,9 @@ public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader im
     }
 
 
-    public Environment loadEnvironment(String requestedName, ParameterHolder theParams) {
+    public EnvironmentInterface loadEnvironment(String requestedName, ParameterHolder theParams) {
         Object theEnvObject=load(requestedName, theParams);
-        if(theEnvObject!=null)return (Environment)theEnvObject;
+        if(theEnvObject!=null)return (EnvironmentInterface)theEnvObject;
         return null;
     }
 

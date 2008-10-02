@@ -21,7 +21,7 @@ package agentShell;
 import rlVizLib.dynamicLoading.EnvOrAgentType;
 import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
-import rlglue.agent.Agent;
+import org.rlcommunity.rlglue.codec.AgentInterface;
 
 public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implements AgentLoaderInterface{
 
@@ -30,9 +30,9 @@ public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implemen
     }
 
 
-    public Agent loadAgent(String requestedName, ParameterHolder theParams) {
+    public AgentInterface loadAgent(String requestedName, ParameterHolder theParams) {
         Object theAgentObject=load(requestedName, theParams);
-        if(theAgentObject!=null)return (Agent)theAgentObject;
+        if(theAgentObject!=null)return (AgentInterface)theAgentObject;
         return null;
     }
 

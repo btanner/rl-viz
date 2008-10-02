@@ -21,14 +21,14 @@ package rlVizLib.messaging.environment;
 
 
 import rlVizLib.general.ParameterHolder;
-import rlVizLib.glueProxy.RLGlueProxy;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.messaging.interfaces.ReceivesRunTimeParameterHolderInterface;
-import rlglue.environment.Environment;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 public class EnvReceiveRunTimeParametersRequest extends EnvironmentMessages{
 ParameterHolder theParams=null;
@@ -50,7 +50,7 @@ public EnvReceiveRunTimeParametersRequest(GenericMessage theMessageObject){
 				MessageValueType.kNone.id(),
 				serializedParameters);
 
-		String responseMessage=RLGlueProxy.RL_env_message(theRequest);
+		String responseMessage=RLGlue.RL_env_message(theRequest);
 
 		EnvReceiveRunTimeParametersResponse theResponse;
 		try {
@@ -62,7 +62,7 @@ public EnvReceiveRunTimeParametersRequest(GenericMessage theMessageObject){
 	}
 
 	@Override
-	public String handleAutomatically(Environment theEnvironment) {
+	public String handleAutomatically(EnvironmentInterface theEnvironment) {
 		ReceivesRunTimeParameterHolderInterface castedEnv = (ReceivesRunTimeParameterHolderInterface)theEnvironment;
 		EnvReceiveRunTimeParametersResponse theResponse=new EnvReceiveRunTimeParametersResponse(castedEnv.receiveRunTimeParameters(theParams));
 		return theResponse.makeStringResponse();
