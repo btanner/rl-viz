@@ -199,6 +199,7 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
                 theParamHolder = (ParameterHolder) paramMakerMethod.invoke((Object[]) null, (Object[]) null);
             }
         } catch (Exception e) {
+            
             return null;
         }
 
