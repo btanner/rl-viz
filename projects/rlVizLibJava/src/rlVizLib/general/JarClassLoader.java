@@ -23,12 +23,13 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
 @author btanner
  */
 public class JarClassLoader {
-
     /**
      * @deprecated
      * @param theFile
@@ -41,6 +42,7 @@ public class JarClassLoader {
     }
 
     /**
+     * All loading goes through here.  Good to know.
     @param theFile A File object that is the Jar we want to load from
     @param className The fully qualified name of the class to load
     @return If this method returns anything it is the class requested.
@@ -48,11 +50,16 @@ public class JarClassLoader {
      */
     public static Class<?> loadClassFromFile(URI theFileURI, String className) throws CouldNotLoadJarException {
         Class<?> theClass = null;
-
-
+        boolean shouldCache=true;
+        
+        if(shouldCache){
+            return CachingJarClassLoader.loadClassFromFile(theFileURI, className);
+        }
+        
         URLClassLoader urlLoader = null;
 
         try {
+            
             urlLoader = new URLClassLoader(new URL[]{theFileURI.toURL()});
             theClass = urlLoader.loadClass(className);
         } catch (Throwable e) {

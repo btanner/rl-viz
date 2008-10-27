@@ -41,10 +41,11 @@ import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 /**
- * @author btanner
- *
- */
-/**
+ * My belief is that our classes are leaking like crazy because we are forever 
+ * loading them using new classloaders and a bunch of the statically allocated 
+ * stuff is just hanging around.
+ * 
+ * I want to cache loaded classes so we only load them a single time.
  * @author btanner
  *
  */

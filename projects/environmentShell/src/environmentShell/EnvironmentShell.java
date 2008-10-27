@@ -192,7 +192,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
     }
 
-    private EnvironmentInterface loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
+    EnvironmentInterface loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
         EnvironmentLoaderInterface thisEnvLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
         String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
         return thisEnvLoader.loadEnvironment(localName, theParams);
@@ -219,4 +219,5 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
     public static void main(String[] args) {
         EnvironmentShell e = new EnvironmentShell();
     }
+    
 }
