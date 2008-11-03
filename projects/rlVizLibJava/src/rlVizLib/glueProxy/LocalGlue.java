@@ -26,7 +26,7 @@ import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Observation_action;
 import org.rlcommunity.rlglue.codec.types.Random_seed_key;
-import org.rlcommunity.rlglue.codec.types.Reward_observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 import org.rlcommunity.rlglue.codec.types.State_key;
 
@@ -107,7 +107,7 @@ public class LocalGlue implements RLGlueInterface {
                 if(lastAction==null){
                     System.err.println("lastAction came back as null from RL_step");
                 }
-		Reward_observation RO=E.env_step(lastAction);
+		Reward_observation_terminal RO=E.env_step(lastAction);
                 if(RO==null){
                     System.err.println("RO came back as null from RL_step");
                 }
@@ -154,15 +154,15 @@ public class LocalGlue implements RLGlueInterface {
 	}
 
 
-	public synchronized Random_seed_key RL_get_random_seed() {
-            Random_seed_key theKey=E.env_get_random_seed();
+	public synchronized Random_seed_key RL_save_random_seed() {
+            Random_seed_key theKey=E.env_save_random_seed();
             if(theKey==null)
                 theKey= new Random_seed_key();
             return theKey;
 	}
 
-	public synchronized State_key RL_get_state() {
-            State_key theKey=E.env_get_state();
+	public synchronized State_key RL_save_state() {
+            State_key theKey=E.env_save_state();
             if(theKey==null)
                 theKey= new State_key();
             return theKey;
@@ -182,12 +182,12 @@ public class LocalGlue implements RLGlueInterface {
 		return totalReward;
 	}
 
-	public synchronized void RL_set_random_seed(Random_seed_key rsk) {
-            E.env_set_random_seed(rsk);
+	public synchronized void RL_load_random_seed(Random_seed_key rsk) {
+            E.env_load_random_seed(rsk);
 	}
 
-	public synchronized void RL_set_state(State_key sk) {
-            E.env_set_state(sk);
+	public synchronized void RL_load_state(State_key sk) {
+            E.env_load_state(sk);
 	}
 
 

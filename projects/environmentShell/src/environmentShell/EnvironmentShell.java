@@ -40,7 +40,7 @@ import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Random_seed_key;
-import org.rlcommunity.rlglue.codec.types.Reward_observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.types.State_key;
 
 public class EnvironmentShell implements EnvironmentInterface, Unloadable {
@@ -117,12 +117,12 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         theEnvironment.env_cleanup();
     }
 
-    public Random_seed_key env_get_random_seed() {
-        return theEnvironment.env_get_random_seed();
+    public Random_seed_key env_save_random_seed() {
+        return theEnvironment.env_save_random_seed();
     }
 
-    public State_key env_get_state() {
-        return theEnvironment.env_get_state();
+    public State_key env_save_state() {
+        return theEnvironment.env_save_state();
     }
 
     public String env_init() {
@@ -198,12 +198,12 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         return thisEnvLoader.loadEnvironment(localName, theParams);
     }
 
-    public void env_set_random_seed(Random_seed_key arg0) {
-        theEnvironment.env_set_random_seed(arg0);
+    public void env_load_random_seed(Random_seed_key arg0) {
+        theEnvironment.env_load_random_seed(arg0);
     }
 
-    public void env_set_state(State_key arg0) {
-        theEnvironment.env_set_state(arg0);
+    public void env_load_state(State_key arg0) {
+        theEnvironment.env_load_state(arg0);
     }
 
     public Observation env_start() {
@@ -211,9 +211,9 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         return o;
     }
 
-    public Reward_observation env_step(Action arg0) {
-        Reward_observation ro = theEnvironment.env_step(arg0);
-        return ro;
+    public Reward_observation_terminal env_step(Action arg0) {
+        Reward_observation_terminal RO = theEnvironment.env_step(arg0);
+        return RO;
     }
 
     public static void main(String[] args) {

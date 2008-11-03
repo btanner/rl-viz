@@ -24,7 +24,7 @@ import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Random_seed_key;
-import org.rlcommunity.rlglue.codec.types.Reward_observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.types.State_key;
 
 //
@@ -80,7 +80,7 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
         return o;
     }
 
-    public Reward_observation env_step(Action a) {
+    public Reward_observation_terminal env_step(Action a) {
         JNIenvstep(a.intArray.length, a.doubleArray.length, a.intArray, a.doubleArray);
 
         int numI = JNIgetInt();
@@ -97,7 +97,7 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
 
         int term = JNIgetTerminal();
 
-        Reward_observation ret = new Reward_observation(rew, o, term);
+        Reward_observation_terminal ret = new Reward_observation_terminal(rew, o, term);
 
         return ret;
     }
@@ -106,11 +106,11 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
         JNIenvcleanup();
     }
 
-    public void env_set_random_seed(Random_seed_key sk) {
+    public void env_load_random_seed(Random_seed_key sk) {
         JNIenvsetrandomseed(sk.intArray.length, sk.doubleArray.length, sk.intArray, sk.doubleArray);
     }
 
-    public Random_seed_key env_get_random_seed() {
+    public Random_seed_key env_save_random_seed() {
         int numI = JNIgetInt();
         int numD = JNIgetDouble();
         
@@ -123,7 +123,7 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
         return rsk;
     }
 
-    public State_key env_get_state() {
+    public State_key env_save_state() {
         int numI = JNIgetInt();
         int numD = JNIgetDouble();
         
@@ -140,7 +140,7 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
         return JNIenvmessage(message);
     }
 
-    public void env_set_state(State_key sk) {
+    public void env_load_state(State_key sk) {
         JNIenvsetstate(sk.intArray.length, sk.doubleArray.length, sk.intArray, sk.doubleArray);
     }
     

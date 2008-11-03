@@ -21,14 +21,14 @@ package rlVizLib.Environments;
 
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.types.Observation;
-import org.rlcommunity.rlglue.codec.types.Reward_observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
 public abstract class EnvironmentBase implements EnvironmentInterface {
 
 	abstract protected Observation makeObservation();
 	
-	protected Reward_observation makeRewardObservation(double reward, boolean isTerminal){
-		Reward_observation RO=new Reward_observation();
+	protected Reward_observation_terminal makeRewardObservation(double reward, boolean isTerminal){
+		Reward_observation_terminal RO=new Reward_observation_terminal();
 		RO.o=makeObservation();
 		RO.r=reward;
 		

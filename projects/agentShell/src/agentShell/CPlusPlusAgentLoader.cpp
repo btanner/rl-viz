@@ -59,7 +59,7 @@ agentgetparams_t agent_getDefaultParameterHolder;
 void *handle;
 //global RL_abstract_type used for C accessor methods
 RL_abstract_type genericReturn;
-Reward_observation rewardObs;
+Reward_observation_terminal rewardObs;
 std::vector<std::string> agentNames;
 std::vector<std::string> theParamHolderStrings;
 int numAgents;
