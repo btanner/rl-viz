@@ -36,7 +36,6 @@ public class JNIAgent implements AgentInterface, QueryableAgent, Unloadable {
 	public native void JNIagentstep(double reward, int numI, int numD, int[] intArray, double[] doubleArray);
 	public native void JNIagentend(double reward);
 	public native void JNIagentcleanup();
-	public native void JNIagentfreeze();
 	public native String JNIagentmessage(String message);
 	//JNI methods for Queryable Agent
 	public native double JNIgetvalueforstate(int numI, int numD, int[] intArray, double[] doubleArray);
@@ -105,10 +104,6 @@ public class JNIAgent implements AgentInterface, QueryableAgent, Unloadable {
 	
 	public void agent_cleanup(){
 		JNIagentcleanup();
-	}
-	
-	public void agent_freeze(){
-		JNIagentfreeze();
 	}
 	
 	public String agent_message(final String message){

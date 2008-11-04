@@ -172,14 +172,6 @@ public class AgentShell implements AgentInterface, Unloadable {
         theAgent.agent_end(reward);
     }
 
-    /**
-     * @deprecated
-     */
-    public void agent_freeze() {
-        System.err.println("agent_freeze is deprecated");
-        Thread.dumpStack();
-    }
-
     public void agent_init(String taskSpecification) {
         theAgent.agent_init(taskSpecification);
     }

@@ -25,10 +25,9 @@ import org.rlcommunity.rlglue.codec.RLGlueInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Observation_action;
-import org.rlcommunity.rlglue.codec.types.Random_seed_key;
+
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
-import org.rlcommunity.rlglue.codec.types.State_key;
 
 public class LocalGlue implements RLGlueInterface {
 	EnvironmentInterface E=null;
@@ -154,19 +153,6 @@ public class LocalGlue implements RLGlueInterface {
 	}
 
 
-	public synchronized Random_seed_key RL_save_random_seed() {
-            Random_seed_key theKey=E.env_save_random_seed();
-            if(theKey==null)
-                theKey= new Random_seed_key();
-            return theKey;
-	}
-
-	public synchronized State_key RL_save_state() {
-            State_key theKey=E.env_save_state();
-            if(theKey==null)
-                theKey= new State_key();
-            return theKey;
-	}
 
 
 
@@ -180,14 +166,6 @@ public class LocalGlue implements RLGlueInterface {
 
 	public synchronized double RL_return() {
 		return totalReward;
-	}
-
-	public synchronized void RL_load_random_seed(Random_seed_key rsk) {
-            E.env_load_random_seed(rsk);
-	}
-
-	public synchronized void RL_load_state(State_key sk) {
-            E.env_load_state(sk);
 	}
 
 

@@ -39,9 +39,8 @@ import rlVizLib.messaging.environmentShell.EnvironmentShellMessages;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
-import org.rlcommunity.rlglue.codec.types.Random_seed_key;
+
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
-import org.rlcommunity.rlglue.codec.types.State_key;
 
 public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
@@ -116,15 +115,6 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
     public void env_cleanup() {
         theEnvironment.env_cleanup();
     }
-
-    public Random_seed_key env_save_random_seed() {
-        return theEnvironment.env_save_random_seed();
-    }
-
-    public State_key env_save_state() {
-        return theEnvironment.env_save_state();
-    }
-
     public String env_init() {
         return theEnvironment.env_init();
     }
@@ -196,14 +186,6 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         EnvironmentLoaderInterface thisEnvLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
         String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
         return thisEnvLoader.loadEnvironment(localName, theParams);
-    }
-
-    public void env_load_random_seed(Random_seed_key arg0) {
-        theEnvironment.env_load_random_seed(arg0);
-    }
-
-    public void env_load_state(State_key arg0) {
-        theEnvironment.env_load_state(arg0);
     }
 
     public Observation env_start() {
