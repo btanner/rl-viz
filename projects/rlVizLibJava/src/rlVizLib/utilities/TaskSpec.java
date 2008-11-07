@@ -16,6 +16,10 @@ limitations under the License.
  */
 package rlVizLib.utilities;
 
+/**
+ * @deprecated Use The Task Spec from the RLGlue Java Codec.
+ * @author btanner
+ */
 public class TaskSpec {
 
     TaskSpecDelegate theTSO = null;
@@ -25,6 +29,8 @@ public class TaskSpec {
     public int getVersion(){
         return TSVersion;
     }
+
+@SuppressWarnings("deprecation")
     public TaskSpec(String taskSpec) {
         String errorAccumulator="Task Spec Parse Results:";
         try {
@@ -51,6 +57,7 @@ public class TaskSpec {
     }
 
 
+    @Override
     public String toString() {
         return theTSO.getStringRepresentation();
     }

@@ -33,8 +33,6 @@ import org.rlcommunity.rlglue.codec.tests.Test_Message_Environment;
 import org.rlcommunity.rlglue.codec.tests.Test_Message_Experiment;
 import org.rlcommunity.rlglue.codec.tests.Test_RL_Episode_Experiment;
 import org.rlcommunity.rlglue.codec.tests.Test_Sanity_Experiment;
-import org.rlcommunity.rlglue.codec.tests.Test_Seeds_Environment;
-import org.rlcommunity.rlglue.codec.tests.Test_Seeds_Experiment;
 import org.rlcommunity.rlglue.codec.tests.Test_Speed_Environment;
 import org.rlcommunity.rlglue.codec.tests.Test_Speed_Experiment;
 import rlVizLib.glueProxy.LocalGlue;
@@ -121,20 +119,6 @@ public void testRLEpisodeLocal(){
     assertEquals(failures, 0);
 }
     
-@Test
-public void testSeedsLocal(){
-    AgentInterface theAgent=new Test_1_Agent();
-    EnvironmentInterface theEnvironment=new Test_Seeds_Environment();
-    
-    RLGlue.setGlue(new LocalGlue(theEnvironment,theAgent));
- 
-    /* Can't do this without duplicating experiment code because
-     * the rl-glue stuff doesn't want to use the glueproxy, it's
-     * not written to*/
-    int failures=Test_Seeds_Experiment.runTest();
-    
-    assertEquals(failures, 0);
-}
 
     
 @Test

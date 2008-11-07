@@ -19,6 +19,10 @@ package rlVizLib.utilities;
 
 import java.util.StringTokenizer;
 
+/**
+ * @deprecated We're now goign to use task spec stuff from the RLGlue Java Codec.
+ * @author btanner
+ */
 class TaskSpecV2 extends TaskSpecDelegate
 {
     public double version;			

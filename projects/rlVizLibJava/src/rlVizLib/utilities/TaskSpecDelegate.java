@@ -22,6 +22,7 @@ package rlVizLib.utilities;
  * task spec object will talk to.  We'll extend this class over time, adding more 
  * stuff to it, but we'll be careful such that we don't need to *ever* change
  * existing subclasses.  Lets pretend that's what I mean.  
+ * @deprecated We're now goign to use task spec stuff from the RLGlue Java Codec.
  * @author mradkie
  */
 public abstract class TaskSpecDelegate {
