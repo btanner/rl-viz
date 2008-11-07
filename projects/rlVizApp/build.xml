@@ -38,5 +38,6 @@
    <target name="clean-build" depends="clean,jar"/>
 
 <target name="test" depends="rl-test-html"/>
+<target name="javadoc" depends="rl-javadoc"/>
 </project>
 
