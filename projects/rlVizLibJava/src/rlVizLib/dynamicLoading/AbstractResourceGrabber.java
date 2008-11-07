@@ -18,7 +18,6 @@ import java.util.Vector;
  */
 public abstract class AbstractResourceGrabber {
     protected Vector<URI> validResourceURIs=new  Vector<URI>();
-    
      /**
      * This method returns a vector of Files from theJarDir directory
      * @param theJarDir
