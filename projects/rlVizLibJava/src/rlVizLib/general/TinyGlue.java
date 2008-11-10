@@ -19,6 +19,7 @@ http://brian.tannerpages.com
   
 package rlVizLib.general;
 
+import java.util.Observable;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -28,8 +29,11 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 /*
  * TinyGlue has the distinct priviledge of calling RL_start() and RL_stop().  We can count on TinyGlue to tell us when certain things are new
  * because the step counter or episode counter will go up.
+ * 
+ * We're moving to an observable implementation so that components can 
+ * subscribe to updates, instead of having them poll.
  */
-public class TinyGlue{
+public class TinyGlue extends Observable{
 	
 	Observation lastObservation=null;
 	Action lastAction=null;
@@ -43,6 +47,12 @@ public class TinyGlue{
         double totalReturn;
 	
 	
+        private void updateObservers(Object theEvent){
+            setChanged();
+            super.notifyObservers(theEvent);
+            super.clearChanged();
+            
+        }
 	//returns true of the episode is over
 	synchronized public boolean  step(){
 		if(!RLGlue.isInited())
@@ -52,6 +62,7 @@ public class TinyGlue{
 		if(RLGlue.isCurrentEpisodeOver()){
 			Observation_action firstAO=RLGlue.RL_start();
 			lastObservation=firstAO.o;
+                        
 			lastAction=firstAO.a;
 			lastReward=Double.NaN;
 
@@ -59,6 +70,7 @@ public class TinyGlue{
 			timeStep=1;
 			totalSteps++;
                         returnThisEpisode=0.0d;
+                        updateObservers(firstAO);
 		}else{
 			totalSteps++;
 			timeStep++;
@@ -70,6 +82,7 @@ public class TinyGlue{
 
                         returnThisEpisode+=lastReward;
                         totalReturn+=lastReward;
+                        updateObservers(whatHappened);
 
 		}
 		return RLGlue.isCurrentEpisodeOver();

@@ -73,14 +73,26 @@ public class GenericMessage {
 			String fromString=theTokenizer.nextToken();
 			String typeString=theTokenizer.nextToken();
 			String valueString=theTokenizer.nextToken();
-			String payloadString=theTokenizer.nextToken("\f");
+//                        StringBuffer payloadBuffer=new StringBuffer(theTokenizer.nextToken("\f"));
+//                        while(theTokenizer.hasMoreTokens()){
+//                            payloadBuffer.append("\f");
+//                            payloadBuffer.append(theTokenizer.nextToken());
+//                        }
+//			String payloadString=payloadBuffer.toString();//theTokenizer.nextToken("\f");
 
+                        
 			from=GenericMessageParser.parseUser(fromString);
 			to=GenericMessageParser.parseUser(toString);
 
 			theMessageType=GenericMessageParser.parseInt(typeString);
 			payloadType=GenericMessageParser.parseValueType(valueString);
-			payload=GenericMessageParser.parsePayload(payloadString);
+                        
+                        int payloadStart=theMessage.indexOf("VALS=");
+                        if(payloadStart==-1){
+                            System.err.println("Did not find VALS= in: "+theMessage);
+                        }
+                        payload=theMessage.substring(payloadStart+5);
+//			payload=GenericMessageParser.parsePayload(payloadString);
 		} catch (Exception e) {
 			//The message was NOT what we expected!
 			throw new NotAnRLVizMessageException();
