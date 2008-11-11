@@ -165,11 +165,9 @@ public abstract class AbstractVisualizer implements ImageAggregator {
             currentlyStarting = true;
         }
         for (RenderObject thisRunner : threadRunners) {
-            if (thisRunner instanceof ThreadRenderObject) {
                 Thread theThread = new Thread(thisRunner);
                 theThreads.add(theThread);
                 theThread.start();
-            }
         }
 
         synchronized (startStopSynchObject) {

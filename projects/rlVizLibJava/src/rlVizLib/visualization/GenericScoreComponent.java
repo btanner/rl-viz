@@ -33,8 +33,8 @@ public class GenericScoreComponent implements SelfUpdatingVizComponent, Observer
     private VizComponentChangeListener theChangeListener=null;
 
     int episodeNumber=0;
-    int timeStep=0;
-    long totalSteps=0;
+    int timeStep=1;
+    long totalSteps=1;
     double lastReward=Double.NaN;
     
     public GenericScoreComponent(GlueStateProvider theGlueStateProvider) {

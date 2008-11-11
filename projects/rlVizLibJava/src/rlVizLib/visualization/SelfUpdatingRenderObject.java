@@ -18,6 +18,8 @@ limitations under the License.
 package rlVizLib.visualization;
 
 import java.awt.Dimension;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This used to be the workhorse of redrawing images, now that functionality 
@@ -26,16 +28,34 @@ import java.awt.Dimension;
  * @author btanner
  */
 public class SelfUpdatingRenderObject extends RenderObject implements VizComponentChangeListener {
+    volatile boolean shouldDie = false;
+    private SelfUpdatingVizComponent theComponent=null;
     public SelfUpdatingRenderObject(Dimension currentVisualizerPanelSize, SelfUpdatingVizComponent theComponent, ImageAggregator theBoss) {
         super(currentVisualizerPanelSize, theBoss);
+        this.theComponent=theComponent;
         theComponent.setVizComponentChangeListener(this);
     }
 
-    public void kill() {}
+    public void kill() {
+        shouldDie=true;
+    }
 
     public void vizComponentChanged(BasicVizComponent theComponent) {
-                       redrawImages(theComponent);
-
+        notify();
     }
-    
+
+    public void run() {
+
+        while (!shouldDie) {
+            try {
+                //draw every 60 seconds if no updates are coming.
+                wait(60000);
+                redrawImages(theComponent);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SelfUpdatingRenderObject.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }//end of the while loop
+        //Now that we've died, can reset the shouldDie flag so that we can easily be restarted
+        shouldDie = false;
+    }
 }

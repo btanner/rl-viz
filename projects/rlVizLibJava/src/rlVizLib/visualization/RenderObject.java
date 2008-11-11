@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
  *  This is a component of a final image.
  * @author Brian Tanner
  */
-public abstract class RenderObject extends Thread {
+public abstract class RenderObject implements Runnable{
 
     private Dimension mySize;
     private BufferedImage prodImage = null;

@@ -40,7 +40,6 @@ public class ThreadRenderObject extends RenderObject {
         shouldDie = true;
     }
 
-    @Override
     public void run() {
 
         while (!shouldDie) {
