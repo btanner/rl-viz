@@ -25,36 +25,17 @@ import java.awt.Dimension;
  * and polling :)
  * @author btanner
  */
-public class ThreadRenderObject extends RenderObject {
-
-    private PollingVizComponent theComponent = null;
-    volatile boolean shouldDie = false;
-    int defaultSleepTime = 100;
-
-    public ThreadRenderObject(Dimension currentVisualizerPanelSize, PollingVizComponent theComponent, ImageAggregator theBoss) {
+public class SelfUpdatingRenderObject extends RenderObject implements VizComponentChangeListener {
+    public SelfUpdatingRenderObject(Dimension currentVisualizerPanelSize, SelfUpdatingVizComponent theComponent, ImageAggregator theBoss) {
         super(currentVisualizerPanelSize, theBoss);
-        this.theComponent = theComponent;
+        theComponent.setVizComponentChangeListener(this);
     }
 
-    public void kill() {
-        shouldDie = true;
+    public void kill() {}
+
+    public void vizComponentChanged(BasicVizComponent theComponent) {
+                       redrawImages(theComponent);
+
     }
-
-    @Override
-    public void run() {
-
-        while (!shouldDie) {
-
-            if (theComponent.update()) {
-                redrawImages(theComponent);
-                try {
-                    Thread.sleep(defaultSleepTime);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }//end of the while loop
-        //Now that we've died, can reset the shouldDie flag so that we can easily be restarted
-        shouldDie = false;
-    }
+    
 }

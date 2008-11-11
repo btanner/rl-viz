@@ -3,20 +3,18 @@ Copyright 2007 Brian Tanner
 brian@tannerpages.com
 http://brian.tannerpages.com
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-
-  
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
 package rlVizLib.visualization;
 
 import java.awt.Color;
@@ -33,7 +31,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
     private BufferedImage productionEnvImage = null;
     private BufferedImage bufferEnvImage = null;
     private VisualizerPanelInterface parentPanel = null;
-    private Vector<ThreadRenderObject> threadRunners = new Vector<ThreadRenderObject>();
+    private Vector<RenderObject> threadRunners = new Vector<RenderObject>();
     private Vector<Thread> theThreads = new Vector<Thread>();
     private Vector<Point2D> positions = new Vector<Point2D>();
     private Vector<Point2D> sizes = new Vector<Point2D>();
@@ -79,7 +77,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         G.clearRect(0, 0, bufferEnvImage.getWidth(), bufferEnvImage.getHeight());
 
         for (int i = 0; i < threadRunners.size(); i++) {
-            ThreadRenderObject thisRunner = threadRunners.get(i);
+            RenderObject thisRunner = threadRunners.get(i);
 
             Dimension position = makeLocationForVizComponent(i);
 
@@ -121,14 +119,14 @@ public abstract class AbstractVisualizer implements ImageAggregator {
                 scheduled = true;
                 redrawTimer.schedule(new TimerTask() {
 
-                            public void run() {
-                                redrawCurrentImage();
-                            }
-                        }, timeBetweenDraw);
+                    public void run() {
+                        redrawCurrentImage();
+                    }
+                }, timeBetweenDraw);
                 return;
             }
             //Ok so in this case, we're !scheduled && !drawing
-                //Schedule a drawing in the shorter term
+            //Schedule a drawing in the shorter term
             long timeSinceDraw = now - lastDrawTime;
             long timeTillDraw = timeBetweenDraw - timeSinceDraw;
             if (timeTillDraw < 0) {
@@ -137,10 +135,10 @@ public abstract class AbstractVisualizer implements ImageAggregator {
 
             redrawTimer.schedule(new TimerTask() {
 
-                        public void run() {
-                            redrawCurrentImage();
-                        }
-                    }, timeTillDraw);
+                public void run() {
+                    redrawCurrentImage();
+                }
+            }, timeTillDraw);
         }
     //
 //            if(now>lastDrawTime+43){
@@ -161,20 +159,22 @@ public abstract class AbstractVisualizer implements ImageAggregator {
 
     public void startVisualizing() {
         synchronized (startStopSynchObject) {
-        if (currentlyRunning||currentlyStarting) {
-            return;
+            if (currentlyRunning || currentlyStarting) {
+                return;
+            }
+            currentlyStarting = true;
         }
-        currentlyStarting = true;
+        for (RenderObject thisRunner : threadRunners) {
+            if (thisRunner instanceof ThreadRenderObject) {
+                Thread theThread = new Thread(thisRunner);
+                theThreads.add(theThread);
+                theThread.start();
+            }
         }
-        for (ThreadRenderObject thisRunner : threadRunners) {
-            Thread theThread = new Thread(thisRunner);
-            theThreads.add(theThread);
-            theThread.start();
-        }
-        
+
         synchronized (startStopSynchObject) {
-            currentlyRunning=true;
-            currentlyStarting=false;
+            currentlyRunning = true;
+            currentlyStarting = false;
         }
 
     }
@@ -189,14 +189,14 @@ public abstract class AbstractVisualizer implements ImageAggregator {
                 return;
             }
             currentlyStopping = true;
-            
-            if(currentlyStarting){
+
+            if (currentlyStarting) {
                 System.err.println("Got through all of the stopping conditions, we're going to stop... but its currently starting....ahhh");
             }
         }
 
         // tell them all to die
-        for (ThreadRenderObject thisRunner : threadRunners) {
+        for (RenderObject thisRunner : threadRunners) {
             thisRunner.kill();
         }
 
@@ -250,12 +250,16 @@ public abstract class AbstractVisualizer implements ImageAggregator {
     }
 
     //All of these should be between 0 and 1
-
-    public void addVizComponentAtPositionWithSize(VizComponent newComponent, double xPos, double yPos, double width, double height) {
+    public void addVizComponentAtPositionWithSize(PollingVizComponent newComponent, double xPos, double yPos, double width, double height) {
         threadRunners.add(new ThreadRenderObject(new Dimension(200, 200), newComponent, this));
         positions.add(new Point2D.Double(xPos, yPos));
         sizes.add(new Point2D.Double(width, height));
-
+    }
+    //All of these should be between 0 and 1
+    public void addVizComponentAtPositionWithSize(SelfUpdatingVizComponent newComponent, double xPos, double yPos, double width, double height) {
+        threadRunners.add(new SelfUpdatingRenderObject(new Dimension(200, 200), newComponent, this));
+        positions.add(new Point2D.Double(xPos, yPos));
+        sizes.add(new Point2D.Double(width, height));
     }
 
     public boolean isCurrentlyRunning() {

@@ -39,7 +39,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  *
  * @author btanner
  */
-public class ValueFunctionVizComponent implements VizComponent, ChangeListener {
+public class ValueFunctionVizComponent implements PollingVizComponent, ChangeListener {
 
     long lastQueryTime = 0;
     Vector<Double> theValues = null;

@@ -22,19 +22,22 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.text.DecimalFormat;
-import rlVizLib.general.TinyGlue;
 import rlVizLib.visualization.interfaces.GlueStateProvider;
 import java.util.Observable;
 import java.util.Observer;
 import org.rlcommunity.rlglue.codec.types.Observation_action;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 
-public class GenericScoreComponent implements VizComponent, Observer {
+public class GenericScoreComponent implements SelfUpdatingVizComponent, Observer {
 
-    private GlueStateProvider theGlueStateProvider = null;
-    boolean somethingNew = false;
+    private VizComponentChangeListener theChangeListener=null;
 
-    public GenericScoreComponent(GlueStateProvider theVis) {
-        this.theGlueStateProvider = theVis;
+    int episodeNumber=0;
+    int timeStep=0;
+    long totalSteps=0;
+    double lastReward=Double.NaN;
+    
+    public GenericScoreComponent(GlueStateProvider theGlueStateProvider) {
         theGlueStateProvider.getTheGlueState().addObserver(this);
     }
 
@@ -48,19 +51,19 @@ public class GenericScoreComponent implements VizComponent, Observer {
         //DRAW STRING
         AffineTransform saveAT = g.getTransform();
         g.scale(.005, .005);
-        TinyGlue theGlueState = theGlueStateProvider.getTheGlueState();
+//        TinyGlue theGlueState = theGlueStateProvider.getTheGlueState();
 
         //used for rounding
         String theRewardString;
         double preRound;
-        preRound = theGlueState.getLastReward();
+        preRound = lastReward;
 
         if (Double.isNaN(preRound)) {
             theRewardString = "None";
         } else {
             theRewardString = myFormatter.format(preRound);
         }
-        g.drawString("E/S/T/R: " + theGlueState.getEpisodeNumber() + "/" + theGlueState.getTimeStep() + "/" + theGlueState.getTotalSteps() + "/" + theRewardString, 0.0f, 10.0f);
+        g.drawString("E/S/T/R: " +episodeNumber + "/" + timeStep + "/" + totalSteps + "/" + theRewardString, 0.0f, 10.0f);
 
         g.setTransform(saveAT);
     }
@@ -72,10 +75,22 @@ public class GenericScoreComponent implements VizComponent, Observer {
      * @param theEvent
      */
     public void update(Observable o, Object theEvent) {
-        somethingNew = true;
+        if(theEvent instanceof Observation_action){
+            episodeNumber++;
+            timeStep=1;
+            lastReward=Double.NaN;
+        }
+        if(theEvent instanceof Reward_observation_action_terminal){
+            Reward_observation_action_terminal ROAT=(Reward_observation_action_terminal)theEvent;
+            lastReward=ROAT.r;
+            timeStep++;
+            totalSteps++;
+        }
+        theChangeListener.vizComponentChanged(this);
     }
 
-    public boolean update() {
-        return somethingNew;
+    public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
+        this.theChangeListener=theChangeListener;
     }
+
 }

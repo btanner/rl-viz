@@ -24,8 +24,7 @@ package rlVizLib.visualization;
  * This should be renamed to PollingVizComponent or something, but that would break 
  * a lot of code.  Actually, that's ok.  I can deprecate this and make that one.
  * @author btanner
- * @deprecated 
  */
-public interface VizComponent extends PollingVizComponent {
-	public boolean update();
+public interface SelfUpdatingVizComponent extends BasicVizComponent {
+        public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener);
 }
