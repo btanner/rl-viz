@@ -39,7 +39,8 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  *
  * @author btanner
  */
-public class ValueFunctionVizComponent implements PollingVizComponent, ChangeListener {
+@SuppressWarnings("deprecation")
+public class ValueFunctionVizComponent implements VizComponent, ChangeListener {
 
     long lastQueryTime = 0;
     Vector<Double> theValues = null;

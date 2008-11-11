@@ -26,7 +26,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 
-public class AgentOnValueFunctionVizComponent implements PollingVizComponent {
+@SuppressWarnings("deprecation")
+public class AgentOnValueFunctionVizComponent implements VizComponent {
 	private AgentOnValueFunctionDataProvider dataProvider=null;
 
 	public AgentOnValueFunctionVizComponent(AgentOnValueFunctionDataProvider dataProvider){
