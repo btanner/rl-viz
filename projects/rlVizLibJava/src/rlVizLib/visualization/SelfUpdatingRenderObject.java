@@ -28,21 +28,23 @@ import java.util.logging.Logger;
  * @author btanner
  */
 public class SelfUpdatingRenderObject extends RenderObject implements VizComponentChangeListener {
-    volatile boolean shouldDie = false;
-    private SelfUpdatingVizComponent theComponent=null;
+
+    volatile boolean shouldDie = false;   
+    private SelfUpdatingVizComponent theComponent = null;
+
     public SelfUpdatingRenderObject(Dimension currentVisualizerPanelSize, SelfUpdatingVizComponent theComponent, ImageAggregator theBoss) {
         super(currentVisualizerPanelSize, theBoss);
-        this.theComponent=theComponent;
+        this.theComponent = theComponent;
         theComponent.setVizComponentChangeListener(this);
     }
 
     public void kill() {
-        shouldDie=true;
+        shouldDie = true;
     }
 
     public synchronized void vizComponentChanged(BasicVizComponent theComponent) {
-        synchronized(theComponent){
-        theComponent.notify();
+        synchronized (theComponent) {
+            theComponent.notify();
         }
     }
 
@@ -51,8 +53,11 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
         while (!shouldDie) {
             try {
                 //draw every 60 seconds if no updates are coming.
-                theComponent.wait(60000);
+                synchronized (theComponent) {
+                    theComponent.wait(60000);
+                }
                 redrawImages(theComponent);
+
             } catch (InterruptedException ex) {
                 Logger.getLogger(SelfUpdatingRenderObject.class.getName()).log(Level.SEVERE, null, ex);
             }
