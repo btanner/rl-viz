@@ -41,7 +41,9 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
     }
 
     public synchronized void vizComponentChanged(BasicVizComponent theComponent) {
-        notify();
+        synchronized(theComponent){
+        theComponent.notify();
+        }
     }
 
     public void run() {
@@ -49,7 +51,7 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
         while (!shouldDie) {
             try {
                 //draw every 60 seconds if no updates are coming.
-                wait(60000);
+                theComponent.wait(60000);
                 redrawImages(theComponent);
             } catch (InterruptedException ex) {
                 Logger.getLogger(SelfUpdatingRenderObject.class.getName()).log(Level.SEVERE, null, ex);
