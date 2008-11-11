@@ -40,7 +40,7 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
         shouldDie=true;
     }
 
-    public void vizComponentChanged(BasicVizComponent theComponent) {
+    public synchronized void vizComponentChanged(BasicVizComponent theComponent) {
         notify();
     }
 
