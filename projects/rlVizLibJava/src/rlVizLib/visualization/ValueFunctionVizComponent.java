@@ -66,12 +66,39 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
     boolean valueFunctionShowing = true;
     JButton refreshButton = new JButton("Update Value Function");
     Vector<Component> myUIComponents = new Vector<Component>();
-    private TinyGlue theGlueState=null;
-    
+    private TinyGlue theGlueState = null;
+    JLabel vfPrefsLabel = null;
+    JCheckBox autoUpdateValueFunction = null;
+    private boolean enabled = true;
+
+    public void setEnabled(boolean newEnableValue) {
+        if (newEnableValue == false && this.enabled) {
+            disable();
+        }
+        if (newEnableValue == true && !this.enabled) {
+            enable();
+        }
+    }
+
+    private void disable() {
+        enabled = false;
+        if (vfPrefsLabel != null) {
+            vfPrefsLabel.setText("Value Function Not Supported");
+        }
+        for (Component thisComponent : myUIComponents) {
+            thisComponent.setEnabled(false);
+        }
+        theChangeListener.vizComponentChanged(this);
+
+    }
+
+    private void enable() {
+        enabled = true;
+    }
 
     public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget, TinyGlue theGlueState) {
         super();
-        this.theGlueState=theGlueState;
+        this.theGlueState = theGlueState;
         currentValueFunctionResolution = 10.0;
         this.theControlTarget = theControlTarget;
 
@@ -97,19 +124,19 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
         if (theControlTarget != null) {
 
-            JLabel vfPrefsLabel = new JLabel("Value Function Preferences");
-            JLabel printGridLabel = new JLabel("Auto-update");
+            vfPrefsLabel = new JLabel("Value Function Preferences");
+            JLabel autoUpdateLabel = new JLabel("Auto-update");
             vfPrefsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            printGridLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            autoUpdateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             refreshButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            JCheckBox autoUpdateValueFunction = new JCheckBox();
+            autoUpdateValueFunction = new JCheckBox();
             autoUpdateValueFunction.setSelected(valueFunctionShowing);
             refreshButton.setEnabled(!valueFunctionShowing);
             refreshButton.addActionListener(this);
 
             JPanel autoUpdateGridPanel = new JPanel();
-            autoUpdateGridPanel.add(printGridLabel);
+            autoUpdateGridPanel.add(autoUpdateLabel);
             autoUpdateGridPanel.add(autoUpdateValueFunction);
 
             JLabel valueFunctionResolutionLabel = new JLabel("Resolution for Value Function (right is finer)");
@@ -156,6 +183,13 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
     public void render(Graphics2D g) {
 //This actually calls for data, so we want it in the render thread where it won't slow anyting else down
+        if (!enabled) {
+            Color myClearColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            g.setColor(myClearColor);
+            g.setBackground(myClearColor);
+            g.clearRect(0, 0, 1, 1);
+            return;
+        }
         update();
         double y = 0;
         double x = 0;
@@ -268,16 +302,16 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
      * @param arg
      */
     public void update(Observable o, Object theEvent) {
-        
-        
-        if (theChangeListener != null && valueFunctionShowing) {
+
+
+        if (theChangeListener != null && valueFunctionShowing && enabled) {
             theChangeListener.vizComponentChanged(this);
         }
     }
 
     public void actionPerformed(ActionEvent e) {
         //This only happens when the button is pressed.
-        if(theChangeListener!=null){
+        if (theChangeListener != null) {
             theChangeListener.vizComponentChanged(this);
         }
     }
