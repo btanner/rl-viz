@@ -43,7 +43,7 @@ public class VisualizerFactory {
     }
 
     private static AbstractVisualizer createVisualizerFromClassName(String theVisualizerClassName, String defaultClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
-        boolean debugThis = false;
+        boolean debugThis = true;
 
         if (debugThis){
             System.out.println("AbstractVisualizer::createVisualizerFromClassName");

@@ -63,7 +63,6 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
     public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget, GlueStateProvider theGlueStateProvider) {
         super();
-        theGlueStateProvider.getTheGlueState().addObserver(this);
         currentValueFunctionResolution = 10.0;
         this.theControlTarget = theControlTarget;
 
@@ -97,6 +96,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
             newComponents.add(tinyPanel);
             theControlTarget.addControls(newComponents);
         }
+        theGlueStateProvider.getTheGlueState().addObserver(this);
     }
 
     public int getIndexForRow(int row, int col) {
@@ -127,7 +127,6 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
     public void render(Graphics2D g) {
 //This actually calls for data, so we want it in the render thread where it won't slow anyting else down
-        update();
         double y = 0;
         double x = 0;
 
@@ -135,7 +134,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
         double thisWorst = Double.MAX_VALUE;
 
         if (theValues == null) {
-            return;
+            update();
         }
 
         int linearIndex = 0;
@@ -222,6 +221,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
     public void setValueFunctionResolution(int theValue) {
         newValueFunctionResolution = theValue;
+        update();
     }
 
     public void stateChanged(ChangeEvent sliderChangeEvent) {
@@ -236,7 +236,14 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
         this.theChangeListener=theChangeListener;
     }
 
+    /**
+     * This is because we are an observer of changes sent out by the TinyGlue.
+     * @param o
+     * @param arg
+     */
     public void update(Observable o, Object arg) {
+        if(theChangeListener!=null){
         theChangeListener.vizComponentChanged(this);
+        }
     }
 }
