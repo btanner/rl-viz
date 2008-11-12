@@ -66,6 +66,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
     boolean valueFunctionShowing = true;
     JButton refreshButton = new JButton("Update Value Function");
     Vector<Component> myUIComponents = new Vector<Component>();
+    Vector<Component> AllMyUIComponents = new Vector<Component>();
     private TinyGlue theGlueState = null;
     JLabel vfPrefsLabel = null;
     JCheckBox autoUpdateValueFunction = null;
@@ -85,7 +86,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
         if (vfPrefsLabel != null) {
             vfPrefsLabel.setText("Value Function Not Supported");
         }
-        for (Component thisComponent : myUIComponents) {
+        for (Component thisComponent : AllMyUIComponents) {
             thisComponent.setEnabled(false);
         }
         theChangeListener.vizComponentChanged(this);
@@ -150,7 +151,11 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
             myUIComponents.add(tinyPanel);
             myUIComponents.add(autoUpdateGridPanel);
             myUIComponents.add(refreshButton);
-            theControlTarget.addControls(myUIComponents);
+            
+            AllMyUIComponents.addAll(myUIComponents);
+            AllMyUIComponents.add(numColsOrRowsForValueFunction);
+            AllMyUIComponents.add(autoUpdateValueFunction);
+            AllMyUIComponents.add(autoUpdateLabel);
         }
         theGlueState.addObserver(this);
     }
