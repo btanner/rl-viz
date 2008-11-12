@@ -261,32 +261,6 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         sizes.add(new Point2D.Double(width, height));
     }
     
-    /**
-     * This is used to take a component off of a visualizer.  It is not something that
-     * should be done often.
-     * 
-     * We should probably make sure we're not running.
-     * @param theComponent
-     */
-    public void removeVizComponent(BasicVizComponent theComponent){
-        for(int i=0;i<theRenderObjects.size();i++){
-            RenderObject thisRenderObject=theRenderObjects.get(i);
-            if(thisRenderObject.getVizComponent()==theComponent){
-                
-                if(currentlyRunning && !currentlyStopping){
-                Thread thisThread=theThreads.get(i);
-                thisRenderObject.kill();
-                theRenderObjects.remove(i);
-                theThreads.remove(i);
-                    try {
-                        thisThread.join();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(AbstractVisualizer.class.getName()).log(Level.SEVERE, "Problem joining thread we're removing.", ex);
-                    }
-                }
-            }
-        }
-    }
 
     public boolean isCurrentlyRunning() {
         return currentlyRunning;

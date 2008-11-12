@@ -31,6 +31,5 @@ public interface DynamicControlTarget {
     
     //Only call this once per visualizer
     public void addControls(Vector<Component> c);
-    public void removeControls(Vector<Component> toRemoveComponents);
 
 }

@@ -68,12 +68,6 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
     Vector<Component> myUIComponents = new Vector<Component>();
     private TinyGlue theGlueState=null;
     
-    public void remove(){
-        if(theControlTarget!=null){
-            theControlTarget.removeControls(myUIComponents);
-            theGlueState.deleteObserver(this);
-        }
-    }
 
     public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget, TinyGlue theGlueState) {
         super();
