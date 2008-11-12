@@ -156,6 +156,8 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
             AllMyUIComponents.add(numColsOrRowsForValueFunction);
             AllMyUIComponents.add(autoUpdateValueFunction);
             AllMyUIComponents.add(autoUpdateLabel);
+
+            theControlTarget.addControls(myUIComponents);
         }
         theGlueState.addObserver(this);
     }
