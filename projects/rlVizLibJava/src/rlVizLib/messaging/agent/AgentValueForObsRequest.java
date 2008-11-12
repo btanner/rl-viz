@@ -3,20 +3,18 @@ Copyright 2007 Brian Tanner
 brian@tannerpages.com
 http://brian.tannerpages.com
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
 package rlVizLib.messaging.agent;
 
 import java.util.StringTokenizer;
@@ -32,6 +30,7 @@ import rlVizLib.visualization.QueryableAgent;
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Observation;
+
 /**
  * This mostly by the {@URL ValueFunctionVizComponent}, this message sends a vector
  * of observations to the agent and receives in return a vector of values.
@@ -57,9 +56,8 @@ public class AgentValueForObsRequest extends AgentMessages {
         }
 
     }
-    static boolean printedReturnError = false;
 
-    public static AgentValueForObsResponse Execute(Vector<Observation> theRequestObservations) {
+    public static AgentValueForObsResponse Execute(Vector<Observation> theRequestObservations) throws NotAnRLVizMessageException {
         StringBuffer thePayLoadBuffer = new StringBuffer();
 
         //Tell them how many
@@ -80,15 +78,7 @@ public class AgentValueForObsRequest extends AgentMessages {
         String responseMessage = RLGlue.RL_agent_message(theRequest);
 
         AgentValueForObsResponse theResponse;
-        try {
-            theResponse = new AgentValueForObsResponse(responseMessage);
-        } catch (NotAnRLVizMessageException e) {
-            if (!printedReturnError) {
-                System.err.println("AgentValueForObsResponse received a non RLViz response.  I won't print this again.");
-                printedReturnError = true;
-            }
-            theResponse = null;
-        }
+        theResponse = new AgentValueForObsResponse(responseMessage);
 
         return theResponse;
 

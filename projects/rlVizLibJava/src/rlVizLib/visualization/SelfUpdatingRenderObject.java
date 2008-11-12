@@ -68,4 +68,9 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
         //Now that we've died, can reset the shouldDie flag so that we can easily be restarted
         shouldDie = false;
     }
+
+    @Override
+    BasicVizComponent getVizComponent() {
+        return theComponent;
+    }
 }

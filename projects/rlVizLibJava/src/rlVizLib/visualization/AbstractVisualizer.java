@@ -22,18 +22,18 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractVisualizer implements ImageAggregator {
 
     private BufferedImage productionEnvImage = null;
     private BufferedImage bufferEnvImage = null;
     private VisualizerPanelInterface parentPanel = null;
-    private Vector<RenderObject> threadRunners = new Vector<RenderObject>();
+    private Vector<RenderObject> theRenderObjects = new Vector<RenderObject>();
     private Vector<Thread> theThreads = new Vector<Thread>();
     private Vector<Point2D> positions = new Vector<Point2D>();
     private Vector<Point2D> sizes = new Vector<Point2D>();
@@ -53,8 +53,8 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         productionEnvImage = new BufferedImage((int) currentVisualizerPanelSize.getWidth(), (int) currentVisualizerPanelSize.getHeight(), BufferedImage.TYPE_INT_ARGB);
         bufferEnvImage = new BufferedImage((int) currentVisualizerPanelSize.getWidth(), (int) currentVisualizerPanelSize.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-        for (int i = 0; i < threadRunners.size(); i++) {
-            threadRunners.get(i).receiveSizeChange(makeSizeForVizComponent(i));
+        for (int i = 0; i < theRenderObjects.size(); i++) {
+            theRenderObjects.get(i).receiveSizeChange(makeSizeForVizComponent(i));
         }
 
     }
@@ -80,8 +80,8 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         G.clearRect(0, 0, bufferEnvImage.getWidth(), bufferEnvImage.getHeight());
 
         
-        for (int i = 0; i < threadRunners.size(); i++) {
-            RenderObject thisRunner = threadRunners.get(i);
+        for (int i = 0; i < theRenderObjects.size(); i++) {
+            RenderObject thisRunner = theRenderObjects.get(i);
             Dimension position = makeLocationForVizComponent(i);
             G.drawImage(thisRunner.getProductionImage(), position.width, position.height, null);
         }
@@ -165,7 +165,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
             }
             currentlyStarting = true;
         }
-        for (RenderObject thisRunner : threadRunners) {
+        for (RenderObject thisRunner : theRenderObjects) {
                 Thread theThread = new Thread(thisRunner);
                 theThreads.add(theThread);
                 theThread.start();
@@ -195,7 +195,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         }
 
         // tell them all to die
-        for (RenderObject thisRunner : threadRunners) {
+        for (RenderObject thisRunner : theRenderObjects) {
             thisRunner.kill();
         }
 
@@ -250,15 +250,42 @@ public abstract class AbstractVisualizer implements ImageAggregator {
 
     //All of these should be between 0 and 1
     public void addVizComponentAtPositionWithSize(PollingVizComponent newComponent, double xPos, double yPos, double width, double height) {
-        threadRunners.add(new ThreadRenderObject(new Dimension(200, 200), newComponent, this));
+        theRenderObjects.add(new ThreadRenderObject(new Dimension(200, 200), newComponent, this));
         positions.add(new Point2D.Double(xPos, yPos));
         sizes.add(new Point2D.Double(width, height));
     }
     //All of these should be between 0 and 1
     public void addVizComponentAtPositionWithSize(SelfUpdatingVizComponent newComponent, double xPos, double yPos, double width, double height) {
-        threadRunners.add(new SelfUpdatingRenderObject(new Dimension(200, 200), newComponent, this));
+        theRenderObjects.add(new SelfUpdatingRenderObject(new Dimension(200, 200), newComponent, this));
         positions.add(new Point2D.Double(xPos, yPos));
         sizes.add(new Point2D.Double(width, height));
+    }
+    
+    /**
+     * This is used to take a component off of a visualizer.  It is not something that
+     * should be done often.
+     * 
+     * We should probably make sure we're not running.
+     * @param theComponent
+     */
+    public void removeVizComponent(BasicVizComponent theComponent){
+        for(int i=0;i<theRenderObjects.size();i++){
+            RenderObject thisRenderObject=theRenderObjects.get(i);
+            if(thisRenderObject.getVizComponent()==theComponent){
+                
+                if(currentlyRunning && !currentlyStopping){
+                Thread thisThread=theThreads.get(i);
+                thisRenderObject.kill();
+                theRenderObjects.remove(i);
+                theThreads.remove(i);
+                    try {
+                        thisThread.join();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(AbstractVisualizer.class.getName()).log(Level.SEVERE, "Problem joining thread we're removing.", ex);
+                    }
+                }
+            }
+        }
     }
 
     public boolean isCurrentlyRunning() {

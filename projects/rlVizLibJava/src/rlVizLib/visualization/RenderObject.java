@@ -76,6 +76,8 @@ public abstract class RenderObject implements Runnable{
                 theBoss.receiveNotification();
     }
 
+    abstract BasicVizComponent getVizComponent();
+
 
     private void resizeImages() {
         workImage = new BufferedImage((int) mySize.getWidth(), (int) mySize.getHeight(), BufferedImage.TYPE_INT_ARGB);

@@ -43,6 +43,18 @@ public class VizFrameControlTarget extends JPanel implements DynamicControlTarge
     private void removeFiller(){
         remove(theFiller);
     }
+    
+    /**
+     * I threw this method in sortof quickly to let me take controls off a panel.
+     * @param toRemoveComponents
+     */
+    
+    public void removeControls(Vector<Component> toRemoveComponents){
+        for (Component component : toRemoveComponents) {
+            dynamicComponents.remove(component);
+        }
+        addControls(new Vector<Component>());
+    }
 
     public void addControls(Vector<Component> newComponents) {
         removeFiller();

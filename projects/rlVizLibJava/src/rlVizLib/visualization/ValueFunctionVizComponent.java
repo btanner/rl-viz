@@ -65,9 +65,19 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
     JSlider numColsOrRowsForValueFunction = null;
     boolean valueFunctionShowing = true;
     JButton refreshButton = new JButton("Update Value Function");
+    Vector<Component> myUIComponents = new Vector<Component>();
+    private TinyGlue theGlueState=null;
+    
+    public void remove(){
+        if(theControlTarget!=null){
+            theControlTarget.removeControls(myUIComponents);
+            theGlueState.deleteObserver(this);
+        }
+    }
 
     public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget, TinyGlue theGlueState) {
         super();
+        this.theGlueState=theGlueState;
         currentValueFunctionResolution = 10.0;
         this.theControlTarget = theControlTarget;
 
@@ -92,7 +102,6 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
         numColsOrRowsForValueFunction.addChangeListener(this);
 
         if (theControlTarget != null) {
-            Vector<Component> newComponents = new Vector<Component>();
 
             JLabel vfPrefsLabel = new JLabel("Value Function Preferences");
             JLabel printGridLabel = new JLabel("Auto-update");
@@ -115,12 +124,12 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
             autoUpdateValueFunction.addChangeListener(this);
 
-            newComponents.add(vfPrefsLabel);
-            newComponents.add(valueFunctionResolutionLabel);
-            newComponents.add(tinyPanel);
-            newComponents.add(autoUpdateGridPanel);
-            newComponents.add(refreshButton);
-            theControlTarget.addControls(newComponents);
+            myUIComponents.add(vfPrefsLabel);
+            myUIComponents.add(valueFunctionResolutionLabel);
+            myUIComponents.add(tinyPanel);
+            myUIComponents.add(autoUpdateGridPanel);
+            myUIComponents.add(refreshButton);
+            theControlTarget.addControls(myUIComponents);
         }
         theGlueState.addObserver(this);
     }
