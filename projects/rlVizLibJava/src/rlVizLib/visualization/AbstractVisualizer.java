@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -63,6 +65,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
     public BufferedImage getLatestImage() {
         return productionEnvImage;
     }
+    
 
     private synchronized void redrawCurrentImage() {
         synchronized (redrawLock) {
@@ -76,11 +79,10 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         G.setBackground(myClearColor);
         G.clearRect(0, 0, bufferEnvImage.getWidth(), bufferEnvImage.getHeight());
 
+        
         for (int i = 0; i < threadRunners.size(); i++) {
             RenderObject thisRunner = threadRunners.get(i);
-
             Dimension position = makeLocationForVizComponent(i);
-
             G.drawImage(thisRunner.getProductionImage(), position.width, position.height, null);
         }
 
@@ -95,9 +97,8 @@ public abstract class AbstractVisualizer implements ImageAggregator {
 
 
         parentPanel.receiveNotificationVizChanged();
-
-
     }
+
     long lastDrawTime = 0;
     volatile boolean scheduled = false;
     boolean drawing = false;

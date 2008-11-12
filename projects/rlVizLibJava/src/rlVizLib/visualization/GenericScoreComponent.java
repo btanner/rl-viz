@@ -30,13 +30,12 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 
 public class GenericScoreComponent implements SelfUpdatingVizComponent, Observer {
 
-    private VizComponentChangeListener theChangeListener=null;
+    private VizComponentChangeListener theChangeListener = null;
+    int episodeNumber = 0;
+    int timeStep = 1;
+    long totalSteps = 1;
+    double lastReward = Double.NaN;
 
-    int episodeNumber=0;
-    int timeStep=1;
-    long totalSteps=1;
-    double lastReward=Double.NaN;
-    
     public GenericScoreComponent(GlueStateProvider theGlueStateProvider) {
         theGlueStateProvider.getTheGlueState().addObserver(this);
     }
@@ -63,7 +62,7 @@ public class GenericScoreComponent implements SelfUpdatingVizComponent, Observer
         } else {
             theRewardString = myFormatter.format(preRound);
         }
-        g.drawString("E/S/T/R: " +episodeNumber + "/" + timeStep + "/" + totalSteps + "/" + theRewardString, 0.0f, 10.0f);
+        g.drawString("E/S/T/R: " + episodeNumber + "/" + timeStep + "/" + totalSteps + "/" + theRewardString, 0.0f, 10.0f);
 
         g.setTransform(saveAT);
     }
@@ -75,22 +74,23 @@ public class GenericScoreComponent implements SelfUpdatingVizComponent, Observer
      * @param theEvent
      */
     public void update(Observable o, Object theEvent) {
-        if(theEvent instanceof Observation_action){
+        if (theEvent instanceof Observation_action) {
             episodeNumber++;
-            timeStep=1;
-            lastReward=Double.NaN;
+            timeStep = 1;
+            lastReward = Double.NaN;
         }
-        if(theEvent instanceof Reward_observation_action_terminal){
-            Reward_observation_action_terminal ROAT=(Reward_observation_action_terminal)theEvent;
-            lastReward=ROAT.r;
+        if (theEvent instanceof Reward_observation_action_terminal) {
+            Reward_observation_action_terminal ROAT = (Reward_observation_action_terminal) theEvent;
+            lastReward = ROAT.r;
             timeStep++;
             totalSteps++;
         }
-        theChangeListener.vizComponentChanged(this);
+        if (theChangeListener != null) {
+            theChangeListener.vizComponentChanged(this);
+        }
     }
 
     public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
-        this.theChangeListener=theChangeListener;
+        this.theChangeListener = theChangeListener;
     }
-
 }

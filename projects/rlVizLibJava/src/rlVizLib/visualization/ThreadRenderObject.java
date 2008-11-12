@@ -29,7 +29,7 @@ public class ThreadRenderObject extends RenderObject {
 
     private PollingVizComponent theComponent = null;
     volatile boolean shouldDie = false;
-    int defaultSleepTime = 100;
+    int defaultSleepTime = 50;
 
     public ThreadRenderObject(Dimension currentVisualizerPanelSize, PollingVizComponent theComponent, ImageAggregator theBoss) {
         super(currentVisualizerPanelSize, theBoss);
@@ -43,7 +43,6 @@ public class ThreadRenderObject extends RenderObject {
     public void run() {
 
         while (!shouldDie) {
-
             if (theComponent.update()) {
                 redrawImages(theComponent);
                 try {

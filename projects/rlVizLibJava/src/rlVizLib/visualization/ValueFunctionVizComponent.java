@@ -24,6 +24,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,13 +36,13 @@ import rlVizLib.visualization.interfaces.ValueFunctionDataProvider;
 import rlVizLib.utilities.UtilityShop;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
 import org.rlcommunity.rlglue.codec.types.Observation;
+import rlVizLib.visualization.interfaces.GlueStateProvider;
 
 /**
  *
  * @author btanner
  */
-@SuppressWarnings("deprecation")
-public class ValueFunctionVizComponent implements VizComponent, ChangeListener {
+public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, ChangeListener, Observer {
 
     long lastQueryTime = 0;
     Vector<Double> theValues = null;
@@ -59,8 +61,9 @@ public class ValueFunctionVizComponent implements VizComponent, ChangeListener {
     DynamicControlTarget theControlTarget = null;
     JSlider numColsOrRowsForValueFunction = null;
 
-    public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget) {
+    public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget, GlueStateProvider theGlueStateProvider) {
         super();
+        theGlueStateProvider.getTheGlueState().addObserver(this);
         currentValueFunctionResolution = 10.0;
         this.theControlTarget = theControlTarget;
 
@@ -123,6 +126,8 @@ public class ValueFunctionVizComponent implements VizComponent, ChangeListener {
     }
 
     public void render(Graphics2D g) {
+//This actually calls for data, so we want it in the render thread where it won't slow anyting else down
+        update();
         double y = 0;
         double x = 0;
 
@@ -223,5 +228,15 @@ public class ValueFunctionVizComponent implements VizComponent, ChangeListener {
         JSlider source = (JSlider) sliderChangeEvent.getSource();
         int theValue = source.getValue();
         setValueFunctionResolution(theValue);
+    }
+
+    
+    private VizComponentChangeListener theChangeListener=null;
+    public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
+        this.theChangeListener=theChangeListener;
+    }
+
+    public void update(Observable o, Object arg) {
+        theChangeListener.vizComponentChanged(this);
     }
 }

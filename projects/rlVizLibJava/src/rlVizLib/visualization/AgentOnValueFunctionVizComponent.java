@@ -18,23 +18,28 @@ http://brian.tannerpages.com
 
   
 package rlVizLib.visualization;
+import java.util.Observable;
 import rlVizLib.visualization.interfaces.AgentOnValueFunctionDataProvider;
 import rlVizLib.utilities.UtilityShop;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Observer;
+import rlVizLib.visualization.interfaces.GlueStateProvider;
 
 
-@SuppressWarnings("deprecation")
-public class AgentOnValueFunctionVizComponent implements VizComponent {
-	private AgentOnValueFunctionDataProvider dataProvider=null;
-
-	public AgentOnValueFunctionVizComponent(AgentOnValueFunctionDataProvider dataProvider){
+public class AgentOnValueFunctionVizComponent implements SelfUpdatingVizComponent, Observer {
+        private VizComponentChangeListener theChangeListener;
+        private AgentOnValueFunctionDataProvider dataProvider;
+        
+	public AgentOnValueFunctionVizComponent(AgentOnValueFunctionDataProvider dataProvider,GlueStateProvider theGlueStateProvider){
 		this.dataProvider=dataProvider;
+                theGlueStateProvider.getTheGlueState().addObserver(this);
 	}
 
 	public void render(Graphics2D g) {
+		dataProvider.updateAgentState();
 		g.setColor(Color.BLUE);
 
 		double transX=UtilityShop.normalizeValue( dataProvider.getCurrentStateInDimension(0),
@@ -49,10 +54,14 @@ public class AgentOnValueFunctionVizComponent implements VizComponent {
 		Rectangle2D agentRect=new Rectangle2D.Double(transX,transY,.02,.02);
 		g.fill(agentRect);
 	}
+    public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
+        this.theChangeListener=theChangeListener;
+    }
 
-	public boolean update() {
-		dataProvider.updateAgentState();
-		return true;
-	}
+    public void update(Observable o, Object arg) {
+        if(theChangeListener!=null){
+        theChangeListener.vizComponentChanged(this);
+        }
+    }
 
 }
