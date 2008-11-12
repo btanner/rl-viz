@@ -30,6 +30,7 @@ import rlVizLib.visualization.AbstractVisualizer;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
 
 public class VisualizerFactory {
+    static    boolean debugThis = false;
 
     static String defaultEnvVisualizerClassName = "org.rlcommunity.visualizers.generic.GenericEnvVisualizer";
     static String defaultAgentVisualizerClassName = "visualizers.Generic.GenericAgentVisualizer";
@@ -43,7 +44,6 @@ public class VisualizerFactory {
     }
 
     private static AbstractVisualizer createVisualizerFromClassName(String theVisualizerClassName, String defaultClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
-        boolean debugThis = true;
 
         if (debugThis){
             System.out.println("AbstractVisualizer::createVisualizerFromClassName");
@@ -116,6 +116,7 @@ public class VisualizerFactory {
     }
 
     private static AbstractVisualizer createVisualizer(Class<?> theVizClass) {
+        
         AbstractVisualizer theVisualizer = null;
         Class<?>[] emptyParams = new Class<?>[0];
 
@@ -124,6 +125,9 @@ public class VisualizerFactory {
             theConstructor = theVizClass.getConstructor(emptyParams);
             theVisualizer = (AbstractVisualizer) theConstructor.newInstance();
         } catch (Exception e) {
+            if(debugThis){
+                System.out.println(e);
+            }
             return null;
         }
         return theVisualizer;
@@ -138,6 +142,9 @@ public class VisualizerFactory {
             theConstructor = theVizClass.getConstructor(TinyGlue.class);
             theVisualizer = (AbstractVisualizer) theConstructor.newInstance(theGlueState);
         } catch (Exception e) {
+            if(debugThis){
+                System.out.println(e);
+            }
             return null;
         }
         return theVisualizer;
@@ -152,6 +159,11 @@ public class VisualizerFactory {
             theConstructor = theVizClass.getConstructor(TinyGlue.class, DynamicControlTarget.class);
             theVisualizer = (AbstractVisualizer) theConstructor.newInstance(theGlueState, theControlTarget);
         } catch (Exception e) {
+            if(debugThis){
+                System.out.println(e);
+                System.out.println(e.getCause());
+                e.getCause().printStackTrace();
+            }
             return null;
         }
         return theVisualizer;

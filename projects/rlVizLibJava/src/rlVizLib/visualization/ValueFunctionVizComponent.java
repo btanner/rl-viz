@@ -3,30 +3,32 @@ Copyright 2007 Brian Tanner
 brian@tannerpages.com
 http://brian.tannerpages.com
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
 package rlVizLib.visualization;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -36,13 +38,14 @@ import rlVizLib.visualization.interfaces.ValueFunctionDataProvider;
 import rlVizLib.utilities.UtilityShop;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
 import org.rlcommunity.rlglue.codec.types.Observation;
+import rlVizLib.general.TinyGlue;
 import rlVizLib.visualization.interfaces.GlueStateProvider;
 
 /**
  *
  * @author btanner
  */
-public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, ChangeListener, Observer {
+public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, ChangeListener, ActionListener, Observer {
 
     long lastQueryTime = 0;
     Vector<Double> theValues = null;
@@ -60,8 +63,10 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
     Vector<Observation> theQueryObservations = null;
     DynamicControlTarget theControlTarget = null;
     JSlider numColsOrRowsForValueFunction = null;
+    boolean valueFunctionShowing = true;
+    JButton refreshButton = new JButton("Update Value Function");
 
-    public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget, GlueStateProvider theGlueStateProvider) {
+    public ValueFunctionVizComponent(ValueFunctionDataProvider theDataProvider, DynamicControlTarget theControlTarget, TinyGlue theGlueState) {
         super();
         currentValueFunctionResolution = 10.0;
         this.theControlTarget = theControlTarget;
@@ -78,9 +83,9 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
         numColsOrRowsForValueFunction = new JSlider(JSlider.HORIZONTAL, 1, 100, 10);
         numColsOrRowsForValueFunction.setPreferredSize(new Dimension(150, 50));
         numColsOrRowsForValueFunction.setSize(new Dimension(150, 50));
-     
+
         setValueFunctionResolution(numColsOrRowsForValueFunction.getValue());
-        JPanel tinyPanel=new JPanel();
+        JPanel tinyPanel = new JPanel();
         tinyPanel.setPreferredSize(new Dimension(150, 50));
         tinyPanel.add(numColsOrRowsForValueFunction);
 
@@ -88,15 +93,36 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
         if (theControlTarget != null) {
             Vector<Component> newComponents = new Vector<Component>();
+
+            JLabel vfPrefsLabel = new JLabel("Value Function Preferences");
+            JLabel printGridLabel = new JLabel("Auto-update");
+            vfPrefsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            printGridLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            refreshButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JCheckBox autoUpdateValueFunction = new JCheckBox();
+            autoUpdateValueFunction.setSelected(valueFunctionShowing);
+            refreshButton.setEnabled(!valueFunctionShowing);
+            refreshButton.addActionListener(this);
+
+            JPanel autoUpdateGridPanel = new JPanel();
+            autoUpdateGridPanel.add(printGridLabel);
+            autoUpdateGridPanel.add(autoUpdateValueFunction);
+
             JLabel valueFunctionResolutionLabel = new JLabel("Resolution for Value Function (right is finer)");
             valueFunctionResolutionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+
+            autoUpdateValueFunction.addChangeListener(this);
+
+            newComponents.add(vfPrefsLabel);
             newComponents.add(valueFunctionResolutionLabel);
-//            newComponents.add(numColsOrRowsForValueFunction);
             newComponents.add(tinyPanel);
+            newComponents.add(autoUpdateGridPanel);
+            newComponents.add(refreshButton);
             theControlTarget.addControls(newComponents);
         }
-        theGlueStateProvider.getTheGlueState().addObserver(this);
+        theGlueState.addObserver(this);
     }
 
     public int getIndexForRow(int row, int col) {
@@ -127,6 +153,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
     public void render(Graphics2D g) {
 //This actually calls for data, so we want it in the render thread where it won't slow anyting else down
+        update();
         double y = 0;
         double x = 0;
 
@@ -134,7 +161,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
         double thisWorst = Double.MAX_VALUE;
 
         if (theValues == null) {
-            update();
+            return;
         }
 
         int linearIndex = 0;
@@ -157,7 +184,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
                 if (V > thisBest) {
                     thisBest = V;
                 }
-                float greenValue = (float) UtilityShop.normalizeValue(V, worstV,  bestV);
+                float greenValue = (float) UtilityShop.normalizeValue(V, worstV, bestV);
 
                 if (greenValue < 0) {
                     greenValue = 0;
@@ -177,12 +204,8 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
         worstV = thisWorst;
         bestV = thisBest;
     }
-//quick hack
-    long lastUpdateTime = 0;
 
-    public boolean update() {
-        boolean changedThisTime = false;
-
+    public void update() {
         if (newValueFunctionResolution != currentValueFunctionResolution || theQueryObservations == null) {
 
             currentValueFunctionResolution = newValueFunctionResolution;
@@ -191,7 +214,7 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
             VFCols = (int) currentValueFunctionResolution;
 
             //The range of the position and velocity
-			
+
             double xRangeSize = dataProvider.getMaxValueForDim(0) - dataProvider.getMinValueForDim(0);
             double yRangeSize = dataProvider.getMaxValueForDim(1) - dataProvider.getMinValueForDim(1);
             //QueryIncrements are the number that the query variables will change from cell to cell
@@ -203,16 +226,9 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
             Vector<Observation> theQueryStates = getQueryStates();
             theQueryObservations = dataProvider.getQueryObservations(theQueryStates);
-            changedThisTime = true;
         }
 
-        long CurrentTime = System.currentTimeMillis();
-        if (CurrentTime - lastUpdateTime > 100 || changedThisTime) {
-            lastUpdateTime = CurrentTime;
-            theValues = dataProvider.queryAgentValues(theQueryObservations);
-            return true;
-        }
-        return false;
+        theValues = dataProvider.queryAgentValues(theQueryObservations);
     }
 
     public double getValueFunctionResolution() {
@@ -221,19 +237,26 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
 
     public void setValueFunctionResolution(int theValue) {
         newValueFunctionResolution = theValue;
-        update();
     }
 
     public void stateChanged(ChangeEvent sliderChangeEvent) {
-        JSlider source = (JSlider) sliderChangeEvent.getSource();
-        int theValue = source.getValue();
-        setValueFunctionResolution(theValue);
+        if (sliderChangeEvent.getSource() instanceof JSlider) {
+            JSlider source = (JSlider) sliderChangeEvent.getSource();
+            int theValue = source.getValue();
+            setValueFunctionResolution(theValue);
+            update(null, "Slider Changed");
+        }
+        if (sliderChangeEvent.getSource() instanceof JCheckBox) {
+            JCheckBox source = (JCheckBox) sliderChangeEvent.getSource();
+            valueFunctionShowing = source.isSelected();
+            refreshButton.setEnabled(!valueFunctionShowing);
+            update(null, "Checkbox Changed");
+        }
     }
+    private VizComponentChangeListener theChangeListener = null;
 
-    
-    private VizComponentChangeListener theChangeListener=null;
     public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
-        this.theChangeListener=theChangeListener;
+        this.theChangeListener = theChangeListener;
     }
 
     /**
@@ -241,9 +264,18 @@ public class ValueFunctionVizComponent implements SelfUpdatingVizComponent, Chan
      * @param o
      * @param arg
      */
-    public void update(Observable o, Object arg) {
+    public void update(Observable o, Object theEvent) {
+        
+        
+        if (theChangeListener != null && valueFunctionShowing) {
+            theChangeListener.vizComponentChanged(this);
+        }
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        //This only happens when the button is pressed.
         if(theChangeListener!=null){
-        theChangeListener.vizComponentChanged(this);
+            theChangeListener.vizComponentChanged(this);
         }
     }
 }

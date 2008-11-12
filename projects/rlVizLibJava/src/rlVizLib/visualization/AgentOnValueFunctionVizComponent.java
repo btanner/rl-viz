@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Observer;
+import rlVizLib.general.TinyGlue;
 import rlVizLib.visualization.interfaces.GlueStateProvider;
 
 
@@ -33,9 +34,9 @@ public class AgentOnValueFunctionVizComponent implements SelfUpdatingVizComponen
         private VizComponentChangeListener theChangeListener;
         private AgentOnValueFunctionDataProvider dataProvider;
         
-	public AgentOnValueFunctionVizComponent(AgentOnValueFunctionDataProvider dataProvider,GlueStateProvider theGlueStateProvider){
+	public AgentOnValueFunctionVizComponent(AgentOnValueFunctionDataProvider dataProvider,TinyGlue theGlueState){
 		this.dataProvider=dataProvider;
-                theGlueStateProvider.getTheGlueState().addObserver(this);
+                theGlueState.addObserver(this);
 	}
 
 	public void render(Graphics2D g) {
