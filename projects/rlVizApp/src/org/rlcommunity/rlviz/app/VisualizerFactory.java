@@ -17,7 +17,7 @@ http://brian.tannerpages.com
 */
 
 
-package btViz;
+package org.rlcommunity.rlviz.app;
 
 import java.lang.reflect.Constructor;
 import java.util.Vector;
@@ -33,7 +33,7 @@ public class VisualizerFactory {
     static    boolean debugThis = false;
 
     static String defaultEnvVisualizerClassName = "org.rlcommunity.visualizers.generic.GenericEnvVisualizer";
-    static String defaultAgentVisualizerClassName = "visualizers.Generic.GenericAgentVisualizer";
+    static String defaultAgentVisualizerClassName = "org.rlcommunity.visualizers.generic.GenericAgentVisualizer";
 
     public static AbstractVisualizer createEnvVisualizerFromClassName(String VizClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
         return createVisualizerFromClassName(VizClassName, defaultEnvVisualizerClassName, theGlueState, theControlTarget);

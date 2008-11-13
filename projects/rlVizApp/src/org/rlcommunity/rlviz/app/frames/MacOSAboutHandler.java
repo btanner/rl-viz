@@ -1,4 +1,4 @@
-package btViz.frames;
+package org.rlcommunity.rlviz.app.frames;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;

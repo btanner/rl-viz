@@ -17,7 +17,7 @@ http://brian.tannerpages.com
 */
 
 
-package btViz;
+package org.rlcommunity.rlviz.app;
 
 public class RLVizPreferences {
 	private static RLVizPreferences ourInstance = new RLVizPreferences(); 

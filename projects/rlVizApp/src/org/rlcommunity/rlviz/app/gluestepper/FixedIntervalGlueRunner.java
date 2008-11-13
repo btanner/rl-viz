@@ -17,44 +17,42 @@ http://brian.tannerpages.com
 */
 
 
-package btViz.glueStepper;
+package org.rlcommunity.rlviz.app.gluestepper;
 
-import btViz.RLGlueLogic;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class GlueStepper{
+import org.rlcommunity.rlviz.app.RLGlueLogic;
+
+public class FixedIntervalGlueRunner implements GlueRunner {
+	Timer currentTimer=null;
+
 	int timeStepDelay=100;
 	boolean running=false;
 
 	RLGlueLogic theGlueLogic=null;
-	GlueRunner theGlueRunner=null;
-
-	public GlueStepper(RLGlueLogic theGlueLogic){
+	
+	public FixedIntervalGlueRunner(RLGlueLogic theGlueLogic, int timeStepDelay){
 		this.theGlueLogic=theGlueLogic;
-	}
-	public void setNewStepDelay(int stepDelay) {
-		this.timeStepDelay=stepDelay;
-		if(running)start();
+		this.timeStepDelay=timeStepDelay;
 	}
 
 	public void start() {
-		if(running)
-			stop();
-		running=true;
-
-		//If time is the minimum we want to do something different
-		if(timeStepDelay==1)
-			theGlueRunner=new NoDelayGlueRunner(theGlueLogic);
-		else
-			theGlueRunner=new FixedIntervalGlueRunner(theGlueLogic,timeStepDelay);
-
-		theGlueRunner.start();
+		currentTimer = new Timer();
+	    
+	    currentTimer.scheduleAtFixedRate(new TimerTask() {
+	            public void run() {
+	            	theGlueLogic.step();
+	            }
+	        }, 0, timeStepDelay);		
+		
 	}
 
 	public void stop() {
-		if(theGlueRunner!=null)theGlueRunner.stop();
-		theGlueRunner=null;
-
-		running=false;
-
+		if(currentTimer!=null){
+			currentTimer.cancel();
+			currentTimer=null;
+		}
 	}
+
 }

@@ -1,15 +1,17 @@
 <project name="AgentShell" basedir="." >
 
-	<property name="baseLibraryDir" value="../.."/>
-	<!-- Things required for build-common.xml -->
-	<property name="main.project.name" value="${ant.project.name}"/>
-	<property name="main.package.name" value="agentShell/"/>
-	<property name="main.package.spec.version" value="1.0"/>
-	<property name="main.vendor.name" value="Brian Tanner"/>
-	<property name="rl.viz.system.directory" value="${baseLibraryDir}/system"/>
-	<path id="project.extra.classpath" />
-	<import file="${rl.viz.system.directory}/build-common.xml"/>
+    <property name="baseLibraryDir" value="../.."/>
+    <!-- Things required for build-common.xml -->
+    <property name="main.project.name" value="${ant.project.name}"/>
+    <property name="main.package.name" value="agentShell/"/>
+    <property name="main.package.spec.version" value="1.0"/>
+    <property name="main.vendor.name" value="Brian Tanner"/>
+    <property name="rl.viz.system.directory" value="${baseLibraryDir}/system"/>
+    <path id="project.extra.classpath" />
+    <import file="${rl.viz.system.directory}/build-common.xml"/>
 
+    <!-- This will get added to the manifest classpath of the jar -->
+    <property name="jar.extra.classpath" value="RLVizLib.jar"/>
 
 
     <target name="clean" depends="rl-clean" />
@@ -17,7 +19,7 @@
 
     <target name="jar" depends="rl-jar" />
     <target name="clean-build" depends="clean,jar"/>
-	<target name="test" depends="rl-test-html" />
-	<target name="javadoc" depends="rl-javadoc" />
+    <target name="test" depends="rl-test-html" />
+    <target name="javadoc" depends="rl-javadoc" />
 </project>
 

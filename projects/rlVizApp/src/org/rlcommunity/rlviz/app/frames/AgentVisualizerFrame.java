@@ -3,10 +3,10 @@
  * and open the template in the editor.
  */
 
-package btViz.frames;
+package org.rlcommunity.rlviz.app.frames;
 
-import btViz.RLGlueLogic;
-import btViz.VisualizerPanel;
+import org.rlcommunity.rlviz.app.RLGlueLogic;
+import org.rlcommunity.rlviz.app.VisualizerPanel;
 import java.awt.Dimension;
 
 /**

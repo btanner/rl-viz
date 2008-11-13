@@ -17,7 +17,7 @@ http://brian.tannerpages.com
 */
 
 
-package btViz;
+package org.rlcommunity.rlviz.app;
 
 
 
@@ -40,7 +40,7 @@ import rlVizLib.messaging.environmentShell.EnvShellListResponse;
 import rlVizLib.messaging.environmentShell.EnvShellLoadRequest;
 import rlVizLib.messaging.environmentShell.EnvShellUnLoadRequest;
 import rlVizLib.visualization.AbstractVisualizer;
-import btViz.glueStepper.GlueStepper;
+import org.rlcommunity.rlviz.app.gluestepper.GlueStepper;
 import rlVizLib.messaging.agent.AgentVersionSupportedRequest;
 import rlVizLib.messaging.agent.AgentVersionSupportedResponse;
 import rlVizLib.messaging.agent.AgentVisualizerNameRequest;

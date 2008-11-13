@@ -19,7 +19,8 @@ http://brian.tannerpages.com
 
 package btViz;
 
-import btViz.frames.RLVizFrame;
+import org.rlcommunity.rlviz.app.RLVizPreferences;
+import org.rlcommunity.rlviz.app.frames.RLVizFrame;
 import java.io.IOException;
 
 import org.rlcommunity.rlglue.codec.RLGlue;
@@ -27,7 +28,7 @@ import org.rlcommunity.rlglue.codec.RLGlue;
  * I don't want to erase this class because people us it, but its poorly named.
  * I've made a new copy called NetGraphicalDriverDynamicEnvStandardAgent.  Use that
  * instead.
- * @deprecated
+ * @deprecated Use the classes in org.rlcommunity.rlviz.app
  * @author btanner
  */
 public class GraphicalDriver {

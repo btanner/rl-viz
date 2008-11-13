@@ -12,6 +12,8 @@
 
 	<property name="privateLib.dir"     value="libs"/>
 
+<property name="jar.extra.classpath" value="RLVizLib.jar EnvironmentShell.jar AgentShell.jar"/>
+
 <path id="project.extra.classpath">
 	<fileset dir="${privateLib.dir}" >
 	    <include name="forms-1.1.0.jar"/>

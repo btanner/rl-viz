@@ -18,7 +18,7 @@ http://brian.tannerpages.com
 
 
 
-package btViz.loadPanels;
+package org.rlcommunity.rlviz.app.loadpanels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

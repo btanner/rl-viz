@@ -2,13 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package btViz.frames;
+package org.rlcommunity.rlviz.app.frames;
 
-import btViz.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -16,8 +13,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.lang.reflect.Constructor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -106,7 +101,7 @@ class VizMenus implements ActionListener {
 //          	System.loadLibrary("btViz.MacOSAboutHandler")
 			try {
     			ClassLoader theClassLoader = ClassLoader.getSystemClassLoader();
-    			Class<?> testObjectClass=theClassLoader.loadClass("btViz.frames.MacOSAboutHandler");    
+    			Class<?> testObjectClass=theClassLoader.loadClass("org.rlcommunity.rlviz.app.frames.MacOSAboutHandler");    
     			Constructor<?> emptyConstructor = testObjectClass.getConstructor();
     			Object classInstance =  (Object)emptyConstructor.newInstance();
 			} catch (Exception ex) {

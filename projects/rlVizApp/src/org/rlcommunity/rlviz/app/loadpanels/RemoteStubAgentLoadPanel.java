@@ -17,9 +17,9 @@ http://brian.tannerpages.com
 */
 
 
-package btViz.loadPanels;
+package org.rlcommunity.rlviz.app.loadpanels;
 
-import btViz.RLGlueLogic;
+import org.rlcommunity.rlviz.app.RLGlueLogic;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;

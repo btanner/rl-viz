@@ -19,10 +19,14 @@ http://brian.tannerpages.com
 
 package btViz;
 
-import btViz.frames.RLVizFrame;
+import org.rlcommunity.rlviz.app.RLVizPreferences;
+import org.rlcommunity.rlviz.app.frames.RLVizFrame;
 import java.io.IOException;
 
-
+/**
+ * @deprecated Use the classes in org.rlcommunity.rlviz.app
+ * @author btanner
+ */
 public class NetGraphicalDriverDynamicAgentStandardEnv {
 
 	public static void main(String [] args) throws IOException {

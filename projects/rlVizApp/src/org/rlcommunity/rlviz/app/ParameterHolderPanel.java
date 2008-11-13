@@ -17,7 +17,7 @@ http://brian.tannerpages.com
 */
 
 
-package btViz;
+package org.rlcommunity.rlviz.app;
 
 import java.awt.Component;
 import java.util.Map;

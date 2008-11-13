@@ -17,7 +17,7 @@ http://brian.tannerpages.com
 */
 
 
-package btViz;
+package org.rlcommunity.rlviz.app;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -31,11 +31,11 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import btViz.loadPanels.DynamicAgentLoadPanel;
-import btViz.loadPanels.DynamicEnvLoadPanel;
-import btViz.loadPanels.LoadPanelInterface;
-import btViz.loadPanels.RemoteStubAgentLoadPanel;
-import btViz.loadPanels.RemoteStubEnvLoadPanel;
+import org.rlcommunity.rlviz.app.loadpanels.DynamicAgentLoadPanel;
+import org.rlcommunity.rlviz.app.loadpanels.DynamicEnvLoadPanel;
+import org.rlcommunity.rlviz.app.loadpanels.LoadPanelInterface;
+import org.rlcommunity.rlviz.app.loadpanels.RemoteStubAgentLoadPanel;
+import org.rlcommunity.rlviz.app.loadpanels.RemoteStubEnvLoadPanel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.border.Border;

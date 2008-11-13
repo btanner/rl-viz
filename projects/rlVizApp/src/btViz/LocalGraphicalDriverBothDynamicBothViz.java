@@ -19,7 +19,8 @@ http://brian.tannerpages.com
 
 package btViz;
 
-import btViz.frames.RLVizFrame;
+import org.rlcommunity.rlviz.app.RLVizPreferences;
+import org.rlcommunity.rlviz.app.frames.RLVizFrame;
 import java.io.IOException;
 
 import org.rlcommunity.rlglue.codec.RLGlue;
@@ -29,6 +30,10 @@ import agentShell.AgentShell;
 import environmentShell.EnvironmentShell;
 import rlVizLib.glueProxy.LocalGlue;
 
+/**
+ * @deprecated Use the classes in org.rlcommunity.rlviz.app
+ * @author btanner
+ */
 public class LocalGraphicalDriverBothDynamicBothViz {
 
 	public static void main(String [] args) throws IOException {

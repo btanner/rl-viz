@@ -17,7 +17,7 @@ http://brian.tannerpages.com
 */
 
 
-package btViz.loadPanels;
+package org.rlcommunity.rlviz.app.loadpanels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,8 +28,8 @@ import javax.swing.JPanel;
 
 import rlVizLib.general.ParameterHolder;
 
-import btViz.ParameterHolderPanel;
-import btViz.RLGlueLogic;
+import org.rlcommunity.rlviz.app.ParameterHolderPanel;
+import org.rlcommunity.rlviz.app.RLGlueLogic;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;

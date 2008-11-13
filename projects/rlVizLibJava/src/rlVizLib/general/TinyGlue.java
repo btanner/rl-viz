@@ -31,6 +31,8 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
  * We're moving to an observable implementation so that components can 
  * subscribe to updates, instead of having them poll.
  */
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
+
 public class TinyGlue extends Observable {
 
     Observation lastObservation = null;
@@ -70,19 +72,38 @@ public class TinyGlue extends Observable {
             }
             updateObservers(firstAO);
         } else {
+            Reward_observation_action_terminal ROAT = new Reward_observation_action_terminal();
 
-            Reward_observation_action_terminal whatHappened = RLGlue.RL_step();
+            Reward_observation_terminal ROT = RLGlue.RL_env_step(lastAction);
+            ROAT.o = ROT.getObservation();
+            ROAT.r = ROT.getReward();
+            ROAT.terminal = ROT.getTerminal();
+
+
+
             synchronized (this) {
                 totalSteps++;
                 timeStep++;
-                lastObservation = whatHappened.o;
-                lastAction = whatHappened.a;
-                lastReward = whatHappened.r;
+                lastObservation = ROAT.getObservation();
+                lastReward = ROAT.getReward();
 
                 returnThisEpisode += lastReward;
                 totalReturn += lastReward;
             }
-            updateObservers(whatHappened);
+
+            updateObservers(ROT);
+            if (ROT.isTerminal()) {
+                RLGlue.RL_agent_end(ROT.getReward());
+            } else {
+                ROAT.a = RLGlue.RL_agent_step(ROT.getReward(), ROT.getObservation());
+            }
+
+            synchronized (this) {
+                if (!ROAT.isTerminal()) {
+                    lastAction = ROAT.getAction();
+                }
+            }
+            updateObservers(ROAT);
 
         }
         return RLGlue.isCurrentEpisodeOver();

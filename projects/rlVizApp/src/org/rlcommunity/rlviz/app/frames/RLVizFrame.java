@@ -17,8 +17,11 @@ http://brian.tannerpages.com
 */
 
 
-package btViz.frames;
+package org.rlcommunity.rlviz.app.frames;
 
+import org.rlcommunity.rlviz.app.VisualizerPanel;
+import org.rlcommunity.rlviz.app.RLControlPanel;
+import org.rlcommunity.rlviz.app.RLGlueLogic;
 import btViz.*;
 import java.awt.Dimension;
 import javax.swing.BoxLayout;

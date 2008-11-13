@@ -97,6 +97,7 @@ We'll try and rely on minimal variables from above.
     <jar destfile="${result.jar}" basedir="${classes.dir}" >
         <manifest>
 		   <attribute name="RLVizLib-Link-Version" value="${rlvizlib.spec.version}"/>
+			<attribute name="Class-Path" value="${jar.extra.classpath}"/>
 		    <section name="${main.package.name}">
 		      <attribute name="Specification-Title" value="${main.project.name}"/>
 		      <attribute name="Specification-Version" value="${main.package.spec.version}"/>

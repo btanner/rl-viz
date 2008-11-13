@@ -17,9 +17,9 @@ http://brian.tannerpages.com
 */
 
 
-package btViz.glueStepper;
+package org.rlcommunity.rlviz.app.gluestepper;
 
-import btViz.RLGlueLogic;
+import org.rlcommunity.rlviz.app.RLGlueLogic;
 
 public class NoDelayGlueRunner implements GlueRunner,Runnable {
 	RLGlueLogic theGlueLogic=null;

@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package btViz.frames;
+package org.rlcommunity.rlviz.app.frames;
 
+import org.rlcommunity.rlviz.app.VisualizerPanel;
 import btViz.*;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;

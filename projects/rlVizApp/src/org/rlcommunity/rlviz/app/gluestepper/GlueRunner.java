@@ -17,19 +17,10 @@ http://brian.tannerpages.com
 */
 
 
-package btViz.loadPanels;
+package org.rlcommunity.rlviz.app.gluestepper;
 
-import javax.swing.JPanel;
+public interface GlueRunner {
+	public void start();
+	public void stop();
 
-public interface LoadPanelInterface {
-
-	abstract public void updateList();
-	public abstract JPanel getPanel();
-	public abstract void setEnabled(boolean b);
-        /**
-         * 
-         * @return Returns true of this panel has something to choose from
-         */
-        public abstract boolean canLoad();
-	public abstract boolean load();
 }

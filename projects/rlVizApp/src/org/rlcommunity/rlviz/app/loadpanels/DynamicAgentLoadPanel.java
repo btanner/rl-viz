@@ -17,38 +17,37 @@ http://brian.tannerpages.com
 */
 
 
-package btViz.loadPanels;
+package org.rlcommunity.rlviz.app.loadpanels;
 
-import btViz.RLGlueLogic;
+import org.rlcommunity.rlviz.app.RLGlueLogic;
 import rlVizLib.general.ParameterHolder;
 
-public class DynamicEnvLoadPanel extends DynamicLoadPanel {
+public class DynamicAgentLoadPanel extends DynamicLoadPanel {
 
-	public DynamicEnvLoadPanel(RLGlueLogic theGlueConnection){
-		super(theGlueConnection,"No Envs Available");
+	public DynamicAgentLoadPanel(RLGlueLogic theGlueConnection){
+		super(theGlueConnection,"No Agents Available");
 	}
 	
 	public void updateList(){
-		theNames=theGlueConnection.getEnvNameList();
-		theParams=theGlueConnection.getEnvParamList();
-                
+		theNames=theGlueConnection.getAgentNameList();
+		theParams=theGlueConnection.getAgentParamList();
 		
-		super.refreshList(theNames, "No Envs Available");
+		super.refreshList(theNames, "No Agents Available");
 		
 	}
-
-	@Override
+        @Override
 	public boolean load(String thisName, ParameterHolder thisP) {
-            boolean loadCheck = theGlueConnection.loadEnvironment(thisName,thisP);
-            if(loadCheck){
-                theGlueConnection.loadEnvironmentVisualizer();
-                return true;
-            }
-            return false;
+		boolean loadCheck = theGlueConnection.loadAgent(thisName,thisP);
+                if(loadCheck){
+                    theGlueConnection.loadAgentVisualizer();
+                    return true;
+                }
+                return false;
 	}
 
 	@Override
 	public String getStringType() {
-		return "Environment";
+		return "Agent";
 	}
+
 }
