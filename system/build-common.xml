@@ -43,6 +43,25 @@ We'll try and rely on minimal variables from above.
   </classpath>
 </taskdef>
 
+<target name="set.jar.extra.classpath">
+	<if>
+		<not><isset property="jar.extra.classpath" /></not>
+		<then>
+			<property name="jar.extra.classpath" value=""/>
+		</then>
+	</if>
+</target>
+
+<target name="set.jar.main.class">
+	<if>
+		<not><isset property="jar.main.class" /></not>
+		<then>
+			<property name="jar.main.class" value=""/>
+		</then>
+	</if>
+</target>
+	
+	
 
 <target name="get.svn.version" description="Get the current subversion revision number of the project">
     <exec executable="svnversion"
@@ -92,12 +111,16 @@ We'll try and rely on minimal variables from above.
 </target>
 
 
-<target name="rl-jar" depends="rl-compile,get.svn.version,get.rlvizlib.version" >
+<target name="rl-jar" depends="rl-compile,get.svn.version,get.rlvizlib.version,set.jar.main.class,set.jar.extra.classpath" >
     <mkdir dir="${dist.dir}" />
     <jar destfile="${result.jar}" basedir="${classes.dir}" >
         <manifest>
 		   <attribute name="RLVizLib-Link-Version" value="${rlvizlib.spec.version}"/>
-			<attribute name="Class-Path" value="${jar.extra.classpath}"/>
+			
+			<attribute name="Class-Path" value="${jar.extra.classpath}" />
+			<attribute name="Main-Class" value="${jar.main.class}" />
+			
+
 		    <section name="${main.package.name}">
 		      <attribute name="Specification-Title" value="${main.project.name}"/>
 		      <attribute name="Specification-Version" value="${main.package.spec.version}"/>
@@ -154,8 +177,5 @@ We'll try and rely on minimal variables from above.
     <mkdir dir="${docs.dir}"/>
     <javadoc sourcepath="${src.dir}" destdir="${docs.dir}" classpathref="rlvizlib.classpath" access="private"/>
 </target>
-
-
-
 
 </project>

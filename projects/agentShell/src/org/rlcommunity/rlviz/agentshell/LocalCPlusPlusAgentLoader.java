@@ -16,7 +16,7 @@ http://brian.tannerpages.com
  limitations under the License.
 */
 
-package agentShell;
+package org.rlcommunity.rlviz.agentshell;
 
 import java.io.File;
 import java.util.Vector;

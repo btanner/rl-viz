@@ -65,7 +65,6 @@ public abstract class AbstractVisualizer implements ImageAggregator {
     public BufferedImage getLatestImage() {
         return productionEnvImage;
     }
-    
 
     private synchronized void redrawCurrentImage() {
         synchronized (redrawLock) {
@@ -79,7 +78,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         G.setBackground(myClearColor);
         G.clearRect(0, 0, bufferEnvImage.getWidth(), bufferEnvImage.getHeight());
 
-        
+
         for (int i = 0; i < theRenderObjects.size(); i++) {
             RenderObject thisRunner = theRenderObjects.get(i);
             Dimension position = makeLocationForVizComponent(i);
@@ -98,7 +97,6 @@ public abstract class AbstractVisualizer implements ImageAggregator {
 
         parentPanel.receiveNotificationVizChanged();
     }
-
     long lastDrawTime = 0;
     volatile boolean scheduled = false;
     boolean drawing = false;
@@ -106,7 +104,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
     volatile Timer redrawTimer = new Timer();
 
     public void receiveNotification() {
-        final int timeBetweenDraw = 43;
+        final int timeBetweenDraw = 50;
         //Either draw now or schedule a drawing
 
         synchronized (redrawLock) {
@@ -115,15 +113,16 @@ public abstract class AbstractVisualizer implements ImageAggregator {
             if (scheduled) {
                 return;
             }
+                scheduled = true;
             //If we're not scheduled but currently drawing, schedule at the interval
             if (drawing) {
-                scheduled = true;
                 redrawTimer.schedule(new TimerTask() {
 
                     public void run() {
                         redrawCurrentImage();
                     }
                 }, timeBetweenDraw);
+
                 return;
             }
             //Ok so in this case, we're !scheduled && !drawing
@@ -141,21 +140,6 @@ public abstract class AbstractVisualizer implements ImageAggregator {
                 }
             }, timeTillDraw);
         }
-    //
-//            if(now>lastDrawTime+43){
-//		//One of the guys I draw has updates
-//		redrawCurrentImage();
-//            }else{
-//                if(redrawTimer==null){
-//		Timer redrawTimer= new Timer();
-//		redrawTimer.schedule(new TimerTask() {
-//		            public void run() {
-//		            	redrawCurrentImage();
-//		            }
-//		        }, now-lastDrawTime);		
-//            }
-//                        
-//}   
     }
 
     public void startVisualizing() {
@@ -166,9 +150,9 @@ public abstract class AbstractVisualizer implements ImageAggregator {
             currentlyStarting = true;
         }
         for (RenderObject thisRunner : theRenderObjects) {
-                Thread theThread = new Thread(thisRunner);
-                theThreads.add(theThread);
-                theThread.start();
+            Thread theThread = new Thread(thisRunner);
+            theThreads.add(theThread);
+            theThread.start();
         }
 
         synchronized (startStopSynchObject) {
@@ -260,7 +244,6 @@ public abstract class AbstractVisualizer implements ImageAggregator {
         positions.add(new Point2D.Double(xPos, yPos));
         sizes.add(new Point2D.Double(width, height));
     }
-    
 
     public boolean isCurrentlyRunning() {
         return currentlyRunning;

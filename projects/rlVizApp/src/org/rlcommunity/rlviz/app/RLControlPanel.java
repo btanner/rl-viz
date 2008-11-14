@@ -41,7 +41,7 @@ import javax.swing.Box;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import org.rlcommunity.rlglue.codec.RLGlue;
+import org.rlcommunity.rlviz.settings.RLVizSettings;
 
 
 
@@ -67,26 +67,21 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
 	LoadPanelInterface envLoadPanel=null;
 	LoadPanelInterface agentLoadPanel=null;
-
-	RLVizPreferences globalPreferences=null;
-        
-        
 	JPanel LoaderPanel=null;
 
 	public RLControlPanel(RLGlueLogic theGlueConnection){
 		super();
-		globalPreferences=RLVizPreferences.getInstance();
 		this.theGlueConnection=theGlueConnection;
                 
                 
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		
-		if(globalPreferences.isDynamicEnvironmentLoading())
+		if(RLVizSettings.getBooleanSetting("list-environments"))
 			envLoadPanel=new DynamicEnvLoadPanel(theGlueConnection);
 		else
 			envLoadPanel=new RemoteStubEnvLoadPanel(theGlueConnection);
 
-		if(globalPreferences.isDynamicAgentLoading())
+		if(RLVizSettings.getBooleanSetting("list-agents"))
 			agentLoadPanel=new DynamicAgentLoadPanel(theGlueConnection);
 		else
 			agentLoadPanel=new RemoteStubAgentLoadPanel(theGlueConnection);
@@ -258,7 +253,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
                 simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
 
 		
-		int stepDelay=(int)sleepTimeBetweenSteps.getValue();
+		int stepDelay=sleepTimeBetweenSteps.getValue();
 		theGlueConnection.setNewStepDelay(stepDelay);
 		theGlueConnection.start();
 	}
@@ -297,7 +292,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
 	public void stateChanged(ChangeEvent sliderChangeEvent) {
 		JSlider source = (JSlider)sliderChangeEvent.getSource();
-		int theValue = (int)source.getValue();
+		int theValue = source.getValue();
 		
 		if(source==sleepTimeBetweenSteps){
 			if (!source.getValueIsAdjusting())

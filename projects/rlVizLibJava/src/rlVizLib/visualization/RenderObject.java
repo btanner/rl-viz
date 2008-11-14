@@ -53,7 +53,8 @@ public abstract class RenderObject implements Runnable{
         resizeImages();
     }
     
-    protected void redrawImages(BasicVizComponent theComponent) {
+    
+    protected void redrawImages() {
                 Graphics2D g = workImage.createGraphics();
 
                 //Set the scaling transform
@@ -67,7 +68,7 @@ public abstract class RenderObject implements Runnable{
                 g.setBackground(myClearColor);
                 g.clearRect(0, 0, 1, 1);
 
-                theComponent.render(g);
+                getVizComponent().render(g);
 
                 BufferedImage tmpImage = prodImage;
                 prodImage = workImage;
@@ -77,8 +78,9 @@ public abstract class RenderObject implements Runnable{
     }
 
     abstract BasicVizComponent getVizComponent();
+    abstract void initiateForcedRedraw();
 
-
+   
     private void resizeImages() {
         workImage = new BufferedImage((int) mySize.getWidth(), (int) mySize.getHeight(), BufferedImage.TYPE_INT_ARGB);
         //Set the transform on the image so we can draw everything in [0,1]
@@ -86,5 +88,6 @@ public abstract class RenderObject implements Runnable{
         theScaleTransform.scale(mySize.getWidth(), mySize.getHeight());
 
         prodImage = new BufferedImage((int) mySize.getWidth(), (int) mySize.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        initiateForcedRedraw();
     }
 }

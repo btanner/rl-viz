@@ -12,6 +12,7 @@
 
     <!-- This will get added to the manifest classpath of the jar -->
     <property name="jar.extra.classpath" value="RLVizLib.jar"/>
+    <property name="jar.main.class" value="org.rlcommunity.rlviz.agentshell.AgentShell"/>
 
 
     <target name="clean" depends="rl-clean" />

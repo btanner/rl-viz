@@ -17,55 +17,55 @@ http://brian.tannerpages.com
 */
 
 
-package environmentShell;
+package org.rlcommunity.rlviz.agentshell;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.rlcommunity.rlviz.settings.RLVizSettings;
 
 /**
  *
  * @author mradkie
  */
-public class EnvironmentShellPreferences {
+public class AgentShellPreferences {
 
-    private static EnvironmentShellPreferences ourInstance = new EnvironmentShellPreferences();
-    private Vector<URI> envUriList = new Vector<URI>();
+    private static AgentShellPreferences ourInstance = new AgentShellPreferences();
+    private Vector<URI> agentLocationList = new Vector<URI>();
     private String jniLoaderLibDir = null;
     
-    public static EnvironmentShellPreferences getInstance() {
+    public static AgentShellPreferences getInstance() {
         return ourInstance;
     }
 
     /**
      * Set's a default path to the same place as where this jar be livin'
      */
-    private EnvironmentShellPreferences() {
+    private AgentShellPreferences() {
+        //By default assume this the jniLoader is in the same directory as the AgentShell Jar
         try {
             URL thisJarUrl = this.getClass().getProtectionDomain().getCodeSource().getLocation();
            jniLoaderLibDir = new File(thisJarUrl.toURI()).getParent();
         } catch (URISyntaxException ex) {
-            Logger.getLogger(EnvironmentShellPreferences.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AgentShellPreferences.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void addToList(URI theURI){
-        this.envUriList.add(theURI);
+        this.agentLocationList.add(theURI);
     }
     public Vector<URI> getList(){
-        if(this.envUriList.isEmpty()){
-//                envUriList.add(new File(jniLoaderLibDir).toURI());
-  //              envUriList.add(new File("/Users/mradkie/competition/rlcomplibrary/libraries/envJars/").toURI());
-//                envUriList.add(new File("../../rlcomplibrary/libraries/envJars/").toURI());
-  //              envUriList.add(new File("../../rl-library/system/dist/").toURI());
-                  envUriList.add(new File(rlVizLib.utilities.UtilityShop.getLibraryPath()).toURI());
+        if(this.agentLocationList.isEmpty()){
+//                agentLocationList.add(new File(jniLoaderLibDir).toURI());
+//                agentLocationList.add(new File("../../rl-library/system/dist/").toURI());
+                  String agentPath=RLVizSettings.getStringSetting("agent-jar-path");
+                  agentLocationList.add(new File(agentPath).toURI());
         }
-        return this.envUriList;
+        return this.agentLocationList;
     }
     public String getJNILoaderLibDir(){
         return this.jniLoaderLibDir;

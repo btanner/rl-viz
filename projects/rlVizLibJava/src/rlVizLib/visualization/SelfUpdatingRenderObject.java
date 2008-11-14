@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class SelfUpdatingRenderObject extends RenderObject implements VizComponentChangeListener {
 
-    volatile boolean shouldDie = false;   
+    volatile boolean shouldDie = false;
     private SelfUpdatingVizComponent theComponent = null;
 
     public SelfUpdatingRenderObject(Dimension currentVisualizerPanelSize, SelfUpdatingVizComponent theComponent, ImageAggregator theBoss) {
@@ -40,7 +40,7 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
 
     public void kill() {
         shouldDie = true;
-        synchronized(theComponent){
+        synchronized (theComponent) {
             theComponent.notify();
         }
     }
@@ -59,7 +59,7 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
                 synchronized (theComponent) {
                     theComponent.wait(60000);
                 }
-                redrawImages(theComponent);
+                redrawImages();
 
             } catch (InterruptedException ex) {
                 Logger.getLogger(SelfUpdatingRenderObject.class.getName()).log(Level.SEVERE, null, ex);
@@ -70,7 +70,17 @@ public class SelfUpdatingRenderObject extends RenderObject implements VizCompone
     }
 
     @Override
-    BasicVizComponent getVizComponent() {
+    protected BasicVizComponent getVizComponent() {
         return theComponent;
+    }
+
+    @Override
+    void initiateForcedRedraw() {
+        if (theComponent != null) {
+            synchronized (theComponent) {
+                theComponent.notify();
+            }
+        }
+
     }
 }

@@ -16,7 +16,7 @@ http://brian.tannerpages.com
  limitations under the License.
 */
 
-package environmentShell;
+package org.rlcommunity.rlviz.environmentshell;
 
 import rlVizLib.dynamicLoading.Unloadable;
 import rlVizLib.general.ParameterHolder;

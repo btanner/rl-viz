@@ -16,12 +16,25 @@ http://brian.tannerpages.com
  limitations under the License.
 */
 
-package environmentShell;
+package org.rlcommunity.rlviz.environmentshell;
 
-import rlVizLib.dynamicLoading.DynamicLoaderInterface;
+
+import rlVizLib.dynamicLoading.EnvOrAgentType;
+import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
-public interface EnvironmentLoaderInterface extends DynamicLoaderInterface{
-	public EnvironmentInterface loadEnvironment(String envName, ParameterHolder theParams);
+public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface{
+
+    public LocalJarEnvironmentLoader() {
+        super(EnvironmentShellPreferences.getInstance().getList(),EnvOrAgentType.kEnv);
+    }
+
+
+    public EnvironmentInterface loadEnvironment(String requestedName, ParameterHolder theParams) {
+        Object theEnvObject=load(requestedName, theParams);
+        if(theEnvObject!=null)return (EnvironmentInterface)theEnvObject;
+        return null;
+    }
+
 }

@@ -100,7 +100,7 @@ public class LocalGlue implements RLGlueInterface {
         return theAction;
     }
     
-    public Reward_observation_terminal RL_env_step(Action theAction) {
+    public synchronized Reward_observation_terminal RL_env_step(Action theAction) {
         Reward_observation_terminal RO = E.env_step(theAction);
         if (RO == null) {
             System.err.println("RO came back as null from RL_step");
@@ -120,7 +120,7 @@ public class LocalGlue implements RLGlueInterface {
     }
 
 
-    public Action RL_agent_step( double theReward, Observation theObservation) {
+    public synchronized Action RL_agent_step( double theReward, Observation theObservation) {
         Action theAction=A.agent_step(theReward, theObservation);
             if (theAction == null) {
                 System.err.println("theAction came back as null from agent_step");
@@ -128,7 +128,7 @@ public class LocalGlue implements RLGlueInterface {
         return theAction;
     }
 
-    public void RL_agent_end(double theReward) {
+    public synchronized void RL_agent_end(double theReward) {
         A.agent_end(theReward);
     }
 

@@ -21,6 +21,7 @@ package org.rlcommunity.rlviz.app;
 
 import java.lang.reflect.Constructor;
 import java.util.Vector;
+import org.rlcommunity.rlviz.settings.RLVizSettings;
 import rlVizLib.dynamicLoading.ClassExtractor;
 import rlVizLib.dynamicLoading.JarFileFilter;
 import rlVizLib.dynamicLoading.LocalDirectoryGrabber;
@@ -36,14 +37,16 @@ public class VisualizerFactory {
     static String defaultAgentVisualizerClassName = "org.rlcommunity.visualizers.generic.GenericAgentVisualizer";
 
     public static AbstractVisualizer createEnvVisualizerFromClassName(String VizClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
-        return createVisualizerFromClassName(VizClassName, defaultEnvVisualizerClassName, theGlueState, theControlTarget);
+        String envJarPath=RLVizSettings.getStringSetting("environment-jar-path");
+        return createVisualizerFromClassName(VizClassName, defaultEnvVisualizerClassName, theGlueState, theControlTarget,envJarPath);
     }
 
     public static AbstractVisualizer createAgentVisualizerFromClassName(String VizClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
-        return createVisualizerFromClassName(VizClassName, defaultAgentVisualizerClassName, theGlueState, theControlTarget);
+        String agentJarPath=RLVizSettings.getStringSetting("agent-jar-path");
+        return createVisualizerFromClassName(VizClassName, defaultAgentVisualizerClassName, theGlueState, theControlTarget,agentJarPath);
     }
 
-    private static AbstractVisualizer createVisualizerFromClassName(String theVisualizerClassName, String defaultClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
+    private static AbstractVisualizer createVisualizerFromClassName(String theVisualizerClassName, String defaultClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget, String libPath) {
 
         if (debugThis){
             System.out.println("AbstractVisualizer::createVisualizerFromClassName");
@@ -52,7 +55,7 @@ public class VisualizerFactory {
         }
 
         AbstractVisualizer theViz = null;
-        String libPath = rlVizLib.utilities.UtilityShop.getLibraryPath();
+//        String libPath = rlVizLib.utilities.UtilityShop.getLibraryPath();
 
         LocalDirectoryGrabber theJarGrabber=new LocalDirectoryGrabber(libPath);
         theJarGrabber.addFilter(new JarFileFilter());
@@ -161,8 +164,10 @@ public class VisualizerFactory {
         } catch (Exception e) {
             if(debugThis){
                 System.out.println(e);
-                System.out.println(e.getCause());
-                e.getCause().printStackTrace();
+                if(e.getCause()!=null){
+                    System.out.println(e.getCause());
+                    e.getCause().printStackTrace();
+                }
             }
             return null;
         }

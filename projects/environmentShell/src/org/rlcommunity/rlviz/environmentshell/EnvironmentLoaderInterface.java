@@ -16,26 +16,12 @@ http://brian.tannerpages.com
  limitations under the License.
 */
 
+package org.rlcommunity.rlviz.environmentshell;
 
-package btViz;
+import rlVizLib.dynamicLoading.DynamicLoaderInterface;
+import rlVizLib.general.ParameterHolder;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
-import org.rlcommunity.rlviz.app.RLVizPreferences;
-import org.rlcommunity.rlviz.app.frames.RLVizFrame;
-import java.io.IOException;
-
-import org.rlcommunity.rlglue.codec.RLGlue;
-
-/**
- * @deprecated Use the classes in org.rlcommunity.rlviz.app
- * @author btanner
- */
-public class NetGraphicalDriverBothDynamic {
-
-	public static void main(String [] args) throws IOException {
-            //Setup what loaders we want
-		RLVizPreferences.getInstance().setDynamicAgentLoading(true);
-		RLVizPreferences.getInstance().setDynamicEnvironmentLoading(true);
-
-		new RLVizFrame();
-	}
+public interface EnvironmentLoaderInterface extends DynamicLoaderInterface{
+	public EnvironmentInterface loadEnvironment(String envName, ParameterHolder theParams);
 }

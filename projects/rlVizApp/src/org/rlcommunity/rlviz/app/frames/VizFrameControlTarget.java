@@ -5,7 +5,6 @@
 package org.rlcommunity.rlviz.app.frames;
 
 import org.rlcommunity.rlviz.app.visualizerLoadListener;
-import btViz.*;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.Vector;

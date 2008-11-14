@@ -141,19 +141,19 @@ public class UtilityShop {
 	 * RLVIZ_LIB_PATH System property or by hopings its at ../../libraries
 	 * 
 	 */
-	public final static String getLibraryPath() {
-		// Some more dynamic loading goodness
-		String libraryPath = System.getProperty("RLVIZ_LIB_PATH");
-		if (libraryPath == null) {
-			String curDir = System.getProperty("user.dir");
-			File thisDirectoryFile = new File(curDir);
-			String mainLibraryDir = thisDirectoryFile.getParent();
-			File parentDirectoryFile = new File(mainLibraryDir);
-			String workSpaceDirString = parentDirectoryFile.getParent();
-			libraryPath = workSpaceDirString + "/libraries";
-		}
-		return libraryPath;
-	}
+//	public final static String getLibraryPath() {
+//		// Some more dynamic loading goodness
+//		String libraryPath = System.getProperty("RLVIZ_LIB_PATH");
+//		if (libraryPath == null) {
+//			String curDir = System.getProperty("user.dir");
+//			File thisDirectoryFile = new File(curDir);
+//			String mainLibraryDir = thisDirectoryFile.getParent();
+//			File parentDirectoryFile = new File(mainLibraryDir);
+//			String workSpaceDirString = parentDirectoryFile.getParent();
+//			libraryPath = workSpaceDirString + "/libraries";
+//		}
+//		return libraryPath;
+//	}
 
 	/**
 	 * Given a {@link hasVersionDetails} provider, fills fields into the ParameterHolder formatted

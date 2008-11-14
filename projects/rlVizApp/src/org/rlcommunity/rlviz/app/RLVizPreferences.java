@@ -20,33 +20,33 @@ http://brian.tannerpages.com
 package org.rlcommunity.rlviz.app;
 
 public class RLVizPreferences {
-	private static RLVizPreferences ourInstance = new RLVizPreferences(); 
-	
-	private boolean dynamicAgentLoading=false;
-	private boolean dynamicEnvironmentLoading=false;
-	
-	public static RLVizPreferences getInstance() { 
-		return ourInstance; 
-	} 
-
-	private RLVizPreferences() { 
-	}
-
-	public boolean isDynamicAgentLoading() {
-		return dynamicAgentLoading;
-	}
-
-	public void setDynamicAgentLoading(boolean dynamicAgentLoading) {
-		this.dynamicAgentLoading = dynamicAgentLoading;
-	}
-
-	public boolean isDynamicEnvironmentLoading() {
-		return dynamicEnvironmentLoading;
-	}
-
-	public void setDynamicEnvironmentLoading(boolean dynamicEnvironmentLoading) {
-		this.dynamicEnvironmentLoading = dynamicEnvironmentLoading;
-	} 
-	
-	
+//	private static RLVizPreferences ourInstance = new RLVizPreferences(); 
+//	
+//	private boolean dynamicAgentLoading=false;
+//	private boolean dynamicEnvironmentLoading=false;
+//	
+//	public static RLVizPreferences getInstance() { 
+//		return ourInstance; 
+//	} 
+//
+//	private RLVizPreferences() { 
+//	}
+//
+//	public boolean isDynamicAgentLoading() {
+//		return dynamicAgentLoading;
+//	}
+//
+//	public void setDynamicAgentLoading(boolean dynamicAgentLoading) {
+//		this.dynamicAgentLoading = dynamicAgentLoading;
+//	}
+//
+//	public boolean isDynamicEnvironmentLoading() {
+//		return dynamicEnvironmentLoading;
+//	}
+//
+//	public void setDynamicEnvironmentLoading(boolean dynamicEnvironmentLoading) {
+//		this.dynamicEnvironmentLoading = dynamicEnvironmentLoading;
+//	} 
+//	
+//	
 }

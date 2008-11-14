@@ -41,6 +41,7 @@ import rlVizLib.messaging.environmentShell.EnvShellLoadRequest;
 import rlVizLib.messaging.environmentShell.EnvShellUnLoadRequest;
 import rlVizLib.visualization.AbstractVisualizer;
 import org.rlcommunity.rlviz.app.gluestepper.GlueStepper;
+import org.rlcommunity.rlviz.settings.RLVizSettings;
 import rlVizLib.messaging.agent.AgentVersionSupportedRequest;
 import rlVizLib.messaging.agent.AgentVersionSupportedResponse;
 import rlVizLib.messaging.agent.AgentVisualizerNameRequest;
@@ -262,13 +263,14 @@ public class RLGlueLogic {
 	}
 
 	private void finishUnloadEnvironment() {
-		if(RLVizPreferences.getInstance().isDynamicEnvironmentLoading())
+            
+		if(RLVizSettings.getBooleanSetting("list-environments"))
 			EnvShellUnLoadRequest.Execute();
 	}
 
 
 	private void finishUnloadAgent(){
-		if(RLVizPreferences.getInstance().isDynamicAgentLoading())
+		if(RLVizSettings.getBooleanSetting("list-agents"))
 			AgentShellUnLoadRequest.Execute();
 	}
 

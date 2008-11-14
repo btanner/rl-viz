@@ -16,7 +16,7 @@ http://brian.tannerpages.com
  limitations under the License.
 */
 
-package environmentShell;
+package org.rlcommunity.rlviz.environmentshell;
 
 import java.io.File;
 import java.net.URI;

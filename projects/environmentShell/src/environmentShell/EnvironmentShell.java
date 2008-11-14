@@ -17,189 +17,48 @@ limitations under the License.
  */
 package environmentShell;
 
-import java.util.Map;
 
-import java.util.TreeMap;
-import java.util.Vector;
 
 import rlVizLib.dynamicLoading.Unloadable;
-import rlVizLib.general.ParameterHolder;
-import rlVizLib.general.RLVizVersion;
-import rlVizLib.messaging.GenericMessage;
-import rlVizLib.messaging.MessageUser;
-import rlVizLib.messaging.NotAnRLVizMessageException;
-import rlVizLib.messaging.environmentShell.EnvShellListResponse;
-import rlVizLib.messaging.environmentShell.EnvShellLoadRequest;
-import rlVizLib.messaging.environmentShell.EnvShellLoadResponse;
-import rlVizLib.messaging.environmentShell.EnvShellRefreshResponse;
-import rlVizLib.messaging.environmentShell.EnvShellMessageType;
-import rlVizLib.messaging.environmentShell.EnvShellUnLoadResponse;
-import rlVizLib.messaging.environmentShell.EnvironmentShellMessageParser;
-import rlVizLib.messaging.environmentShell.EnvironmentShellMessages;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
+/**
+ * @deprecated Use org.rlcommunity.rlviz.environmentshell
+ * @author btanner
+ */
 public class EnvironmentShell implements EnvironmentInterface, Unloadable {
-
-    protected String libDir;
-    
-
-    static {
-        RLVizVersion theLinkedLibraryVizVersion = rlVizLib.rlVizCore.getRLVizSpecVersion();
-        RLVizVersion ourCompileVersion = rlVizLib.rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(EnvironmentShell.class);
-
-        if (!theLinkedLibraryVizVersion.equals(ourCompileVersion)) {
-            System.err.println("Warning :: Possible RLVizLib Incompatibility");
-            System.err.println("Warning :: Runtime version used by AgentShell is:  " + theLinkedLibraryVizVersion);
-            System.err.println("Warning :: Compile version used to build AgentShell is:  " + ourCompileVersion);
-        }
-    }
-    private EnvironmentInterface theEnvironment = null;
-    Map<String, EnvironmentLoaderInterface> mapFromUniqueNameToLoader = null;
-    Map<String, String> mapFromUniqueNameToLocalName = null;
-    Vector<EnvironmentLoaderInterface> theEnvironmentLoaders = null;
-    Vector<String> envNameVector = null;
-    Vector<ParameterHolder> envParamVector = null;
-
+    private final org.rlcommunity.rlviz.environmentshell.EnvironmentShell es;
+  
     public EnvironmentShell() {
-        //See if the environment variable for the path to the Jars has been defined
-        this.refreshList();
+        es=new org.rlcommunity.rlviz.environmentshell.EnvironmentShell();
     }
 
     public void refreshList() {
-        mapFromUniqueNameToLoader = new TreeMap<String, EnvironmentLoaderInterface>();
-        mapFromUniqueNameToLocalName = new TreeMap<String, String>();
-        theEnvironmentLoaders = new Vector<EnvironmentLoaderInterface>();
-        envNameVector = new Vector<String>();
-        envParamVector = new Vector<ParameterHolder>();
-
-        if (!theEnvironmentLoaders.isEmpty()) {
-            theEnvironmentLoaders.clear();
-        }
-        //See if the environment variable for the path to the Jars has been defined
-        theEnvironmentLoaders.add(new LocalJarEnvironmentLoader());
-
-        //Check if we should do CPP loading
-        String CPPEnvLoaderString = System.getProperty("CPPEnv");
-
-        //Short circuit to check the pointer in case not defined
-        if (CPPEnvLoaderString != null && CPPEnvLoaderString.equalsIgnoreCase("true")) {
-            try {
-                theEnvironmentLoaders.add(new LocalCPlusPlusEnvironmentLoader());
-            } catch (UnsatisfiedLinkError failure) {
-                System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments: " + failure);
-            }
-        }
-
-        for (EnvironmentLoaderInterface thisEnvLoader : theEnvironmentLoaders) {
-            thisEnvLoader.makeList();
-            Vector<String> thisEnvNameVector = thisEnvLoader.getNames();
-            for (String localName : thisEnvNameVector) {
-                String uniqueName = localName + " " + thisEnvLoader.getTypeSuffix();
-                envNameVector.add(uniqueName);
-                mapFromUniqueNameToLocalName.put(uniqueName, localName);
-                mapFromUniqueNameToLoader.put(uniqueName, thisEnvLoader);
-            }
-
-            Vector<ParameterHolder> thisParameterVector = thisEnvLoader.getParameters();
-            for (ParameterHolder thisParam : thisParameterVector) {
-                envParamVector.add(thisParam);
-            }
-
-        }
+        es.refreshList();
     }
 
     public void env_cleanup() {
-        theEnvironment.env_cleanup();
+        es.env_cleanup();
     }
     public String env_init() {
-        return theEnvironment.env_init();
+        return es.env_init();
     }
 
     public String env_message(String theMessage) {
-        GenericMessage theGenericMessage;
-        try {
-            theGenericMessage = new GenericMessage(theMessage);
-        } catch (NotAnRLVizMessageException e) {
-            System.err.println("Someone sent EnvironmentShell a message that wasn't RL-Viz compatible");
-            return "I only respond to RL-Viz messages!";
-        }
-        if (theGenericMessage.getTo().id() == MessageUser.kEnvShell.id()) {
-
-            //Its for me
-            EnvironmentShellMessages theMessageObject = EnvironmentShellMessageParser.makeMessage(theGenericMessage);
-
-            //Handle a request for the list of environments
-            if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellListQuery.id()) {
-
-                this.refreshList();
-                EnvShellListResponse theResponse = new EnvShellListResponse(envNameVector, envParamVector);
-
-                return theResponse.makeStringResponse();
-            }
-
-            //Handle a request to actually load the environment
-            if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellLoad.id()) {
-                EnvShellLoadRequest theCastedRequest = (EnvShellLoadRequest) theMessageObject;
-
-                String envName = theCastedRequest.getEnvName();
-                ParameterHolder theParams = theCastedRequest.getParameterHolder();
-
-
-                theEnvironment = loadEnvironment(envName, theParams);
-
-                EnvShellLoadResponse theResponse = new EnvShellLoadResponse(theEnvironment != null);
-
-                return theResponse.makeStringResponse();
-            }
-
-            //Handle a request to actually load the environment
-            if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellUnLoad.id()) {
-                //Actually "load" the environment
-                theEnvironment = null;
-
-                EnvShellUnLoadResponse theResponse = new EnvShellUnLoadResponse();
-
-                return theResponse.makeStringResponse();
-            }
-
-            if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellRefresh.id()) {
-                this.refreshList();
-
-                EnvShellRefreshResponse theResponse = new EnvShellRefreshResponse(true);
-
-                return theResponse.makeStringResponse();
-            }
-            System.err.println("Env shell doesn't know how to handle message: " + theMessage);
-        }
-        //IF it wasn't for me, pass it on
-        String response = theEnvironment.env_message(theMessage);
-        return response;
-
-
-    }
-
-    EnvironmentInterface loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
-        EnvironmentLoaderInterface thisEnvLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
-        String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
-        return thisEnvLoader.loadEnvironment(localName, theParams);
+        return es.env_message(theMessage);
     }
 
     public Observation env_start() {
-        Observation o = theEnvironment.env_start();
-        return o;
+        return es.env_start();
     }
 
     public Reward_observation_terminal env_step(Action arg0) {
-        Reward_observation_terminal RO = theEnvironment.env_step(arg0);
-        return RO;
+        return es.env_step(arg0);
     }
 
-    public static void main(String[] args) {
-        EnvironmentShell e = new EnvironmentShell();
-    }
     
 }
