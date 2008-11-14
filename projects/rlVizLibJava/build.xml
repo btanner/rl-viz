@@ -37,20 +37,20 @@
             <manifest>
                 <attribute name="Main-Class" value="rlVizLib.rlVizCore"/>
                 <attribute name="Built-By" value="${user.name}"/>
+                <section name="org/rlcommunity/rlglue/codec/">
+                    <attribute name="Specification-Title" value="RLGlueJavaCodec"/>
+                    <attribute name="Specification-Version" value="${rlglue.spec.version}"/>
+                    <attribute name="Specification-Vendor" value="RLAI"/>
+                    <attribute name="Implementation-Title" value="RLGlueJavaCodec"/>
+                    <attribute name="Implementation-Version" value="${rlglue.build.version}"/> 
+                    <attribute name="Implementation-Vendor" value="Brian Tanner"/>
+                </section>
                 <section name="rlVizLib/">
                     <attribute name="Specification-Title" value="rlVizLib"/>
                     <attribute name="Specification-Version" value="${rlVizLib.spec.version}"/>
                     <attribute name="Specification-Vendor" value="RLAI"/>
                     <attribute name="Implementation-Title" value="rlVizLib"/>
                     <attribute name="Implementation-Version" value="Build:${svn.revision.version}"/> 
-                    <attribute name="Implementation-Vendor" value="Brian Tanner"/>
-                </section>
-                <section name="org.rlcommunity.rlglue.codec/">
-                    <attribute name="Specification-Title" value="RLGlueJavaCodec"/>
-                    <attribute name="Specification-Version" value="${rlglue.spec.version}"/>
-                    <attribute name="Specification-Vendor" value="RLAI"/>
-                    <attribute name="Implementation-Title" value="RLGlueJavaCodec"/>
-                    <attribute name="Implementation-Version" value="${rlglue.build.version}"/> 
                     <attribute name="Implementation-Vendor" value="Brian Tanner"/>
                 </section>
             </manifest>
