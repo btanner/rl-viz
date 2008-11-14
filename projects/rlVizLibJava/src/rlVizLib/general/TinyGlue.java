@@ -58,11 +58,11 @@ public class TinyGlue extends Observable {
 
 
         if (RLGlue.isCurrentEpisodeOver()) {
-            Observation_action firstAO = RLGlue.RL_start();
+            Observation firstObservation = RLGlue.RL_env_start();
+
 
             synchronized (this) {
-                lastObservation = firstAO.o;
-                lastAction = firstAO.a;
+                lastObservation = firstObservation;
                 lastReward = Double.NaN;
 
                 episodeNumber++;
@@ -70,7 +70,14 @@ public class TinyGlue extends Observable {
                 totalSteps++;
                 returnThisEpisode = 0.0d;
             }
-            updateObservers(firstAO);
+            updateObservers(firstObservation);
+            Action firstAction = RLGlue.RL_agent_start(firstObservation);
+
+            synchronized (this) {
+                lastAction = firstAction;
+            }
+            updateObservers(firstAction);
+
         } else {
             Reward_observation_action_terminal ROAT = new Reward_observation_action_terminal();
 
