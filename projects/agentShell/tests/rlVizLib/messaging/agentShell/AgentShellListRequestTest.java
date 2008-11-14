@@ -19,6 +19,7 @@ http://brian.tannerpages.com
 package rlVizLib.messaging.agentShell;
 
 import org.junit.Test;
+import org.rlcommunity.rlviz.agentshell.AgentShell;
 import static org.junit.Assert.*;
 
 

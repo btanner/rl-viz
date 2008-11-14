@@ -62,6 +62,24 @@ We'll try and rely on minimal variables from above.
 </target>
 	
 	
+<target name="get.rlglue.spec.version" description="Get the current spec version of rl-glue">
+    <exec executable="java"
+          failifexecutionfails="no"
+          outputproperty="rlglue.spec.version">
+    <arg value="-jar"/>
+   <arg value="${rlgluecodec.jar}"/>
+   <arg value="--version"/>
+    </exec>
+</target>
+<target name="get.rlglue.build.version" description="Get the current spec version of rl-glue">
+    <exec executable="java"
+          failifexecutionfails="no"
+          outputproperty="rlglue.build.version">
+    <arg value="-jar"/>
+   <arg value="${rlgluecodec.jar}"/>
+   <arg value="--buildversion"/>
+    </exec>
+</target>
 
 <target name="get.svn.version" description="Get the current subversion revision number of the project">
     <exec executable="svnversion"

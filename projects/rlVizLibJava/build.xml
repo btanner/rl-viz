@@ -30,7 +30,7 @@
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="rlgluecodec.classpath" debug="${build.debug}" deprecation="${build.deprecation}"/> 
     </target>
 
-    <target name="jar" depends="compile,get.svn.version" >
+    <target name="jar" depends="compile,get.svn.version,get.rlglue.spec.version,get.rlglue.build.version" >
         <unjar src="${rlgluecodec.jar}" dest="${classes.dir}" />
         <mkdir dir="${dist.dir}" />
         <jar destfile="${result.jar}" basedir="${classes.dir}" >
@@ -43,6 +43,14 @@
                     <attribute name="Specification-Vendor" value="RLAI"/>
                     <attribute name="Implementation-Title" value="rlVizLib"/>
                     <attribute name="Implementation-Version" value="Build:${svn.revision.version}"/> 
+                    <attribute name="Implementation-Vendor" value="Brian Tanner"/>
+                </section>
+                <section name="org.rlcommunity.rlglue.codec/">
+                    <attribute name="Specification-Title" value="RLGlueJavaCodec"/>
+                    <attribute name="Specification-Version" value="${rlglue.spec.version}"/>
+                    <attribute name="Specification-Vendor" value="RLAI"/>
+                    <attribute name="Implementation-Title" value="RLGlueJavaCodec"/>
+                    <attribute name="Implementation-Version" value="${rlglue.build.version}"/> 
                     <attribute name="Implementation-Vendor" value="Brian Tanner"/>
                 </section>
             </manifest>
