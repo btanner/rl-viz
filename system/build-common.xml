@@ -26,6 +26,7 @@ We'll try and rely on minimal variables from above.
 <property name="test.reports"   value="reports"/>
 <property name="test.raw"   value="reports/raw"/>
 <property name="result.jar" value="${dist.dir}/${main.project.name}.jar" />
+<property name="src.jar" value="${dist.dir}/${main.project.name}-src.jar" />
 
 
 <!-- everyone can use this EXCEPT rlVizLib, for obvious reasons -->

@@ -55,7 +55,8 @@
                 </section>
             </manifest>
         </jar>
-    </target>
+        <jar destfile="${src.jar}" basedir="${src.dir}" ></jar>    
+</target>
 
     <target name="clean-build" depends="clean,jar"/>
     
