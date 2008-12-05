@@ -101,6 +101,9 @@ public class JarClassLoader {
                 Thread.dumpStack();
             }
             return null;
+        }catch(Throwable T){
+            System.out.println("Misc. problem loading class: "+thisClassName+" \n"+T);
+            return null;
         }
         return theClass;
     }
