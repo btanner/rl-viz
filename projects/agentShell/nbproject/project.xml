@@ -79,7 +79,7 @@
             <compilation-unit>
                 <package-root>tests</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../system/dist/RLVizLib.jar:../../system/libs/junit.jar:../../system/dist/AgentShell.jar</classpath>
+                <classpath mode="compile">../../system/dist/RLVizLib.jar:../../system/libs/junit.jar:../../system/dist/AgentShell.jar:../../system/dist/RLVizLib-src.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
