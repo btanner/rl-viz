@@ -31,6 +31,8 @@ import rlVizLib.dynamicLoading.CompositeResourceGrabber;
 import rlVizLib.dynamicLoading.DylibGrabber;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import rlVizLib.messaging.environmentShell.EnvShellTaskSpecResponse;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 /**
  *	Java class to talk to a C++ counterpart, 
@@ -160,5 +162,9 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
 
     public String getTypeSuffix() {
         return " - C++";
+    }
+
+    public TaskSpecPayload loadTaskSpecPayload(String localName, ParameterHolder theParams) {
+        return new TaskSpecPayload("", true, "LocalCPlusPlus Loader does not yet support task spec requests.");
     }
 }

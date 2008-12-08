@@ -13,6 +13,7 @@
 	<property name="main.vendor.name" value="Brian Tanner"/>
 	<property name="rl.viz.system.directory" value="${baseLibraryDir}/system"/>
 	<path id="project.extra.classpath" />
+	
 	<import file="${rl.viz.system.directory}/build-common.xml"/>
 
 
@@ -27,7 +28,13 @@
 <!-- Not using rl-compile in build-common.xml because we need rlgluecodec.jar -->
     <target name="compile"  depends="set-debug">
         <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="rlgluecodec.classpath" debug="${build.debug}" deprecation="${build.deprecation}"/> 
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="${build.debug}" deprecation="${build.deprecation}">
+			<classpath>
+					<path refid="rlgluecodec.classpath" />
+			    	<pathelement location="${baseLibraryDir}/system/dist/libs/commons-codec-1.3.jar"/>
+			      </classpath>
+	
+	</javac> 
     </target>
 
     <target name="jar" depends="compile,get.svn.version,get.rlglue.spec.version,get.rlglue.build.version" >
@@ -36,6 +43,7 @@
         <jar destfile="${result.jar}" basedir="${classes.dir}" >
             <manifest>
                 <attribute name="Main-Class" value="rlVizLib.rlVizCore"/>
+				<attribute name="Class-Path" value="libs/commons-codec-1.3.jar" />
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="org/rlcommunity/rlglue/codec/">
                     <attribute name="Specification-Title" value="RLGlueJavaCodec"/>

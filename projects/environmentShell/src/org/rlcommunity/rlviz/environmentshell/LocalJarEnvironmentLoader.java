@@ -3,38 +3,73 @@ Copyright 2007 Brian Tanner
 brian@tannerpages.com
 http://brian.tannerpages.com
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
 package org.rlcommunity.rlviz.environmentshell;
 
-
+import java.lang.reflect.Method;
 import rlVizLib.dynamicLoading.EnvOrAgentType;
 import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import rlVizLib.messaging.environmentShell.EnvShellTaskSpecResponse;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
-public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface{
+public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface {
 
     public LocalJarEnvironmentLoader() {
-        super(EnvironmentShellPreferences.getInstance().getList(),EnvOrAgentType.kEnv);
+        super(EnvironmentShellPreferences.getInstance().getList(), EnvOrAgentType.kEnv);
     }
 
-
     public EnvironmentInterface loadEnvironment(String requestedName, ParameterHolder theParams) {
-        Object theEnvObject=load(requestedName, theParams);
-        if(theEnvObject!=null)return (EnvironmentInterface)theEnvObject;
+        Object theEnvObject = load(requestedName, theParams);
+        if (theEnvObject != null) {
+            return (EnvironmentInterface) theEnvObject;
+        }
         return null;
     }
 
+    public TaskSpecPayload loadTaskSpecPayload(String localName, ParameterHolder theParams) {
+        if (theClasses == null) {
+            makeList();
+        }
+
+        String fullName = getFullClassNameFromShortName(localName);
+        //Get the file from the list
+        for (Class<?> theClass : theClasses) {
+            if (theClass.getName().equals(fullName)) {
+                //this is the right one load it
+                return loadTaskSpecPayloadFromClass(theClass, theParams);
+            }
+        }
+        return null;
+
+    }
+
+    private TaskSpecPayload loadTaskSpecPayloadFromClass(Class<?> theClass, ParameterHolder theParams) {
+        TaskSpecPayload theTSP = null;
+
+        Class<?>[] paramHolderParams = new Class<?>[]{theParams.getClass()};
+
+        try {
+            Method TaskSpecPayloadMakerMethod = theClass.getDeclaredMethod("getTaskSpecPayload", paramHolderParams);
+            if (TaskSpecPayloadMakerMethod != null) {
+                theTSP = (TaskSpecPayload) TaskSpecPayloadMakerMethod.invoke((Object[]) null, new Object[]{theParams});
+            }
+        } catch (Exception e) {
+            return new TaskSpecPayload("", true, ""+theClass.getName()+" does not have a getTaskSpecPayload method");
+        }
+
+        return theTSP;
+    }
 }

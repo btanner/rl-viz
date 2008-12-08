@@ -19,7 +19,6 @@ http://brian.tannerpages.com
 */
 
 
-import java.io.File;
 import java.io.FileFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -52,7 +51,7 @@ import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
 
     private Vector<String> theNames = null;
-    private Vector<Class<?>> theClasses = null;
+    protected Vector<Class<?>> theClasses = null;
     private Vector<ParameterHolder> theParamHolders = null;
     private Map<String, String> publicNameToFullName = null;
     private Set<String> allFullClassName = null;
@@ -96,7 +95,6 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         Vector<Class<?>> allMatching = new Vector<Class<?>>();
         publicNameToFullName=new TreeMap<String, String>();
 
-        File JarDir = new File(theUriList.elementAt(0).toString());
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
             //System.out.println("-------Loading both types");
             allMatching = theClassExtractor.getAllClassesThatImplement(EnvironmentInterface.class, Unloadable.class);
@@ -136,7 +134,7 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         return true;
     }
 
-    private String getFullClassNameFromShortName(String shortName) {
+    protected String getFullClassNameFromShortName(String shortName) {
         return publicNameToFullName.get(shortName);
     }
 
@@ -199,7 +197,6 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
                 theParamHolder = (ParameterHolder) paramMakerMethod.invoke((Object[]) null, (Object[]) null);
             }
         } catch (Exception e) {
-            
             return null;
         }
 

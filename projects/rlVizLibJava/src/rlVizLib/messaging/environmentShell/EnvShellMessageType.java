@@ -24,7 +24,8 @@ public enum EnvShellMessageType{
 	kEnvShellListQuery(1),
 	kEnvShellLoad(2),
 	kEnvShellUnLoad(3),
-        kEnvShellRefresh(4);
+        kEnvShellRefresh(4),
+        kEnvShellTaskspec(5);
 	
 	private final int id;
 	

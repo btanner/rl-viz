@@ -17,10 +17,6 @@ limitations under the License.
  */
 package org.rlcommunity.rlviz.environmentshell;
 
-import environmentShell.*;
-import org.rlcommunity.rlviz.environmentshell.LocalJarEnvironmentLoader;
-import org.rlcommunity.rlviz.environmentshell.EnvironmentLoaderInterface;
-import org.rlcommunity.rlviz.environmentshell.LocalCPlusPlusEnvironmentLoader;
 import java.util.Map;
 
 import java.util.TreeMap;
@@ -47,6 +43,9 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 import org.rlcommunity.rlviz.settings.RLVizSettings;
+import rlVizLib.messaging.environmentShell.EnvShellTaskSpecRequest;
+import rlVizLib.messaging.environmentShell.EnvShellTaskSpecResponse;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
@@ -123,6 +122,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
     public void env_cleanup() {
         theEnvironment.env_cleanup();
     }
+
     public String env_init() {
         return theEnvironment.env_init();
     }
@@ -135,14 +135,17 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
             System.err.println("Someone sent EnvironmentShell a message that wasn't RL-Viz compatible");
             return "I only respond to RL-Viz messages!";
         }
+        /**
+         * Check if this message is destined for the environment shell or the environment
+         */
         if (theGenericMessage.getTo().id() == MessageUser.kEnvShell.id()) {
-
-            //Its for me
+            /**
+             * This message is for the environment shell
+             */
             EnvironmentShellMessages theMessageObject = EnvironmentShellMessageParser.makeMessage(theGenericMessage);
 
             //Handle a request for the list of environments
             if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellListQuery.id()) {
-
                 this.refreshList();
                 EnvShellListResponse theResponse = new EnvShellListResponse(envNameVector, envParamVector);
 
@@ -164,7 +167,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
                 return theResponse.makeStringResponse();
             }
 
-            //Handle a request to actually load the environment
+            //Handle a request to actually unload the environment
             if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellUnLoad.id()) {
                 //Actually "load" the environment
                 theEnvironment = null;
@@ -181,9 +184,26 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
                 return theResponse.makeStringResponse();
             }
+            
+            //Handle a request to get a copy of the task spec from the environment
+            if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellTaskspec.id()) {
+                EnvShellTaskSpecRequest theCastedRequest = (EnvShellTaskSpecRequest) theMessageObject;
+
+                String envName = theCastedRequest.getEnvName();
+                ParameterHolder theParams = theCastedRequest.getParameterHolder();
+
+
+
+                EnvShellTaskSpecResponse theResponse = loadTaskSpec(envName,theParams);
+
+                return theResponse.makeStringResponse();
+            }
+
             System.err.println("Env shell doesn't know how to handle message: " + theMessage);
         }
-        //IF it wasn't for me, pass it on
+        /**
+         * This message was not for the environment shell so we pass it along to the environment.
+         */
         String response = theEnvironment.env_message(theMessage);
         return response;
 
@@ -195,6 +215,13 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
         return thisEnvLoader.loadEnvironment(localName, theParams);
     }
+    EnvShellTaskSpecResponse loadTaskSpec(String uniqueEnvName, ParameterHolder theParams) {
+        EnvironmentLoaderInterface thisEnvLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
+        String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
+        
+        TaskSpecPayload theTSP=thisEnvLoader.loadTaskSpecPayload(localName, theParams);
+        return new EnvShellTaskSpecResponse(theTSP);
+    }
 
     public Observation env_start() {
         Observation o = theEnvironment.env_start();
@@ -205,8 +232,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         Reward_observation_terminal RO = theEnvironment.env_step(arg0);
         return RO;
     }
-    
-    
+
     public static ParameterHolder getSettings() {
         ParameterHolder envShellSettings = new ParameterHolder();
         envShellSettings.addStringParam("environment-jar-path", ".");
@@ -224,8 +250,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         RLVizSettings.initializeSettings(args);
         RLVizSettings.addNewParameters(getSettings());
 
-        EnvironmentLoader L=new EnvironmentLoader(new EnvironmentShell());
+        EnvironmentLoader L = new EnvironmentLoader(new EnvironmentShell());
         L.run();
     }
-    
 }

@@ -21,7 +21,9 @@ package org.rlcommunity.rlviz.environmentshell;
 import rlVizLib.dynamicLoading.DynamicLoaderInterface;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 public interface EnvironmentLoaderInterface extends DynamicLoaderInterface{
-	public EnvironmentInterface loadEnvironment(String envName, ParameterHolder theParams);
+    public EnvironmentInterface loadEnvironment(String envName, ParameterHolder theParams);
+    public TaskSpecPayload loadTaskSpecPayload(String localName, ParameterHolder theParams);
 }
