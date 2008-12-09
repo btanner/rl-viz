@@ -165,6 +165,6 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
     }
 
     public TaskSpecPayload loadTaskSpecPayload(String localName, ParameterHolder theParams) {
-        return new TaskSpecPayload("", true, "LocalCPlusPlus Loader does not yet support task spec requests.");
+        return TaskSpecPayload.makeUnsupportedPayload();
     }
 }

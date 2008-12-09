@@ -100,7 +100,7 @@ public class LocalCPlusPlusAgentLoader implements AgentLoaderInterface {
 	}
 
     public TaskSpecResponsePayload loadTaskSpecCompat(String localName, ParameterHolder theParams, String TaskSpec) {
-        return new TaskSpecResponsePayload(true, "C++ Agent Loader does not yet support checking task spec compatibility.");
+        return TaskSpecResponsePayload.makeUnsupportedPayload();
     }
 
 }

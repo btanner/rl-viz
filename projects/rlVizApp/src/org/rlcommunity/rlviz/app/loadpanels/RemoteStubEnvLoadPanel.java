@@ -73,6 +73,6 @@ public class RemoteStubEnvLoadPanel implements EnvLoadPanelInterface {
     }
 
     public TaskSpecPayload getTaskSpecPayload() {
-        return new TaskSpecPayload("", true, "Not in dynamic loading mode so cannot fish for task spec.");
+        return TaskSpecPayload.makeUnsupportedPayload();
     }
 }

@@ -73,7 +73,7 @@ public RemoteStubAgentLoadPanel(RLGlueLogic theGlueConnection){
 	}
 
     public TaskSpecResponsePayload getTaskSpecPayloadResponse(TaskSpecPayload theTSP) {
-        return new TaskSpecResponsePayload(true, "Not in dynamic loading mode so cannot check for task spec compatibility.");
+        return TaskSpecResponsePayload.makeUnsupportedPayload();
     }
 
 

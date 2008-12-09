@@ -148,15 +148,12 @@ public class RLGlueLogic {
 
         //Only load the agent visualizer if someone will care to draw it
         if (agentVisualizerLoadListeners.size() > 0) {
-            System.out.println("There are listeners so trying to make it");
 
             theAgentVisualizer = VisualizerFactory.createAgentVisualizerFromClassName(theVisualizerName, myGlueState, theAgentVisualizerControlTarget);
 
             if (theAgentVisualizer != null) {
-                System.out.println("It was not null");
                 notifyAgentVisualizerListenersNewAgent();
             } else {
-                System.out.println("It was  null");
                 System.out.println("Caught a NULL AGENT visualizer. Vizualiser not Loaded");
             }
         }

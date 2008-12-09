@@ -67,7 +67,7 @@ public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader im
                 theTSP = (TaskSpecPayload) TaskSpecPayloadMakerMethod.invoke((Object[]) null, new Object[]{theParams});
             }
         } catch (Exception e) {
-            return new TaskSpecPayload("", true, ""+theClass.getName()+" does not have a getTaskSpecPayload method");
+            return TaskSpecPayload.makeUnsupportedPayload();
         }
 
         return theTSP;
