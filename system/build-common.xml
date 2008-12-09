@@ -102,7 +102,6 @@ We'll try and rely on minimal variables from above.
 
 <target name="rl-clean" >
     <delete dir="${build.dir}"/>
-    <delete file="${result.jar}"/>
 <!--    <delete dir="${docs.dir}"/>-->
     <delete dir="${test.raw}"/>
     <delete dir="${test.reports}"/>

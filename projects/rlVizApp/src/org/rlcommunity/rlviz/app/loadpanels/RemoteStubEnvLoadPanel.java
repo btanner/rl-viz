@@ -27,8 +27,9 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
-public class RemoteStubEnvLoadPanel implements LoadPanelInterface {
+public class RemoteStubEnvLoadPanel implements EnvLoadPanelInterface {
 
     JPanel thePanel = null;
     RLGlueLogic theGlueConnection = null;
@@ -69,5 +70,9 @@ public class RemoteStubEnvLoadPanel implements LoadPanelInterface {
 
     public boolean canLoad() {
         return true;
+    }
+
+    public TaskSpecPayload getTaskSpecPayload() {
+        return new TaskSpecPayload("", true, "Not in dynamic loading mode so cannot fish for task spec.");
     }
 }

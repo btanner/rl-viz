@@ -21,8 +21,11 @@ package org.rlcommunity.rlviz.app.loadpanels;
 
 import org.rlcommunity.rlviz.app.RLGlueLogic;
 import rlVizLib.general.ParameterHolder;
+import rlVizLib.messaging.environmentShell.EnvShellTaskSpecRequest;
+import rlVizLib.messaging.environmentShell.EnvShellTaskSpecResponse;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
-public class DynamicEnvLoadPanel extends DynamicLoadPanel {
+public class DynamicEnvLoadPanel extends DynamicLoadPanel implements EnvLoadPanelInterface {
 
 	public DynamicEnvLoadPanel(RLGlueLogic theGlueConnection){
 		super(theGlueConnection,"No Envs Available");
@@ -51,4 +54,21 @@ public class DynamicEnvLoadPanel extends DynamicLoadPanel {
 	public String getStringType() {
 		return "Environment";
 	}
+
+    public TaskSpecPayload getTaskSpecPayload() {
+        if (currentLoadedIndex != -1 && !theNames.isEmpty()) {
+            String thisName = theNames.get(currentLoadedIndex);
+            updateParamsFromPanel();
+            ParameterHolder thisP = theParams.get(currentLoadedIndex);
+            
+            EnvShellTaskSpecResponse theTSPResponse=EnvShellTaskSpecRequest.Execute(thisName, thisP);
+            return theTSPResponse.getTaskSpecPayload();
+                    
+        }else{
+            System.err.println("getTaskSpecPayload was called on the EnvDynamicLoad Panel but there are none of what you tried to load or we couldn't set the index right");
+        }
+        return null;
+    }
+
+    
 }

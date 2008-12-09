@@ -43,17 +43,14 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
-public abstract class DynamicLoadPanel implements ActionListener, LoadPanelInterface {
+public abstract class DynamicLoadPanel implements ActionListener,LoadPanelInterface {
 
     JComboBox theComboBox = null;
     RLGlueLogic theGlueConnection = null;
@@ -91,6 +88,7 @@ public abstract class DynamicLoadPanel implements ActionListener, LoadPanelInter
         //No choices if no names
         return !theNames.isEmpty();
     }
+
 
     /* (non-Javadoc)
 	 * @see btViz.loadPanels.LoadPanelInterface#updateList()

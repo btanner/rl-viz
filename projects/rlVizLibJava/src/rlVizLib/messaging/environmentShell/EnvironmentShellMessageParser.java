@@ -36,6 +36,7 @@ public class EnvironmentShellMessageParser extends GenericMessageParser{
 		if(cmdId==EnvShellMessageType.kEnvShellLoad.id()) 				return new EnvShellLoadRequest(theGenericMessage);
 		if(cmdId==EnvShellMessageType.kEnvShellUnLoad.id()) 				return new EnvShellUnLoadRequest(theGenericMessage);
                 if(cmdId==EnvShellMessageType.kEnvShellRefresh.id()) 				return new EnvShellRefreshRequest(theGenericMessage);
+                if(cmdId==EnvShellMessageType.kEnvShellTaskspec.id()) 				return new EnvShellTaskSpecRequest(theGenericMessage);
 
 		System.out.println("EnvironmentShellMessageParser - unknown query type: "+cmdId);
 		Thread.dumpStack();

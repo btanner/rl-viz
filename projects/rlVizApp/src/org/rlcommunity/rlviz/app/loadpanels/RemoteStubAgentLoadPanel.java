@@ -21,14 +21,15 @@ package org.rlcommunity.rlviz.app.loadpanels;
 
 import org.rlcommunity.rlviz.app.RLGlueLogic;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
-public class RemoteStubAgentLoadPanel implements LoadPanelInterface {
+public class RemoteStubAgentLoadPanel implements AgentLoadPanelInterface {
 JPanel thePanel=null;
 RLGlueLogic theGlueConnection=null;
 
@@ -70,6 +71,10 @@ public RemoteStubAgentLoadPanel(RLGlueLogic theGlueConnection){
 	public void updateList() {
 		//This does nothing because this panel is a stub
 	}
+
+    public TaskSpecResponsePayload getTaskSpecPayloadResponse(TaskSpecPayload theTSP) {
+        return new TaskSpecResponsePayload(true, "Not in dynamic loading mode so cannot check for task spec compatibility.");
+    }
 
 
 }

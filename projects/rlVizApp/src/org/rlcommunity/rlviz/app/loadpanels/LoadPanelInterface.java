@@ -20,8 +20,11 @@ http://brian.tannerpages.com
 package org.rlcommunity.rlviz.app.loadpanels;
 
 import javax.swing.JPanel;
+import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 public interface LoadPanelInterface {
+
 
 	abstract public void updateList();
 	public abstract JPanel getPanel();

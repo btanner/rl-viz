@@ -25,6 +25,7 @@ import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.AgentInterface;
 
 //LocalCPlusPlusAgentLoader loads the c dynamic library factory. This library essentially wraps
+import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
 //an agent library providing information for the JNI api to allow the java rl-viz to make
 //use of c/c++ agents
 
@@ -97,5 +98,9 @@ public class LocalCPlusPlusAgentLoader implements AgentLoaderInterface {
 	public String getTypeSuffix() {
 		return " - C++";
 	}
+
+    public TaskSpecResponsePayload loadTaskSpecCompat(String localName, ParameterHolder theParams, String TaskSpec) {
+        return new TaskSpecResponsePayload(true, "C++ Agent Loader does not yet support checking task spec compatibility.");
+    }
 
 }

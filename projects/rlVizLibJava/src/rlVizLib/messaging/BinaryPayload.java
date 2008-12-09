@@ -59,7 +59,7 @@ public class BinaryPayload {
     public String getAsEncodedString() {
         alreadyEncoded = true;
         try {
-            BOS.close();
+            theOutputStream.close();
             byte[] theStringBytes = BOS.toByteArray();
             byte[] b64encoded = Base64.encodeBase64(theStringBytes);
             String theBytesAsString = new String(b64encoded);

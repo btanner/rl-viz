@@ -21,8 +21,12 @@ package org.rlcommunity.rlviz.app.loadpanels;
 
 import org.rlcommunity.rlviz.app.RLGlueLogic;
 import rlVizLib.general.ParameterHolder;
+import rlVizLib.messaging.agentShell.AgentShellTaskSpecCompatRequest;
+import rlVizLib.messaging.agentShell.AgentShellTaskSpecCompatResponse;
+import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
-public class DynamicAgentLoadPanel extends DynamicLoadPanel {
+public class DynamicAgentLoadPanel extends DynamicLoadPanel implements AgentLoadPanelInterface {
 
 	public DynamicAgentLoadPanel(RLGlueLogic theGlueConnection){
 		super(theGlueConnection,"No Agents Available");
@@ -49,5 +53,21 @@ public class DynamicAgentLoadPanel extends DynamicLoadPanel {
 	public String getStringType() {
 		return "Agent";
 	}
+
+    public TaskSpecResponsePayload getTaskSpecPayloadResponse(TaskSpecPayload theTSP) {
+                if (currentLoadedIndex != -1 && !theNames.isEmpty()) {
+            String thisName = theNames.get(currentLoadedIndex);
+            updateParamsFromPanel();
+            ParameterHolder thisP = theParams.get(currentLoadedIndex);
+            
+            AgentShellTaskSpecCompatResponse theTSPResponse=AgentShellTaskSpecCompatRequest.Execute(thisName, thisP,theTSP.getTaskSpec());
+            return theTSPResponse.getTaskSpecPayload();
+                    
+        }else{
+            System.err.println("getTaskSpecPayloadResponse was called on the AgentDynamicLoad Panel but there are none of what you tried to load or we couldn't set the index right");
+        }
+        return null;
+
+    }
 
 }

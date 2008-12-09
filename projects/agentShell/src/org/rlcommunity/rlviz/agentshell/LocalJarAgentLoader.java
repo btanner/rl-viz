@@ -18,10 +18,12 @@ http://brian.tannerpages.com
 
 package org.rlcommunity.rlviz.agentshell;
 
+import java.lang.reflect.Method;
 import rlVizLib.dynamicLoading.EnvOrAgentType;
 import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.AgentInterface;
+import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
 
 public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implements AgentLoaderInterface{
 
@@ -35,5 +37,39 @@ public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implemen
         if(theAgentObject!=null)return (AgentInterface)theAgentObject;
         return null;
     }
+
+    public TaskSpecResponsePayload loadTaskSpecCompat(String localName, ParameterHolder theParams, String TaskSpec) {
+        if (theClasses == null) {
+            makeList();
+        }
+
+        String fullName = getFullClassNameFromShortName(localName);
+        //Get the file from the list
+        for (Class<?> theClass : theClasses) {
+            if (theClass.getName().equals(fullName)) {
+                //this is the right one load it
+                return loadTaskSpecCompatFromClass(theClass, theParams,TaskSpec);
+            }
+        }
+        return null;
+    }
+
+    private TaskSpecResponsePayload loadTaskSpecCompatFromClass(Class<?> theClass, ParameterHolder theParams,String theTaskSpec) {
+        TaskSpecResponsePayload theTSP = null;
+
+        Class<?>[] paramHolderParams = new Class<?>[]{theParams.getClass(),String.class};
+
+        try {
+            Method TaskSpecPayloadMakerMethod = theClass.getDeclaredMethod("isCompatible", paramHolderParams);
+            if (TaskSpecPayloadMakerMethod != null) {
+                theTSP = (TaskSpecResponsePayload) TaskSpecPayloadMakerMethod.invoke((Object[]) null, new Object[]{theParams, theTaskSpec});
+            }
+        } catch (Exception e) {
+            return new TaskSpecResponsePayload(true, ""+theClass.getName()+" does not have a isCompatible method");
+        }
+
+        return theTSP;
+    }
+
 
 }

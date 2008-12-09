@@ -23,8 +23,8 @@ public enum AgentShellMessageType{
 	kAgentShellResponse(0),
 	kAgentShellListRequest(1),
 	kAgentShellLoad(2),
-	kAgentShellUnload(3);
-	
+	kAgentShellUnload(3),	
+	kAgentShellTaskSpecCompat(4);
 	private final int id;
 	
 	AgentShellMessageType(int id){

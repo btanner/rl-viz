@@ -192,8 +192,6 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
                 String envName = theCastedRequest.getEnvName();
                 ParameterHolder theParams = theCastedRequest.getParameterHolder();
 
-
-
                 EnvShellTaskSpecResponse theResponse = loadTaskSpec(envName,theParams);
 
                 return theResponse.makeStringResponse();

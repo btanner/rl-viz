@@ -38,10 +38,15 @@ import org.rlcommunity.rlviz.app.loadpanels.RemoteStubAgentLoadPanel;
 import org.rlcommunity.rlviz.app.loadpanels.RemoteStubEnvLoadPanel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import org.rlcommunity.rlviz.app.loadpanels.AgentLoadPanelInterface;
+import org.rlcommunity.rlviz.app.loadpanels.EnvLoadPanelInterface;
 import org.rlcommunity.rlviz.settings.RLVizSettings;
+import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
+import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 
 
@@ -61,13 +66,14 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 	JButton bStart =null; 
 	JButton bStop = null;
 	JButton bStep = null;
+        JButton bCompatibility;
 	
 	JSlider sleepTimeBetweenSteps=null;
         JLabel simSpeedLabel=new JLabel("Simulation Speed (left is faster)");
 
-	LoadPanelInterface envLoadPanel=null;
-	LoadPanelInterface agentLoadPanel=null;
-	JPanel LoaderPanel=null;
+	EnvLoadPanelInterface envLoadPanel=null;
+	AgentLoadPanelInterface agentLoadPanel=null;
+//	JPanel LoaderPanel=null;
 
 	public RLControlPanel(RLGlueLogic theGlueConnection){
 		super();
@@ -140,24 +146,37 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
                 
                 add(experimentalControlsPanel);
                 add(Box.createRigidArea(new java.awt.Dimension(0, 10)));
-		
+
+                JPanel LoaderPanel=null;
+
 		LoaderPanel=new JPanel();
 
 		LoaderPanel.setLayout(new BoxLayout(LoaderPanel,BoxLayout.X_AXIS));
 
 		LoaderPanel.add(envLoadPanel.getPanel());
 		LoaderPanel.add(agentLoadPanel.getPanel());		
+                JPanel LoaderSuperPanel=new JPanel();
+		LoaderSuperPanel.setLayout(new BoxLayout(LoaderSuperPanel,BoxLayout.Y_AXIS));
+
+                //Only make the compatibility button if we are dynamically loading agents and envs
+                if(RLVizSettings.getBooleanSetting("list-environments")||RLVizSettings.getBooleanSetting("list-agents")){
+                bCompatibility=new JButton("Check Compatibility");
+                bCompatibility.addActionListener(this);
+                bCompatibility.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+                LoaderSuperPanel.add(bCompatibility);
+                }
                 
+                LoaderSuperPanel.add(LoaderPanel);
                 //
                 //Setup the border for the loader panels
                 //
                 titled = BorderFactory.createTitledBorder(loweredetched, "Dynamic Loading");
                 titled.setTitleJustification(TitledBorder.CENTER);
 
-                LoaderPanel.setBorder(titled);
+                LoaderSuperPanel.setBorder(titled);
 
 		
-		add(LoaderPanel);
+		add(LoaderSuperPanel);
 
 
 		envLoadPanel.updateList();
@@ -174,8 +193,19 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 		if (theEvent.getSource()==bStart)handleStartClick();
 		if (theEvent.getSource()==bStop)handleStopClick();
 		if (theEvent.getSource()==bStep)handleStepClick();
+                if (theEvent.getSource()==bCompatibility)handleCompatibilityClick();
 
 	}
+
+    private void handleCompatibilityClick() {
+        TaskSpecPayload theTSP=envLoadPanel.getTaskSpecPayload();
+        if(theTSP.getErrorStatus()){
+            System.err.println("Could not do compatibility check because of environment\n"+theTSP.getErrorMessage());            
+        }else{
+            TaskSpecResponsePayload theTSRP=agentLoadPanel.getTaskSpecPayloadResponse(theTSP);
+            System.out.println(theTSRP);
+        }
+    }
 
 
 	private void setDefaultEnabling() {
@@ -183,6 +213,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 		agentLoadPanel.setEnabled(true);
 
       		bLoad.setEnabled(envLoadPanel.canLoad()&&agentLoadPanel.canLoad());
+                bCompatibility.setEnabled(bLoad.isEnabled());
                 bUnLoad.setEnabled(false);
 		bStart.setEnabled(false);
 		bStop.setEnabled(false);
@@ -198,6 +229,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
 
 		bLoad.setEnabled(true);
+                bCompatibility.setEnabled(true);
 		bUnLoad.setEnabled(false);
 		bStart.setEnabled(false);
 		bStop.setEnabled(false);
@@ -220,9 +252,9 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
                 
                 if(!envLoadedOk || !agentLoadedOk){
                     if(!envLoadedOk)
-                        System.err.println("Environment didnt load properly\n");
+                        System.err.println("Environment didn't load properly\n");
                     if(!agentLoadedOk)
-                        System.err.println("Agent didnt load properly\n");
+                        System.err.println("Agent didn't load properly\n");
                     return;
                 }
 
@@ -230,6 +262,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
                 theGlueConnection.RL_init();
                 
                 envLoadPanel.setEnabled(false);
+                bCompatibility.setEnabled(false);
 		agentLoadPanel.setEnabled(false);
 
 
@@ -245,6 +278,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
 	private void handleStartClick(){
 		bLoad.setEnabled(false);
+                bCompatibility.setEnabled(false);
 		bUnLoad.setEnabled(false);
 		bStart.setEnabled(false);
 		bStop.setEnabled(true);
@@ -263,6 +297,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 		agentLoadPanel.setEnabled(false);
 
 		bLoad.setEnabled(false);
+                bCompatibility.setEnabled(false);
 		bUnLoad.setEnabled(true);
 		bStart.setEnabled(true);
 		bStop.setEnabled(false);
@@ -278,8 +313,9 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 		agentLoadPanel.setEnabled(false);
 
 		bLoad.setEnabled(false);
-		bUnLoad.setEnabled(true);
+                bCompatibility.setEnabled(false);
 
+		bUnLoad.setEnabled(true);
 		bStart.setEnabled(true);
 		bStop.setEnabled(false);
 		bStep.setEnabled(true);		

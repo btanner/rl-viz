@@ -39,6 +39,9 @@ import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 import org.rlcommunity.rlviz.settings.RLVizSettings;
+import rlVizLib.messaging.agentShell.AgentShellTaskSpecCompatRequest;
+import rlVizLib.messaging.agentShell.AgentShellTaskSpecCompatResponse;
+import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
 
 public class AgentShell implements AgentInterface, Unloadable {
 
@@ -180,6 +183,22 @@ public class AgentShell implements AgentInterface, Unloadable {
 
                 return theResponse.makeStringResponse();
             }
+            
+                        //Handle a request to get a copy of the task spec from the environment
+            if (theMessageObject.getTheMessageType() == AgentShellMessageType.kAgentShellTaskSpecCompat.id()) {
+                AgentShellTaskSpecCompatRequest theCastedRequest = (AgentShellTaskSpecCompatRequest) theMessageObject;
+
+                String agentName = theCastedRequest.getAgentName();
+                ParameterHolder theParams = theCastedRequest.getParameterHolder();
+                String theTaskSpec=theCastedRequest.getTaskSpec();
+
+                AgentShellTaskSpecCompatResponse theResponse = checkCompat(agentName,theParams,theTaskSpec);
+
+                return theResponse.makeStringResponse();
+            }else{
+                System.out.println("Type was: "+theMessageObject.getTheMessageType()+" and not: "+ AgentShellMessageType.kAgentShellTaskSpecCompat.id());
+            }
+
 
             System.err.println("Agent shell doesn't know how to handle message: " + theMessage);
         }
@@ -188,6 +207,15 @@ public class AgentShell implements AgentInterface, Unloadable {
 
 
     }
+    
+        AgentShellTaskSpecCompatResponse checkCompat(String uniqueAgentName, ParameterHolder theParams, String TaskSpec) {
+        AgentLoaderInterface thisAgentLoader = mapFromUniqueNameToLoader.get(uniqueAgentName);
+        String localName = mapFromUniqueNameToLocalName.get(uniqueAgentName);
+        
+        TaskSpecResponsePayload theTSP=thisAgentLoader.loadTaskSpecCompat(localName, theParams, TaskSpec);
+        return new AgentShellTaskSpecCompatResponse(theTSP);
+    }
+
 
     private AgentInterface loadAgent(String uniqueAgentName, ParameterHolder theParams) {
         AgentLoaderInterface thisAgentLoader = mapFromUniqueNameToLoader.get(uniqueAgentName);
