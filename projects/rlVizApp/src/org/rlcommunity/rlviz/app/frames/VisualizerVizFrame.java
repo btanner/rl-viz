@@ -5,6 +5,7 @@
 
 package org.rlcommunity.rlviz.app.frames;
 
+import java.awt.Color;
 import org.rlcommunity.rlviz.app.VisualizerPanel;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
@@ -67,6 +68,7 @@ public abstract class VisualizerVizFrame extends GenericVizFrame{
         register();
        getContentPane().add(theCompositePanel);
        pack();
+        this.setBackground(Color.white);
        setVisible(true);
     }
     

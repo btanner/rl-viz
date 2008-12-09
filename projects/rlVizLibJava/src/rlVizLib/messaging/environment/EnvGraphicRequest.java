@@ -17,10 +17,12 @@ limitations under the License.
  */
 package rlVizLib.messaging.environment;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -45,7 +47,7 @@ public class EnvGraphicRequest extends EnvironmentMessages {
         String theRequest = AbstractMessage.makeMessage(
                 MessageUser.kEnv.id(),
                 MessageUser.kBenchmark.id(),
-                EnvMessageType.kEnvQueryVisualizerName.id(),
+                EnvMessageType.kEnvGetGraphic.id(),
                 MessageValueType.kNone.id(),
                 "NULL");
 
@@ -59,20 +61,32 @@ public class EnvGraphicRequest extends EnvironmentMessages {
     @Override
     public String handleAutomatically(EnvironmentInterface theEnvironment) {
         HasImageInterface castedEnv = (HasImageInterface) theEnvironment;
-        Response theResponse = new Response(castedEnv.getImage());
+
+        BufferedImage theImage = null;
+
+        URL imageURL = castedEnv.getImageURL();
+        try {
+            theImage = ImageIO.read(imageURL);
+
+        } catch (IOException ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+        }
+
+        Response theResponse = new Response(theImage);
         return theResponse.makeStringResponse();
     }
 
     @Override
     public boolean canHandleAutomatically(Object theEnvironment) {
+        System.out.println("Can handle automatically called on:" + theEnvironment.getClass().getName());
         return (theEnvironment instanceof HasImageInterface);
     }
 
     public static class Response extends AbstractResponse {
 
-        private RenderedImage theImage;
+        private BufferedImage theImage;
 
-        public Response(RenderedImage theImage) {
+        public Response(BufferedImage theImage) {
             this.theImage = theImage;
 
         }
@@ -80,8 +94,8 @@ public class EnvGraphicRequest extends EnvironmentMessages {
         public Response(String responseMessage) {
             try {
                 GenericMessage theGenericResponse = new GenericMessage(responseMessage);
-
-                DataInputStream DIS = BinaryPayload.getInputStreamFromPayload(responseMessage);
+                String payLoad = theGenericResponse.getPayLoad();
+                DataInputStream DIS = BinaryPayload.getInputStreamFromPayload(payLoad);
                 theImage = ImageIO.read(DIS);
             } catch (IOException ex) {
                 Logger.getLogger(EnvGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,7 +120,7 @@ public class EnvGraphicRequest extends EnvironmentMessages {
             return null;
         }
 
-        public RenderedImage getImage() {
+        public BufferedImage getImage() {
             return theImage;
 
         }

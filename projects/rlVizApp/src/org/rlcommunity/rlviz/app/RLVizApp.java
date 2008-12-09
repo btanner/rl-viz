@@ -17,10 +17,13 @@ limitations under the License.
  */
 package org.rlcommunity.rlviz.app;
 
-import org.rlcommunity.rlviz.app.RLVizPreferences;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.rlcommunity.rlviz.app.frames.RLVizFrame;
 import java.io.IOException;
 
+import javax.swing.UIManager;
 import org.rlcommunity.rlglue.codec.RLGlue;
 
 
@@ -49,6 +52,12 @@ public class RLVizApp {
     }
 
     public static void main(String[] args) throws IOException {
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
+        }
+
         RLVizSettings.initializeSettings(args);
         RLVizSettings.addNewParameters(getSettings());
 

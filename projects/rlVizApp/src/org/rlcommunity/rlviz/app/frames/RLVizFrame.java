@@ -19,6 +19,7 @@ http://brian.tannerpages.com
 
 package org.rlcommunity.rlviz.app.frames;
 
+import java.awt.Color;
 import org.rlcommunity.rlviz.app.VisualizerPanel;
 import org.rlcommunity.rlviz.app.RLControlPanel;
 import org.rlcommunity.rlviz.app.RLGlueLogic;
@@ -56,7 +57,7 @@ public class RLVizFrame extends GenericVizFrame{
 
 
         int panelWidth = 800;
-        int panelHeight = 600;
+        int panelHeight = 800;
 
 
         if (useEnvVisualizer && useAgentVisualizer) {
@@ -107,6 +108,7 @@ public class RLVizFrame extends GenericVizFrame{
 
         pack();
         setVisible(true);
+        this.setBackground(Color.white);
 
         //Make sure we exit if they close the window
         setDefaultCloseOperation(EXIT_ON_CLOSE);

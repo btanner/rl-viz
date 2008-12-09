@@ -36,6 +36,7 @@ public class EnvironmentMessageParser extends GenericMessageParser{
 		if(cmdId==EnvMessageType.kEnvQueryVisualizerName.id()) 	return new EnvVisualizerNameRequest(theGenericMessage);
 		if(cmdId==EnvMessageType.kEnvQueryEpisodeSummary.id()) 	return new EpisodeSummaryRequest(theGenericMessage);
 		if(cmdId==EnvMessageType.kEnvCustom.id())		return new EnvCustomRequest(theGenericMessage);
+		if(cmdId==EnvMessageType.kEnvGetGraphic.id())		return new EnvGraphicRequest(theGenericMessage);
 
 
 		System.out.println("EnvironmentMessageParser - unknown query type: "+theMessage);

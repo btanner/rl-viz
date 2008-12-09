@@ -19,9 +19,9 @@ http://brian.tannerpages.com
   
 package rlVizLib.messaging.interfaces;
 
-import java.awt.image.RenderedImage;
+import java.net.URL;
 
 
 public interface HasImageInterface {
-	public RenderedImage getImage();
+	public URL getImageURL();
 }

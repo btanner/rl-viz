@@ -27,7 +27,8 @@ public enum EnvMessageType{
 	kEnvQuerySupportedVersion(4),
 	kEnvReceiveRunTimeParameters(5),
 	kEnvQueryVisualizerName(6),
-	kEnvQueryEpisodeSummary(7);
+	kEnvQueryEpisodeSummary(7),
+        kEnvGetGraphic(8);
 
         
 	private final int id;

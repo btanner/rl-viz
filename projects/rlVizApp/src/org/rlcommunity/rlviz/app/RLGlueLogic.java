@@ -44,9 +44,6 @@ import rlVizLib.messaging.agent.AgentVisualizerNameRequest;
 import rlVizLib.messaging.agent.AgentVisualizerNameResponse;
 import rlVizLib.messaging.agentShell.AgentShellLoadResponse;
 import rlVizLib.messaging.environmentShell.EnvShellLoadResponse;
-import rlVizLib.messaging.environmentShell.EnvShellTaskSpecRequest;
-import rlVizLib.messaging.environmentShell.EnvShellTaskSpecResponse;
-import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
 
 public class RLGlueLogic {
@@ -76,6 +73,9 @@ public class RLGlueLogic {
         theTimeKeeper = new GlueStepper(this);
     }
 
+    public TinyGlue getGlueState(){
+        return myGlueState;
+    }
     public RLVizVersion getEnvVersion() {
         return theEnvVersion;
     }
