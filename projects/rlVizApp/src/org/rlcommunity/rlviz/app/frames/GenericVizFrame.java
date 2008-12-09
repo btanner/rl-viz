@@ -27,8 +27,8 @@ static {
     }
     static int nextId = 0;
     VizMenus theMenus = null;
-    GenericVizFrame envVizFrame = null;
-    GenericVizFrame agentVizFrame = null;
+    VisualizerVizFrame envVizFrame = null;
+    VisualizerVizFrame agentVizFrame = null;
     GenericVizFrame controlVizFrame = null;
     Vector<GenericVizFrame> otherFrames = null;
     private int thisId = 0;
@@ -44,7 +44,7 @@ static {
         this("No Name Given");
     }
 
-    public void setFrames(GenericVizFrame controlVizFrame, GenericVizFrame envVizFrame, GenericVizFrame agentVizFrame) {
+    public void setFrames(GenericVizFrame controlVizFrame, VisualizerVizFrame envVizFrame, VisualizerVizFrame agentVizFrame) {
         this.controlVizFrame = controlVizFrame;
         this.envVizFrame = envVizFrame;
         this.agentVizFrame = agentVizFrame;

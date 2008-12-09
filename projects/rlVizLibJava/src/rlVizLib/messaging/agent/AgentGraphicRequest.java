@@ -15,10 +15,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package rlVizLib.messaging.environment;
+package rlVizLib.messaging.agent;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -26,32 +25,32 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.GenericMessage;
 import rlVizLib.messaging.MessageUser;
 import rlVizLib.messaging.MessageValueType;
 import rlVizLib.messaging.NotAnRLVizMessageException;
-import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import rlVizLib.messaging.AbstractResponse;
 import rlVizLib.messaging.BinaryPayload;
 import rlVizLib.messaging.interfaces.HasImageInterface;
 
-public class EnvGraphicRequest extends EnvironmentMessages {
+public class AgentGraphicRequest extends AgentMessages {
 
-    public EnvGraphicRequest(GenericMessage theMessageObject) {
+    public AgentGraphicRequest(GenericMessage theMessageObject) {
         super(theMessageObject);
     }
 
     public static Response Execute() {
         String theRequest = AbstractMessage.makeMessage(
-                MessageUser.kEnv.id(),
+                MessageUser.kAgent.id(),
                 MessageUser.kBenchmark.id(),
-                EnvMessageType.kEnvGetGraphic.id(),
+                AgentMessageType.kAgentGetGraphic.id(),
                 MessageValueType.kNone.id(),
                 "NULL");
 
-        String responseMessage = RLGlue.RL_env_message(theRequest);
+        String responseMessage = RLGlue.RL_agent_message(theRequest);
 
         Response theResponse;
         theResponse = new Response(responseMessage);
@@ -59,12 +58,12 @@ public class EnvGraphicRequest extends EnvironmentMessages {
     }
 
     @Override
-    public String handleAutomatically(EnvironmentInterface theEnvironment) {
-        HasImageInterface castedEnv = (HasImageInterface) theEnvironment;
+    public String handleAutomatically(AgentInterface theAgent) {
+        HasImageInterface castedAgent = (HasImageInterface) theAgent;
 
         BufferedImage theImage = null;
 
-        URL imageURL = castedEnv.getImageURL();
+        URL imageURL = castedAgent.getImageURL();
         try {
             theImage = ImageIO.read(imageURL);
 
@@ -77,8 +76,9 @@ public class EnvGraphicRequest extends EnvironmentMessages {
     }
 
     @Override
-    public boolean canHandleAutomatically(Object theEnvironment) {
-        return (theEnvironment instanceof HasImageInterface);
+    public boolean canHandleAutomatically(Object theAgent) {
+        System.out.println("Can handle automatically called on:" + theAgent.getClass().getName());
+        return (theAgent instanceof HasImageInterface);
     }
 
     public static class Response extends AbstractResponse {
@@ -97,9 +97,9 @@ public class EnvGraphicRequest extends EnvironmentMessages {
                 DataInputStream DIS = BinaryPayload.getInputStreamFromPayload(payLoad);
                 theImage = ImageIO.read(DIS);
             } catch (IOException ex) {
-                Logger.getLogger(EnvGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AgentGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NotAnRLVizMessageException ex) {
-                Logger.getLogger(EnvGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AgentGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -110,11 +110,11 @@ public class EnvGraphicRequest extends EnvironmentMessages {
                 DataOutputStream DOS = P.getOutputStream();
                 ImageIO.write(theImage, "PNG", DOS);
                 String theEncodedImage = P.getAsEncodedString();
-                String theResponse = AbstractMessage.makeMessage(MessageUser.kBenchmark.id(), MessageUser.kEnv.id(), EnvMessageType.kEnvResponse.id(), MessageValueType.kStringList.id(), theEncodedImage);
+                String theResponse = AbstractMessage.makeMessage(MessageUser.kBenchmark.id(), MessageUser.kAgent.id(), AgentMessageType.kAgentResponse.id(), MessageValueType.kStringList.id(), theEncodedImage);
 
                 return theResponse;
             } catch (IOException ex) {
-                Logger.getLogger(EnvGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AgentGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
             }
             return null;
         }

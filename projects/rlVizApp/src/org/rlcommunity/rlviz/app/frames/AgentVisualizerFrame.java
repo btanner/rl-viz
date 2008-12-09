@@ -14,6 +14,7 @@ import java.awt.Dimension;
  * @author btanner
  */
 public class AgentVisualizerFrame extends VisualizerVizFrame {
+    private static final long serialVersionUID = 1L;
 
     public AgentVisualizerFrame(Dimension theSize){
         super("Agent Visualizer",theSize);
@@ -29,6 +30,11 @@ public class AgentVisualizerFrame extends VisualizerVizFrame {
     @Override
     protected String getWindowName() {
         return "Agent Visualizer";
+    }
+
+    @Override
+    protected int getVisualizerType() {
+        return VisualizerVizFrame.AgentVisualizerType;
     }
 
 }

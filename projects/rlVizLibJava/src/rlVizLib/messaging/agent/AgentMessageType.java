@@ -27,7 +27,9 @@ public enum AgentMessageType {
     kAgentQueryValuesForObs(1),
     kAgentCustom(2),
     kAgentQuerySupportedVersion(4),
-    kAgentQueryVisualizerName(6);
+    kAgentQueryVisualizerName(6),
+    kAgentGetGraphic(7);
+    
     private final int id;
 
     AgentMessageType(int id) {

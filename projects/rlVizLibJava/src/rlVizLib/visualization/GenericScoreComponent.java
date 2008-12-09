@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import rlVizLib.visualization.interfaces.GlueStateProvider;
 import java.util.Observable;
 import java.util.Observer;
+import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Observation_action;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 
@@ -74,7 +75,7 @@ public class GenericScoreComponent implements SelfUpdatingVizComponent, Observer
      * @param theEvent
      */
     public void update(Observable o, Object theEvent) {
-        if (theEvent instanceof Observation_action) {
+        if (theEvent instanceof Observation) {
             episodeNumber++;
             timeStep = 1;
             lastReward = Double.NaN;

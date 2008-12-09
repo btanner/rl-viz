@@ -139,7 +139,6 @@ public class AgentShell implements AgentInterface, Unloadable {
     }
 
     public String agent_message(String theMessage) {
-
         GenericMessage theGenericMessage;
         try {
             theGenericMessage = new GenericMessage(theMessage);
@@ -195,9 +194,8 @@ public class AgentShell implements AgentInterface, Unloadable {
                 AgentShellTaskSpecCompatResponse theResponse = checkCompat(agentName,theParams,theTaskSpec);
 
                 return theResponse.makeStringResponse();
-            }else{
-                System.out.println("Type was: "+theMessageObject.getTheMessageType()+" and not: "+ AgentShellMessageType.kAgentShellTaskSpecCompat.id());
             }
+            
 
 
             System.err.println("Agent shell doesn't know how to handle message: " + theMessage);

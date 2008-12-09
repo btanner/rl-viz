@@ -7,13 +7,13 @@ package org.rlcommunity.rlviz.app.frames;
 
 import org.rlcommunity.rlviz.app.RLGlueLogic;
 import java.awt.Dimension;
-import java.awt.event.WindowEvent;
 
 /**
  *
  * @author btanner
  */
 public class EnvVisualizerFrame extends VisualizerVizFrame {
+    private static final long serialVersionUID = 1L;
 
     public EnvVisualizerFrame(Dimension theSize){
         super("Environment Visualizer",theSize);
@@ -30,6 +30,11 @@ public class EnvVisualizerFrame extends VisualizerVizFrame {
     @Override
     protected String getWindowName() {
         return "Environment Visualizer";
+    }
+
+    @Override
+    protected int getVisualizerType() {
+        return VisualizerVizFrame.EnvVisualizerType;
     }
 
   

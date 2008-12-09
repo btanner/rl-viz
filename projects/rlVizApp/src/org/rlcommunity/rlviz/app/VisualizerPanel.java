@@ -36,6 +36,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.rlcommunity.rlviz.app.frames.VisualizerVizFrame;
+import rlVizLib.messaging.agent.AgentGraphicRequest;
 import rlVizLib.messaging.environment.EnvGraphicRequest;
 import rlVizLib.visualization.AbstractVisualizer;
 import rlVizLib.visualization.VisualizerPanelInterface;
@@ -48,42 +50,19 @@ public class VisualizerPanel extends JPanel implements ComponentListener, Visual
     //Going to use this timer so that all of the cascase resizing that happens is on a delay so that window resizing is more responsive
     Timer resizeChildrenTimer = null;
     BufferedImage defaultImage = null;
+    
+    final int VisualizerType;
 
-    public VisualizerPanel(Dimension initialSize) {
+    public VisualizerPanel(Dimension initialSize, int VisualizerType) {
         super();
+        this.VisualizerType=VisualizerType;
         this.setSize((int) initialSize.getWidth(), (int) initialSize.getHeight());
         this.setBackground(Color.white);
         addComponentListener(this);
 
     }
 
-    private AffineTransform getDefaultImageTransform(){
-        int imageW=defaultImage.getWidth();
-        int imageH=defaultImage.getHeight();
-        
-        int panelWidth=getWidth();
-        int panelHeight=getHeight();
-        double widthRatio=(double)panelWidth/(double)imageW;
-        double heightRatio=(double)panelHeight/(double)imageH;
-        
-        double theRatio=widthRatio;
-        double xOffset=0;
-        double yOffset=(double)panelHeight-(double)imageH*theRatio;
-        
-        
-        
-        if(heightRatio<widthRatio){
-            theRatio=heightRatio;
-            xOffset=.5*(panelWidth-imageW*theRatio);
-            yOffset=0;
-        }
-        
-//          System.out.printf("Panel %d, Image %d, yOffset %f\n",panelHeight,imageH*theRatio,yOffset);
-        AffineTransform theTransform=AffineTransform.getTranslateInstance(xOffset, yOffset);
-        theTransform.concatenate(AffineTransform.getScaleInstance(theRatio, theRatio));
-
-        return theTransform;
-    }
+    
     private Image getDefaultImageTransformed(){
         int imageW=defaultImage.getWidth();
         int imageH=defaultImage.getHeight();
@@ -190,11 +169,16 @@ public class VisualizerPanel extends JPanel implements ComponentListener, Visual
             theVisualizer.notifyPanelSizeChange();
 
             this.setNamedBorder();
-
+            
             //Try to get an image
+            if (VisualizerType == VisualizerVizFrame.AgentVisualizerType) {
+                AgentGraphicRequest.Response graphicResponse = AgentGraphicRequest.Execute();
+                defaultImage = graphicResponse.getImage();
+            }
+            if(VisualizerType==VisualizerVizFrame.EnvVisualizerType){
             EnvGraphicRequest.Response graphicResponse = EnvGraphicRequest.Execute();
             defaultImage = graphicResponse.getImage();
-            System.out.println("Received image: " + defaultImage);
+            }
             vizLoaded = true;
         } else {
             System.err.println("Failed To Load a Visualizer.");
