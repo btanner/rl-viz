@@ -18,9 +18,6 @@ limitations under the License.
 package rlVizLib.general;
 
 import java.util.Observable;
-import java.util.Observer;
-import java.util.Set;
-import java.util.TreeSet;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -36,7 +33,7 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
  */
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
-public class TinyGlue  {
+public class TinyGlue extends Observable {
 
     Observation lastObservation = null;
     Action lastAction = null;
@@ -47,25 +44,11 @@ public class TinyGlue  {
     double returnThisEpisode;
     double totalReturn;
 
-    Observer lastObserver=null;
-    Set<Observer> theObservers=new TreeSet<Observer>();
-    
-    public void addLastObserver(Observer o){
-        assert(lastObserver==null);
-        lastObserver=o;
-    }
-    
-    public void addObserver(Observer o){
-        theObservers.add(o);
-        }
-        
     private void updateObservers(Object theEvent) {
-        for (Observer observer : theObservers) {
-            observer.update(null, theEvent);
-        }
-        if(lastObserver!=null){
-            lastObserver.update(null, theEvent);
-        }
+        setChanged();
+        super.notifyObservers(theEvent);
+        super.clearChanged();
+
     }
     //returns true of the episode is over
     public boolean step() {
@@ -136,7 +119,7 @@ public class TinyGlue  {
                         System.out.println("\t notifying on ROAT");
 
             updateObservers(ROAT);
-            System.out.println("\t done notifying on ROAT");
+            System.out.println("\t done notifying on ROT");
 
         }
         return RLGlue.isCurrentEpisodeOver();
