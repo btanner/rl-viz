@@ -18,6 +18,7 @@ limitations under the License.
 package rlVizLib.general;
 
 import java.util.Observable;
+import java.util.Observer;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -43,10 +44,17 @@ public class TinyGlue extends Observable {
     int totalSteps = 0;
     double returnThisEpisode;
     double totalReturn;
+    
+    Observer lastObserver=null;
+    public void addLastObserver(Observer o){
+        assert(lastObserver==null);
+        lastObserver=o;
+    }
 
     private void updateObservers(Object theEvent) {
         setChanged();
         super.notifyObservers(theEvent);
+        lastObserver.update(this, theEvent);
         super.clearChanged();
 
     }
