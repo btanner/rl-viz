@@ -104,7 +104,7 @@ public abstract class AbstractVisualizer implements ImageAggregator {
     volatile Timer redrawTimer = new Timer();
 
     public void receiveNotification() {
-        final int timeBetweenDraw = 50;
+        final int timeBetweenDraw = 10;
         //Either draw now or schedule a drawing
 
         synchronized (redrawLock) {

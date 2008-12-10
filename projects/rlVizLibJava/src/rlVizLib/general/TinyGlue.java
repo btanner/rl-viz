@@ -18,6 +18,9 @@ limitations under the License.
 package rlVizLib.general;
 
 import java.util.Observable;
+import java.util.Observer;
+import java.util.Set;
+import java.util.TreeSet;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -33,7 +36,7 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
  */
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
-public class TinyGlue extends Observable {
+public class TinyGlue  {
 
     Observation lastObservation = null;
     Action lastAction = null;
@@ -44,11 +47,25 @@ public class TinyGlue extends Observable {
     double returnThisEpisode;
     double totalReturn;
 
+    Observer lastObserver=null;
+    Set<Observer> theObservers=new TreeSet<Observer>();
+    
+    public void addLastObserver(Observer o){
+        assert(lastObserver==null);
+        lastObserver=o;
+    }
+    
+    public void addObserver(Observer o){
+        theObservers.add(o);
+        }
+        
     private void updateObservers(Object theEvent) {
-        setChanged();
-        super.notifyObservers(theEvent);
-        super.clearChanged();
-
+        for (Observer observer : theObservers) {
+            observer.update(null, theEvent);
+        }
+        if(lastObserver!=null){
+            lastObserver.update(null, theEvent);
+        }
     }
     //returns true of the episode is over
     public boolean step() {
@@ -81,7 +98,9 @@ public class TinyGlue extends Observable {
         } else {
             Reward_observation_action_terminal ROAT = new Reward_observation_action_terminal();
 
+            System.out.println("Calling env_step");
             Reward_observation_terminal ROT = RLGlue.RL_env_step(lastAction);
+            System.out.println("Back from env_step");
             ROAT.o = ROT.getObservation();
             ROAT.r = ROT.getReward();
             ROAT.terminal = ROT.getTerminal();
@@ -97,12 +116,16 @@ public class TinyGlue extends Observable {
                 returnThisEpisode += lastReward;
                 totalReturn += lastReward;
             }
-
+            System.out.println("\t notifying on ROT");
             updateObservers(ROT);
+            System.out.println("\t done notifying on ROT");
             if (ROT.isTerminal()) {
                 RLGlue.RL_agent_end(ROT.getReward());
             } else {
+            System.out.println("Calling agent_step");
                 ROAT.a = RLGlue.RL_agent_step(ROT.getReward(), ROT.getObservation());
+                            System.out.println("back from agent_step");
+
             }
 
             synchronized (this) {
@@ -110,7 +133,10 @@ public class TinyGlue extends Observable {
                     lastAction = ROAT.getAction();
                 }
             }
+                        System.out.println("\t notifying on ROAT");
+
             updateObservers(ROAT);
+            System.out.println("\t done notifying on ROAT");
 
         }
         return RLGlue.isCurrentEpisodeOver();

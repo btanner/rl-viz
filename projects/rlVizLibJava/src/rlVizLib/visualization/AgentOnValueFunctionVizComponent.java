@@ -25,6 +25,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Observer;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 import rlVizLib.general.TinyGlue;
 import rlVizLib.visualization.interfaces.GlueStateProvider;
 
@@ -85,7 +86,7 @@ public class AgentOnValueFunctionVizComponent implements SelfUpdatingVizComponen
         this.theChangeListener = theChangeListener;
     }
 
-    public void update(Observable o, Object arg) {
+    public void update(Observable o, Object theEvent) {
         if (theChangeListener != null) {
             theChangeListener.vizComponentChanged(this);
         }

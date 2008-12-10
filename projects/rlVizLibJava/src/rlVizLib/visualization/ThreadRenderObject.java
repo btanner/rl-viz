@@ -29,7 +29,7 @@ public class ThreadRenderObject extends RenderObject {
 
     private PollingVizComponent theComponent = null;
     volatile boolean shouldDie = false;
-    int defaultSleepTime = 150;
+    int defaultSleepTime = 10;
     private volatile boolean forced=false;
 
     public ThreadRenderObject(Dimension currentVisualizerPanelSize, PollingVizComponent theComponent, ImageAggregator theBoss) {
