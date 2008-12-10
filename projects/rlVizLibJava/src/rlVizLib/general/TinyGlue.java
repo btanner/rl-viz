@@ -44,17 +44,24 @@ public class TinyGlue extends Observable {
     int totalSteps = 0;
     double returnThisEpisode;
     double totalReturn;
-    
-    Observer lastObserver=null;
-    public void addLastObserver(Observer o){
-        assert(lastObserver==null);
-        lastObserver=o;
+    Observer lastObserver = null;
+
+    public void addLastObserver(Observer o) {
+        assert (lastObserver == null);
+        lastObserver = o;
+    }
+
+    public void deleteObservers() {
+        super.deleteObservers();
+        lastObserver = null;
     }
 
     private void updateObservers(Object theEvent) {
         setChanged();
         super.notifyObservers(theEvent);
+        if(lastObserver!=null){
         lastObserver.update(this, theEvent);
+        }
         super.clearChanged();
 
     }
@@ -113,9 +120,9 @@ public class TinyGlue extends Observable {
             if (ROT.isTerminal()) {
                 RLGlue.RL_agent_end(ROT.getReward());
             } else {
-            System.out.println("Calling agent_step");
+                System.out.println("Calling agent_step");
                 ROAT.a = RLGlue.RL_agent_step(ROT.getReward(), ROT.getObservation());
-                            System.out.println("back from agent_step");
+                System.out.println("back from agent_step");
 
             }
 
@@ -124,7 +131,7 @@ public class TinyGlue extends Observable {
                     lastAction = ROAT.getAction();
                 }
             }
-                        System.out.println("\t notifying on ROAT");
+            System.out.println("\t notifying on ROAT");
 
             updateObservers(ROAT);
             System.out.println("\t done notifying on ROT");
