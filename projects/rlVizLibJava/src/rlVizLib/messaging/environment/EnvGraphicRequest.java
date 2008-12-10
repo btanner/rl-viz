@@ -54,24 +54,30 @@ public class EnvGraphicRequest extends EnvironmentMessages {
         String responseMessage = RLGlue.RL_env_message(theRequest);
 
         Response theResponse;
-        theResponse = new Response(responseMessage);
+        try {
+            theResponse = new Response(responseMessage);
+        } catch (NotAnRLVizMessageException ex) {
+            URL defaultURL=EnvGraphicRequest.class.getResource("/images/defaultsplash.png");
+            theResponse = new Response(getImageFromURL(defaultURL));
+        }
         return theResponse;
+    }
+
+    private static BufferedImage getImageFromURL(URL imageURL) {
+        BufferedImage theImage = null;
+        try {
+            theImage = ImageIO.read(imageURL);
+        } catch (IOException ex) {
+            Logger.getLogger(EnvGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return theImage;
     }
 
     @Override
     public String handleAutomatically(EnvironmentInterface theEnvironment) {
         HasImageInterface castedEnv = (HasImageInterface) theEnvironment;
 
-        BufferedImage theImage = null;
-
-        URL imageURL = castedEnv.getImageURL();
-        try {
-            theImage = ImageIO.read(imageURL);
-
-        } catch (IOException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
-
+        BufferedImage theImage = getImageFromURL(castedEnv.getImageURL());
         Response theResponse = new Response(theImage);
         return theResponse.makeStringResponse();
     }
@@ -90,15 +96,13 @@ public class EnvGraphicRequest extends EnvironmentMessages {
 
         }
 
-        public Response(String responseMessage) {
+        public Response(String responseMessage) throws NotAnRLVizMessageException {
             try {
                 GenericMessage theGenericResponse = new GenericMessage(responseMessage);
                 String payLoad = theGenericResponse.getPayLoad();
                 DataInputStream DIS = BinaryPayload.getInputStreamFromPayload(payLoad);
                 theImage = ImageIO.read(DIS);
             } catch (IOException ex) {
-                Logger.getLogger(EnvGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NotAnRLVizMessageException ex) {
                 Logger.getLogger(EnvGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

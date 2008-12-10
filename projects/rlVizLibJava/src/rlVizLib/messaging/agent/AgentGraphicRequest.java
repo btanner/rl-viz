@@ -53,23 +53,30 @@ public class AgentGraphicRequest extends AgentMessages {
         String responseMessage = RLGlue.RL_agent_message(theRequest);
 
         Response theResponse;
-        theResponse = new Response(responseMessage);
+        try {
+            theResponse = new Response(responseMessage);
+        } catch (NotAnRLVizMessageException ex) {
+            URL defaultURL=AgentGraphicRequest.class.getResource("/images/defaultsplash.png");
+            theResponse = new Response(getImageFromURL(defaultURL));
+        }
         return theResponse;
+    }
+
+    private static BufferedImage getImageFromURL(URL imageURL) {
+        BufferedImage theImage = null;
+        try {
+            theImage = ImageIO.read(imageURL);
+        } catch (IOException ex) {
+            Logger.getLogger(AgentGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return theImage;
     }
 
     @Override
     public String handleAutomatically(AgentInterface theAgent) {
         HasImageInterface castedAgent = (HasImageInterface) theAgent;
 
-        BufferedImage theImage = null;
-
-        URL imageURL = castedAgent.getImageURL();
-        try {
-            theImage = ImageIO.read(imageURL);
-
-        } catch (IOException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
+        BufferedImage theImage = getImageFromURL(castedAgent.getImageURL());
 
         Response theResponse = new Response(theImage);
         return theResponse.makeStringResponse();
@@ -90,15 +97,13 @@ public class AgentGraphicRequest extends AgentMessages {
 
         }
 
-        public Response(String responseMessage) {
+        public Response(String responseMessage) throws NotAnRLVizMessageException {
             try {
                 GenericMessage theGenericResponse = new GenericMessage(responseMessage);
                 String payLoad = theGenericResponse.getPayLoad();
                 DataInputStream DIS = BinaryPayload.getInputStreamFromPayload(payLoad);
                 theImage = ImageIO.read(DIS);
             } catch (IOException ex) {
-                Logger.getLogger(AgentGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NotAnRLVizMessageException ex) {
                 Logger.getLogger(AgentGraphicRequest.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

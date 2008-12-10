@@ -42,7 +42,6 @@ public class EnvVisualizerNameRequest extends EnvironmentMessages{
 				EnvMessageType.kEnvQueryVisualizerName.id(),
 				MessageValueType.kNone.id(),
 				"NULL");
-
 		String responseMessage=RLGlue.RL_env_message(theRequest);
 
 		EnvVisualizerNameResponse theResponse;
