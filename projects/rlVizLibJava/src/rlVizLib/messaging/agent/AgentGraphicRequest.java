@@ -59,6 +59,10 @@ public class AgentGraphicRequest extends AgentMessages {
             URL defaultURL=AgentGraphicRequest.class.getResource("/images/defaultsplash.png");
             theResponse = new Response(getImageFromURL(defaultURL));
         }
+        if(theResponse.getImage()==null){
+            URL defaultURL=AgentGraphicRequest.class.getResource("/images/defaultsplash.png");
+            theResponse=new Response(getImageFromURL(defaultURL));
+        }
         return theResponse;
     }
 

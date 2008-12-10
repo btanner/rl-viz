@@ -28,6 +28,11 @@
 <!-- Not using rl-compile in build-common.xml because we need rlgluecodec.jar -->
     <target name="compile"  depends="set-debug">
         <mkdir dir="${classes.dir}"/>
+<!-- make sure we get the resources (images) -->
+		<copy todir="${classes.dir}">
+	    	<fileset dir="${src.dir}" excludes="**/*.java"/>
+	  	</copy>
+
         <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="${build.debug}" deprecation="${build.deprecation}">
 			<classpath>
 					<path refid="rlgluecodec.classpath" />
