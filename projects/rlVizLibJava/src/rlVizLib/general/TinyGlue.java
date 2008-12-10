@@ -59,8 +59,8 @@ public class TinyGlue extends Observable {
     private void updateObservers(Object theEvent) {
         setChanged();
         super.notifyObservers(theEvent);
-        if(lastObserver!=null){
-        lastObserver.update(this, theEvent);
+        if (lastObserver != null) {
+            lastObserver.update(this, theEvent);
         }
         super.clearChanged();
 
@@ -96,9 +96,8 @@ public class TinyGlue extends Observable {
         } else {
             Reward_observation_action_terminal ROAT = new Reward_observation_action_terminal();
 
-            System.out.println("Calling env_step");
             Reward_observation_terminal ROT = RLGlue.RL_env_step(lastAction);
-            System.out.println("Back from env_step");
+
             ROAT.o = ROT.getObservation();
             ROAT.r = ROT.getReward();
             ROAT.terminal = ROT.getTerminal();
@@ -114,16 +113,13 @@ public class TinyGlue extends Observable {
                 returnThisEpisode += lastReward;
                 totalReturn += lastReward;
             }
-            System.out.println("\t notifying on ROT");
+
             updateObservers(ROT);
-            System.out.println("\t done notifying on ROT");
+
             if (ROT.isTerminal()) {
                 RLGlue.RL_agent_end(ROT.getReward());
             } else {
-                System.out.println("Calling agent_step");
                 ROAT.a = RLGlue.RL_agent_step(ROT.getReward(), ROT.getObservation());
-                System.out.println("back from agent_step");
-
             }
 
             synchronized (this) {
@@ -131,11 +127,7 @@ public class TinyGlue extends Observable {
                     lastAction = ROAT.getAction();
                 }
             }
-            System.out.println("\t notifying on ROAT");
-
             updateObservers(ROAT);
-            System.out.println("\t done notifying on ROT");
-
         }
         return RLGlue.isCurrentEpisodeOver();
     }
