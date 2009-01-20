@@ -17,9 +17,6 @@ limitations under the License.
  */
 package org.rlcommunity.rlviz.app;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.UnsupportedLookAndFeelException;
 import org.rlcommunity.rlviz.app.frames.RLVizFrame;
 import java.io.IOException;
 
@@ -29,27 +26,12 @@ import org.rlcommunity.rlglue.codec.RLGlue;
 
 import org.rlcommunity.rlviz.agentshell.AgentShell;
 import org.rlcommunity.rlviz.settings.RLVizSettings;
-import org.rlcommunity.rlviz.environmentshell.EnvironmentShell;
-import rlVizLib.general.ParameterHolder;
-import rlVizLib.glueProxy.LocalGlue;
 
 /**
  * @author btanner
  */
 public class RLVizApp {
 
-    private static ParameterHolder getSettings() {
-        ParameterHolder AppSettings = new ParameterHolder();
-        AppSettings.addBooleanParam("list-agents", false);
-        AppSettings.addBooleanParam("list-environments", false);
-        AppSettings.addBooleanParam("local-glue", false);
-        AppSettings.addBooleanParam("agent-viz", false);
-        AppSettings.addBooleanParam("env-viz", false);
-        AppSettings.addStringParam("agent-environment-jar-path");
-        AppSettings.addStringParam("agent-jar-path");
-        AppSettings.addStringParam("environment-jar-path");
-        return AppSettings;
-    }
 
     public static void main(String[] args) throws IOException {
         try {
@@ -57,34 +39,8 @@ public class RLVizApp {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
         }
-
-        RLVizSettings.initializeSettings(args);
-        RLVizSettings.addNewParameters(getSettings());
-
-//        String commandLineJarPath = RLVizSettings.getStringSetting("env-agent-jar-path");
-//        if (!commandLineJarPath.equals("")) {
-//            System.setProperty(commandLineJarPath, commandLineJarPath)
-//        }
-//
-
-        if (RLVizSettings.getBooleanSetting("local-glue")) {
-//            assert RLVizSettings.getBooleanSetting("list-environments") && RLVizSettings.getBooleanSetting("list-agents") : "If using local glue, must specify list-environments and list-agents.";
-            RLVizSettings.overrideBooleanParameter("list-agents", true);
-            RLVizSettings.overrideBooleanParameter("list-environments", true);
-            RLVizSettings.addNewParameters(EnvironmentShell.getSettings());
-            RLVizSettings.addNewParameters(AgentShell.getSettings());
-            EnvironmentShell E = new EnvironmentShell();
-            AgentShell A = new AgentShell();
-            RLGlue.setGlue(new LocalGlue(E, A));
-        } else {
-            //If we're local we can trust the shells to set where to find the visualizers.  Otherwise, we need to do it.
-            if (RLVizSettings.isStringParamSet("agent-environment-jar-path")) {
-                RLVizSettings.overrideStringSetting("environment-jar-path", RLVizSettings.getStringSetting("agent-environment-jar-path"));
-                RLVizSettings.overrideStringSetting("agent-jar-path", RLVizSettings.getStringSetting("agent-environment-jar-path"));
-            }
-
-        }
-
+        
+        AppSetup.setup(args);
 
         new RLVizFrame(RLVizSettings.getBooleanSetting("env-viz"), RLVizSettings.getBooleanSetting("agent-viz"));
     }
