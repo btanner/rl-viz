@@ -21,6 +21,11 @@ package rlVizLib.visualization.interfaces;
 
 
 public interface AgentOnValueFunctionDataProvider {
+    /**
+     * This should actually be STATE, not observation
+     * @param whichDimension
+     * @return
+     */
 	public double getCurrentStateInDimension(int whichDimension);
 	public double getMinValueForDim(int whichDimension);
 	public double getMaxValueForDim(int whichDimension);
