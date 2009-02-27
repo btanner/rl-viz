@@ -119,7 +119,7 @@ We'll try and rely on minimal variables from above.
 			<property name="useOSXclasses" value="true"/>
 		</then>
 	</if>
-    <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="${build.debug}" deprecation="${build.deprecation}">
+    <javac srcdir="${src.dir}" destdir="${classes.dir}"  debug="${build.debug}" target="1.5" deprecation="${build.deprecation}">
 	    <classpath>
             <path refid="rlvizlib.classpath" />
  		    <path refid="project.extra.classpath" />
@@ -154,7 +154,7 @@ We'll try and rely on minimal variables from above.
 <target name="rl-compile-tests" depends="rl-jar">
     <mkdir dir="${test.classes.dir}"/>
 	
-    <javac srcdir="${test.dir}" destdir="${test.classes.dir}">
+    <javac srcdir="${test.dir}" destdir="${test.classes.dir}" target="1.5">
         <classpath>
             <path refid="junit.classpath" />
             <path refid="rlvizlib.classpath" />
