@@ -21,10 +21,8 @@ import org.rlcommunity.rlviz.app.frames.RLVizFrame;
 import java.io.IOException;
 
 import javax.swing.UIManager;
-import org.rlcommunity.rlglue.codec.RLGlue;
 
 
-import org.rlcommunity.rlviz.agentshell.AgentShell;
 import org.rlcommunity.rlviz.settings.RLVizSettings;
 
 /**
