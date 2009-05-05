@@ -1,16 +1,23 @@
 #ifndef CPLUSPLUSENVIRONMENTLOADER_H
 #define CPLUSPLUSENVIRONMENTLOADER_H
 
-typedef Task_specification(*envinit_t)();
-typedef Observation(*envstart_t)();
-typedef Reward_observation(*envstep_t)(Action a);
+#include <rlglue/Environment_common.h>
+
+/*
+We want to define some types to represent our different function prototypes
+For example:
+typedef const char*(*envinit_t)();
+
+This creates a type called envinit_t which points to a function that
+takes no parameters and returns a const char *.
+*/
+
+
+typedef const char* (*envinit_t)();
+typedef observation_t* (*envstart_t)();
+typedef reward_observation_terminal_t* (*envstep_t)(const action_t*);
 typedef void (*envcleanup_t)();
-typedef void (*hamburgers_t)();
-typedef State_key(*envgetstate_t)();
-typedef void (*envsetstate_t)(State_key sk);
-typedef void (*envsetrandomseed_t)(Random_seed_key rsk);
-typedef Random_seed_key(*envgetrandomseed_t)();
-typedef Message(*envmessage_t)(const Message inMessage);
+typedef const char* (*envmessage_t)(const char * message);
 typedef const char* (*envgetparams_t)();
 typedef void (*envsetparams_t)(const char* theParams);
 
@@ -18,10 +25,6 @@ struct envFuncs{
     envsetparams_t env_setDefaultParameters;
     envgetparams_t env_getDefaultParameters;
     envmessage_t env_message;
-    envgetrandomseed_t env_get_random_seed;
-    envsetrandomseed_t env_set_random_seed;
-    envsetstate_t env_set_state;
-    envgetstate_t env_get_state;
     envcleanup_t env_cleanup;
     envinit_t env_init;
     envstart_t env_start;

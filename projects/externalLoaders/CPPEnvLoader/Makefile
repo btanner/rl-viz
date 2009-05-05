@@ -61,13 +61,13 @@ else
 endif
 
 CPPENV.dylib: $(LIB_HEADERS)
-	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp
+	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp -lrlutils
 	
 JNI_Env.h:
-	javah -o src/JNI_Env.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar environmentShell.JNIEnvironment
+	javah -o src/JNI_Env.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.JNIEnvironment
 	
 JNI_CPPEnvLoader.h:
-	javah -o src/JNI_CPPEnvLoader.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar environmentShell.LocalCPlusPlusEnvironmentLoader
+	javah -o src/JNI_CPPEnvLoader.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.LocalCPlusPlusEnvironmentLoader
 
 DylibGrabber.h:
 	javah -o src/JNI_DylibGrabber.h -classpath .:$(ENV_HEADERS)/RLVizLib.jar rlVizLib.dynamicLoading.DylibGrabber
