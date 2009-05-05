@@ -63,7 +63,9 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
      * be used in java
      */
     private void loadLoader() {
-        System.load(EnvironmentShellPreferences.getInstance().getJNILoaderLibDir() + File.separator+ "CPPENV.dylib");
+        String CPPLibDir=EnvironmentShellPreferences.getInstance().getJNILoaderLibDir() + File.separator+ "CPPENV.dylib";
+        System.out.println("Looking for CPPLib in: "+CPPLibDir+" which is: "+new File(CPPLibDir).getAbsolutePath());
+        System.load(CPPLibDir);
     }
 
     private String getShortEnvNameFromURI(URI theURI) {
@@ -75,6 +77,10 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
         while (toke.hasMoreTokens()) {
             fileName = toke.nextToken();
         }
+
+        //Lets drop the .dylib
+        int lastDot=fileName.lastIndexOf(".");
+        fileName=fileName.substring(0,lastDot);
         return fileName;
     }
 
@@ -161,7 +167,7 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
     }
 
     public String getTypeSuffix() {
-        return " - C++";
+        return "- C++";
     }
 
     public TaskSpecPayload loadTaskSpecPayload(String localName, ParameterHolder theParams) {

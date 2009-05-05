@@ -22,5 +22,14 @@
     <target name="clean-build" depends="clean,jar"/>
     <target name="test" depends="rl-test-html" />
     <target name="javadoc" depends="rl-javadoc" />
+
+    <target name="run" depends="jar">
+      	<java classname="org.rlcommunity.rlviz.environmentshell.EnvironmentShell" fork="true">
+		         <classpath>
+		           <pathelement location="../../system/dist/EnvironmentShell.jar"/>
+		           <pathelement location="../../system/dist/RLVizLib.jar"/>
+		         </classpath>
+		       </java>
+    </target>
 </project>
 

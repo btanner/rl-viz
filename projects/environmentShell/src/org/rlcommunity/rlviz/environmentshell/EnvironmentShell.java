@@ -58,8 +58,8 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
         if (!theLinkedLibraryVizVersion.equals(ourCompileVersion)) {
             System.err.println("Warning :: Possible RLVizLib Incompatibility");
-            System.err.println("Warning :: Runtime version used by AgentShell is:  " + theLinkedLibraryVizVersion);
-            System.err.println("Warning :: Compile version used to build AgentShell is:  " + ourCompileVersion);
+            System.err.println("Warning :: Runtime version used by EnvironmentShell is:  " + theLinkedLibraryVizVersion);
+            System.err.println("Warning :: Compile version used to build EnvironmentShell is:  " + ourCompileVersion);
         }
     }
     private EnvironmentInterface theEnvironment = null;
@@ -89,13 +89,10 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         //See if the environment variable for the path to the Jars has been defined
         theEnvironmentLoaders.add(new LocalJarEnvironmentLoader());
 
-        //Check if we should do CPP loading
-        String CPPEnvLoaderString = System.getProperty("CPPEnv");
-
-        //Short circuit to check the pointer in case not defined
-        if (CPPEnvLoaderString != null && CPPEnvLoaderString.equalsIgnoreCase("true")) {
-            try {
+        if(RLVizSettings.getBooleanSetting("do-cpp-loading")){
+           try {
                 theEnvironmentLoaders.add(new LocalCPlusPlusEnvironmentLoader());
+                System.out.println("I think we can load C++ envs.");
             } catch (UnsatisfiedLinkError failure) {
                 System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments: " + failure);
             }
@@ -132,8 +129,12 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         try {
             theGenericMessage = new GenericMessage(theMessage);
         } catch (NotAnRLVizMessageException e) {
+            if(theEnvironment==null){
             System.err.println("Someone sent EnvironmentShell a message that wasn't RL-Viz compatible");
             return "I only respond to RL-Viz messages!";
+            }else{
+                return theEnvironment.env_message(theMessage);
+            }
         }
         /**
          * Check if this message is destined for the environment shell or the environment
@@ -158,7 +159,6 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
                 String envName = theCastedRequest.getEnvName();
                 ParameterHolder theParams = theCastedRequest.getParameterHolder();
-
 
                 theEnvironment = loadEnvironment(envName, theParams);
 
@@ -208,7 +208,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
     }
 
-    EnvironmentInterface loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
+    public EnvironmentInterface loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
         EnvironmentLoaderInterface thisEnvLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
         String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
         return thisEnvLoader.loadEnvironment(localName, theParams);
@@ -235,6 +235,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         ParameterHolder envShellSettings = new ParameterHolder();
         envShellSettings.addStringParam("environment-jar-path", ".");
         envShellSettings.addStringParam("agent-environment-jar-path");
+        envShellSettings.addBooleanParam("do-cpp-loading", Boolean.FALSE);
 
         if (System.getProperty("RLVIZ_LIB_PATH") != null) {
             System.err.println("Don't use the system property anymore, use the command line property environment-jar-path");
@@ -242,6 +243,15 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         }
 
         return envShellSettings;
+    }
+
+    public Vector<String> getEnvNames(){
+        refreshList();
+        return envNameVector;
+    }
+    public Vector<ParameterHolder> getEnvParams(){
+        refreshList();
+        return envParamVector;
     }
 
     public static void main(String[] args) {

@@ -30,7 +30,7 @@
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>compile</target>
+                    <target>jar</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
@@ -43,7 +43,7 @@
                 </action>
                 <action name="rebuild">
                     <target>clean</target>
-                    <target>compile</target>
+                    <target>jar</target>
                 </action>
                 <action name="run.single">
                     <script>nbproject/ide-file-targets.xml</script>
@@ -84,6 +84,9 @@
                         </arity>
                     </context>
                 </action>
+                <action name="run">
+                    <target>run</target>
+                </action>
             </ide-actions>
             <view>
                 <items>
@@ -104,6 +107,7 @@
                     <ide-action name="rebuild"/>
                     <ide-action name="clean"/>
                     <ide-action name="javadoc"/>
+                    <ide-action name="run"/>
                     <ide-action name="test"/>
                 </context-menu>
             </view>
@@ -118,7 +122,7 @@
             <compilation-unit>
                 <package-root>tests</package-root>
                 <unit-tests/>
-                <classpath mode="compile">../../system/dist/RLVizLib.jar:../../system/libs/junit.jar:../../system/dist/EnvironmentShell.jar</classpath>
+                <classpath mode="compile">../../system/libs/junit.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

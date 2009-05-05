@@ -24,6 +24,7 @@ import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
+import org.rlcommunity.rlglue.codec.types.RL_abstract_type;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
 //
@@ -39,17 +40,15 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
     public native boolean JNIloadEnvironment(String theFilePath, String theParams);
     public native String JNIenvinit();
     public native void JNIenvstart();
-    public native void JNIenvstep(int numI, int numD, int[] intArray, double[] doubleArray);
+    public native void JNIenvstep(int numI, int numD, int numC, int[] intArray, double[] doubleArray,char[] charArray);
     public native void JNIenvcleanup();
-    public native void JNIenvsetrandomseed(int numI, double numD, int[] intArray, double[] doubleArray);
-    public native void JNIgetrandomseed();
-    public native void JNIenvsetstate(int numI, double numD, int[] intArray, double[] doubleArray);
-    public native void JNIgetstate();   
     public native String JNIenvmessage(String s);
-    public native int JNIgetInt();
+    public native int JNIgetIntCount();
     public native int[] JNIgetIntArray();
-    public native int JNIgetDouble();
+    public native int JNIgetDoubleCount();
     public native double[] JNIgetDoubleArray();
+    public native int JNIgetCharCount();
+    public native char[] JNIgetCharArray();
     public native double JNIgetReward();
     public native int JNIgetTerminal();
     public  boolean validEnv = false;
@@ -67,36 +66,46 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
         return JNIenvinit();
     }
 
-    public Observation env_start() {
-        JNIenvstart();
-        int numI = JNIgetInt();
-        int numD = JNIgetDouble();
-        Observation o = new Observation(numI, numD);
+    private void fillTypeFromJNI(RL_abstract_type genericVariable){
         int[] theInts = JNIgetIntArray();
         double[] theDoubles = JNIgetDoubleArray();
-        System.arraycopy(theInts, 0, o.intArray, 0, numI);
-        System.arraycopy(theDoubles, 0, o.doubleArray, 0, numD);
-        return o;
+        char[] theChars=JNIgetCharArray();
+
+        if(theInts.length!=genericVariable.intArray.length){
+            genericVariable.intArray=new int[theInts.length];
+        }
+        if(theDoubles.length!=genericVariable.doubleArray.length){
+            genericVariable.doubleArray=new double[theDoubles.length];
+        }
+        if(theChars.length!=genericVariable.charArray.length){
+            genericVariable.charArray=new char[theChars.length];
+        }
+
+
+        System.arraycopy(theInts, 0, genericVariable.intArray, 0, theInts.length);
+        System.arraycopy(theDoubles, 0, genericVariable.doubleArray, 0, theDoubles.length);
+        System.arraycopy(theChars, 0, genericVariable.charArray, 0, theChars.length);
+    }
+
+    public Observation env_start() {
+        JNIenvstart();
+        Observation theObservation = new Observation();
+        fillTypeFromJNI(theObservation);
+
+        return theObservation;
     }
 
     public Reward_observation_terminal env_step(Action a) {
-        JNIenvstep(a.intArray.length, a.doubleArray.length, a.intArray, a.doubleArray);
+        JNIenvstep(a.intArray.length, a.doubleArray.length, a.charArray.length, a.intArray, a.doubleArray, a.charArray);
 
-        int numI = JNIgetInt();
-        int numD = JNIgetDouble();
+        Observation theObservation = new Observation();
+        fillTypeFromJNI(theObservation);
 
-        Observation o = new Observation(numI, numD);
-        int[] theInts = JNIgetIntArray();
-        double[] theDoubles = JNIgetDoubleArray();
+        double theReward = JNIgetReward();
 
-        System.arraycopy(theInts, 0, o.intArray, 0, numI);
-        System.arraycopy(theDoubles, 0, o.doubleArray, 0, numD);
+        int terminalFlag = JNIgetTerminal();
 
-        double rew = JNIgetReward();
-
-        int term = JNIgetTerminal();
-
-        Reward_observation_terminal ret = new Reward_observation_terminal(rew, o, term);
+        Reward_observation_terminal ret = new Reward_observation_terminal(theReward, theObservation, terminalFlag==1);
 
         return ret;
     }

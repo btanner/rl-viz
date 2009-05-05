@@ -48,7 +48,7 @@ public class EnvironmentShellPreferences {
     private EnvironmentShellPreferences() {
         try {
             URL thisJarUrl = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-           jniLoaderLibDir = new File(thisJarUrl.toURI()).getParent();
+            jniLoaderLibDir = new File(thisJarUrl.toURI()).getParent();
         } catch (URISyntaxException ex) {
             Logger.getLogger(EnvironmentShellPreferences.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -22,7 +22,6 @@ import rlVizLib.dynamicLoading.EnvOrAgentType;
 import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
-import rlVizLib.messaging.environmentShell.EnvShellTaskSpecResponse;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface {
