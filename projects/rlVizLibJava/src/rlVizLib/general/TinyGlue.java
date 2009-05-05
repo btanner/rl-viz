@@ -100,7 +100,11 @@ public class TinyGlue extends Observable {
 
             ROAT.o = ROT.getObservation();
             ROAT.r = ROT.getReward();
-            ROAT.terminal = ROT.getTerminal();
+            boolean isTerminal=ROT.isTerminal();
+            ROAT.terminal=0;
+            if(isTerminal){
+                ROAT.terminal=1;
+            }
 
 
 

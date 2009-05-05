@@ -144,7 +144,7 @@ public class LocalGlue implements RLGlueInterface {
         } else {
            lastAction = RL_agent_step(RO.getReward(), RO.getObservation());
         }
-        return new Reward_observation_action_terminal(RO.getReward(), RO.getObservation(), lastAction, RO.getTerminal());
+        return new Reward_observation_action_terminal(RO.getReward(), RO.getObservation(), lastAction, RO.terminal);
     }
 
     public synchronized void RL_cleanup() {

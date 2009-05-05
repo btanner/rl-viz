@@ -46,11 +46,11 @@ public class DylibGrabber extends LocalDirectoryGrabber{
 
     private boolean isReallyAnEnvDylib(URI thisFileURI) {
         int errorCode = jniIsThisAValidEnv(thisFileURI.getPath(),DEBUG);
-        if(DEBUG)System.out.println("Rejected: "+thisFileURI.toString()+" for error code: "+errorCode);
         if (errorCode == 0) {
             return true;
         }
 
+        if(DEBUG)System.out.println("Rejected: "+thisFileURI.toString()+" for error code: "+errorCode);
         return false;
     }
 
