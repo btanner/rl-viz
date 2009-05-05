@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 
 int main(){
     	ParameterHolder P;

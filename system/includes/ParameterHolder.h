@@ -13,6 +13,7 @@
 #define ParameterHolder_H
 
 #include <vector>
+#include <string>
 #include <map>
 
 enum PHTypes{
