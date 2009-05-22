@@ -31,6 +31,7 @@ INCLUDE_PATH=$(BASE_PATH)/includes
 GLUE_PATH=../../rl-glue/RL-Glue
 ENV_HEADERS=$(BASE_PATH)/dist
 
+CFLAGS := -Wall -W -Wno-long-long -Wno-unused-parameter
 
 # supported substrings of OSTYPE
 # The following words must be uppercase
@@ -60,8 +61,8 @@ else
 #This is for linux
 endif
 
-CPPENV.dylib: $(LIB_HEADERS)
-	$(CC) -o $(OUT_PATH)/CPPENV.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp -lrlutils
+libRLVizCPPEnvLoader.dylib: $(LIB_HEADERS)
+	$(CC) $(CFLAGS) -o $(OUT_PATH)/libRLVizCPPEnvLoader.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp -lrlutils
 	
 JNI_Env.h:
 	javah -o src/JNI_Env.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.JNIEnvironment

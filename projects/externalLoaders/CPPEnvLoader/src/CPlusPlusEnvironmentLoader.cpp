@@ -5,41 +5,56 @@
 #include "JNI_DylibGrabber.h"
 
 #include <iostream>
+#include <cassert>
 #include <unistd.h>
 #include <dlfcn.h>
-//#include "RL_common.h"
+
 #include "ParameterHolder.h"
 #include "LoaderConstants.h"
 #include "CPlusPlusEnvironmentLoader.h"
 
 #include <sys/types.h>
 #include <errno.h>
-#include <vector>
-#include <string>
+
 
 #include <rlglue/utils/C/RLStruct_util.h>
-#define DEBUGMODE 1
+
+//CEL_DEBUG will be the CPP_ENV_LOADER DEBUG MODE
+#ifndef CEL_DEBUG
+#define CEL_DEBUG 0
+#endif
+
+/**
+ * This is the C/C++ Environment Loader for EnvironmentShell.  This code can
+ * pick RL-Glue environments out of a dynamic library.  Basically, it extends
+ * EnvironmentShell style runtime loading (parameters, localglue, etc) to C/C++.
+ *
+ * We use dlsym to grab function pointers to all of the RL-Glue functions in the
+ * dynamic library, and then Java calls us through JNI to interact with the
+ * underlying environment.  We need some global variables because JNI doesn't
+ * allow us to have composite return types, so we have to keep some things
+ * hanging around and retrieve them with a couple of separate method calls.
+*/
 
 /**
  * We should be using a global action and observation type, and using the
  * utility functions from RL-Glue to fill it.  They do some checking to save
  * work... like not mallocing and freeing every step.
+ *
+ * That actually might be lies: a future enhancement/improvement for RL-Glue
  */
-//global variables
-envStruct theEnvironment = {0, 0, 0, 0, 0, 0, 0, 0};
+
+/**
+ * Global Variables
+ */
+static envStruct envFuncPointers = {0, 0, 0, 0, 0, 0, 0, 0};
 
 //global RL_abstract_type used for C accessor methods
-const rl_abstract_type_t *sharedReturnVariable;
-reward_observation_terminal_t *rewardObs;
+static const rl_abstract_type_t *sharedReturnVariable;
+static reward_observation_terminal_t *rewardObs;
 
-std::string theNullParamHolder("NULL");
+static const char* theNullParamHolder="NULL";
 
-/*
- * Some function prototypes... why aren't these in the header?
- */
-int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, std::string theFileLocation, jboolean printVerboseErrors = false);
-std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment);
-const char* getParameterHolder(std::string theFilePath);
 
 /**
  * This function takes a file path (presumably to a shared library)
@@ -49,14 +64,16 @@ const char* getParameterHolder(std::string theFilePath);
  * the environment.
  */
 JNIEXPORT jboolean JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIloadEnvironment(JNIEnv *env, jobject obj, jstring envFilePath, jstring theParamString) {
-    std::string stdStringPath = std::string(env->GetStringUTFChars(envFilePath, 0));
+    const char* stringPath=env->GetStringUTFChars(envFilePath,0);
 
-    loadEnvironmentToStructFromFile(theEnvironment, stdStringPath);
-    int status = loadEnvironmentToStructFromFile(theEnvironment, stdStringPath);
+    loadEnvironmentToStructFromFile(envFuncPointers, stringPath);
+    int status = loadEnvironmentToStructFromFile(envFuncPointers, stringPath);
+
+    env->ReleaseStringUTFChars(envFilePath, stringPath);
 
     if (status != DLSYM_SUCCESS)return false;
 
-    setDefaultParams(theEnvironment, env->GetStringUTFChars(theParamString, 0));
+    setDefaultParams(envFuncPointers, env->GetStringUTFChars(theParamString, 0));
 
     return true;
 }
@@ -65,14 +82,14 @@ JNIEXPORT jboolean JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnviro
  * Pass off the call to env_start, store the response in a global variable
  */
 JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvstart(JNIEnv *env, jobject obj) {
-    sharedReturnVariable = theEnvironment.env_start();
+    sharedReturnVariable = envFuncPointers.env_start();
 }
 
 /**
  * Pass off the call to env_init
  */
 JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvinit(JNIEnv *env, jobject obj) {
-    return env->NewStringUTF(theEnvironment.env_init());
+    return env->NewStringUTF(envFuncPointers.env_init());
 }
 
 /**
@@ -95,7 +112,7 @@ JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironmen
     env->GetCharArrayRegion(charArray, 0, numChars, (jchar*) theAction->charArray);
 
     // get the return from env_step and parse it into a form that java can check.
-    rewardObs = theEnvironment.env_step(theAction);
+    rewardObs = envFuncPointers.env_step(theAction);
     freeRLStructPointer(theAction);
     sharedReturnVariable = (observation_t *) rewardObs->observation;
 }
@@ -104,67 +121,58 @@ JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironmen
  * Pass off env_cleanup
  */
 JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvcleanup(JNIEnv *env, jobject obj) {
-    theEnvironment.env_cleanup();
+    envFuncPointers.env_cleanup();
 }
 
 /**
  * Pass of env_message
  */
-JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvmessage(JNIEnv *env, jobject obj, jstring themessage) {
-    static const char *messageVar = NULL;
-    //get rid of the old message
-    if (messageVar != NULL) {
-        free((char *) messageVar);
-        messageVar = NULL;
-    }
-    messageVar = env->GetStringUTFChars(themessage, 0);
-    return env->NewStringUTF(theEnvironment.env_message((const char *) messageVar));
+JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvmessage(JNIEnv *env, jobject obj, jstring j_theMessage) {
+    const char *c_theMessage = 0;
+
+    /* Now c_messageVar points to a representation of the jstring*/
+    c_theMessage = env->GetStringUTFChars(j_theMessage, 0);
+
+    /* No worries, the environment will manage the memory for the response*/
+    const char* c_messageResponse=envFuncPointers.env_message(c_theMessage);
+
+    /* Tell Java we are done with whatever c_messageVar points to  */
+    env->ReleaseStringUTFChars(j_theMessage, c_theMessage);
+
+    jstring j_messageResponse=env->NewStringUTF(c_messageResponse);
+    return j_messageResponse;
 }
 
 
-/*
- *
- *	Methods for accessing the genericReturn struct... as each method can only have
- *	1 return. These accessor functions return the numInts, numDoubles, intArray and doubleArray
- *	values.
- */
-//get the integer from the current struct
 
-JNIEXPORT jint JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetIntCount(JNIEnv *env, jobject obj) {
-    return (jint) sharedReturnVariable->numInts;
-}
-//get the integer array
-
+/* Get the integer array */
 JNIEXPORT jintArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetIntArray(JNIEnv *env, jobject obj) {
-    jintArray temp = (env)->NewIntArray(sharedReturnVariable->numInts);
+    /* Create a new Java Array.  Hope that this will get cleaned up automagically*/
+    jintArray jIntArray = (env)->NewIntArray(sharedReturnVariable->numInts);
+    /* Figure out how big the intarray from the last observation was */
     jsize arrSize = (jsize) (sharedReturnVariable->numInts);
-    env->SetIntArrayRegion(temp, 0, arrSize, (jint*) sharedReturnVariable->intArray);
-    return temp;
+    /* Copy the values from the C/C++ intArray TO the new Java array*/
+    env->SetIntArrayRegion(jIntArray, 0, arrSize, (jint*) sharedReturnVariable->intArray);
+    return jIntArray;
 }
-//get the double from the current struct
 
-JNIEXPORT jint JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetDoubleCount(JNIEnv *env, jobject obj) {
-    return (jint) sharedReturnVariable->numDoubles;
-}
-//get the double array
-
+/* Get the double array */
 JNIEXPORT jdoubleArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetDoubleArray(JNIEnv *env, jobject obj) {
-    jdoubleArray temp = (env)->NewDoubleArray(sharedReturnVariable->numDoubles);
+    /* Create a new Java Array.  Hope that this will get cleaned up automagically*/
+    jdoubleArray jDoubleArray = (env)->NewDoubleArray(sharedReturnVariable->numDoubles);
     jsize arrSize = (jsize) (sharedReturnVariable->numDoubles);
-    env->SetDoubleArrayRegion(temp, 0, arrSize, (jdouble*) sharedReturnVariable->doubleArray);
-    return temp;
+    /* Copy the values from the C/C++ doubleArray TO the new Java array*/
+    env->SetDoubleArrayRegion(jDoubleArray, 0, arrSize, (jdouble*) sharedReturnVariable->doubleArray);
+    return jDoubleArray;
 }
 
-JNIEXPORT jint JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetCharCount(JNIEnv *env, jobject obj) {
-    return (jint) sharedReturnVariable->numChars;
-}
-//get the integer array
-
+/* Get the char array */
 JNIEXPORT jcharArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetCharArray(JNIEnv *env, jobject obj) {
-    jcharArray temp = (env)->NewCharArray(sharedReturnVariable->numChars);
+    jcharArray jCharArray = (env)->NewCharArray(sharedReturnVariable->numChars);
     jsize arrSize = (jsize) (sharedReturnVariable->numChars);
-    env->SetCharArrayRegion(temp, 0, arrSize, (jchar*) sharedReturnVariable->charArray);
-    return temp;
+    /* Copy the values from the C/C++ charArray TO the new Java array*/
+    env->SetCharArrayRegion(jCharArray, 0, arrSize, (jchar*) sharedReturnVariable->charArray);
+    return jCharArray;
 }
 
 /*
@@ -180,34 +188,48 @@ JNIEXPORT jint JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironmen
 }
 
 
-//This mehtod makes a list of C/C++ environment names and parameter holders.
-
-JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValidEnv(JNIEnv *env, jobject obj, jstring envFilePath, jboolean verboseErrors) {
-    std::string stdStringPath = std::string(env->GetStringUTFChars(envFilePath, 0));
+/*
+ * Returns whether a particular shared library is a valid environment
+ */
+JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValidEnv(JNIEnv *env, jobject obj, jstring j_envFilePath, jboolean verboseErrors) {
+    const char* c_envFilePath=env->GetStringUTFChars(j_envFilePath, 0);
 
     envStruct tmpEnvironment;
-    int errorCode = loadEnvironmentToStructFromFile(tmpEnvironment, stdStringPath, verboseErrors);
+    int errorCode = loadEnvironmentToStructFromFile(tmpEnvironment, c_envFilePath, verboseErrors);
     closeEnvironment(tmpEnvironment);
+
+    env->ReleaseStringUTFChars(j_envFilePath,c_envFilePath);
 
     return errorCode;
 }
 
-JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_LocalCPlusPlusEnvironmentLoader_JNIgetEnvParams(JNIEnv *env, jobject obj, jstring envFilePath) {
+/*
+ * Given a particular shared library, pull out the parameter holder string
+ * if possible.
+ */
+JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_LocalCPlusPlusEnvironmentLoader_JNIgetEnvParams(JNIEnv *env, jobject obj, jstring j_envFilePath) {
+    const char *c_envFilePath=env->GetStringUTFChars(j_envFilePath, 0);
+    const char* paramHolderString = getParameterHolder(c_envFilePath);
 
-    std::string stdStringFileLocation(env->GetStringUTFChars(envFilePath, 0));
-    const char* paramHolderString = getParameterHolder(stdStringFileLocation);
-    return env->NewStringUTF(paramHolderString);
+    env->ReleaseStringUTFChars(j_envFilePath,c_envFilePath);
+    
+    jstring j_paramHolderString=env->NewStringUTF(paramHolderString);
+    return j_paramHolderString;
 }
 
-/*
- *	Simple C accessor methods, that allow Java to get the returns from this C library
- */
+
 void closeEnvironment(envStruct &theEnv) {
     closeFile(theEnv.handle);
+    theEnv.env_init=NULL;
+    theEnv.env_start=NULL;
+    theEnv.env_step=NULL;
+    theEnv.env_message=NULL;
+    theEnv.env_cleanup=NULL;
+
 }
 
-void* openFile(std::string fileName) {
-    void* theLocalHandle = dlopen(fileName.c_str(), RTLD_NOW | RTLD_LOCAL);
+void* openFile(const char *c_fileName) {
+    void* theLocalHandle = dlopen(c_fileName, RTLD_NOW | RTLD_LOCAL);
     return theLocalHandle;
 }
 
@@ -215,49 +237,74 @@ void closeFile(void *theLocalHandle) {
     dlclose(theLocalHandle);
 }
 
-void checkEnvironmentStruct(envStruct &thisEnvironment, std::vector<std::string> &symFailures) {
-    if (!thisEnvironment.env_start)symFailures.push_back("env_start");
-    if (!thisEnvironment.env_init)symFailures.push_back("env_init");
-    if (!thisEnvironment.env_cleanup)symFailures.push_back("env_cleanup");
-    if (!thisEnvironment.env_step)symFailures.push_back("env_step");
-    if (!thisEnvironment.env_message)symFailures.push_back("env_message");
+unsigned int checkEnvironmentStruct(envStruct &thisEnvironment,unsigned int shouldPrintErrors) {
+    unsigned int missingFunctionCount=0;
+
+    if (!thisEnvironment.env_message){
+        missingFunctionCount++;
+        if(shouldPrintErrors){
+            std::cout<<"\t Missing Function: env_message"<<std::endl;
+        }
+    }
+    if (!thisEnvironment.env_init){
+        missingFunctionCount++;
+        if(shouldPrintErrors){
+            std::cout<<"\t Missing Function: env_init"<<std::endl;
+        }
+    }
+    if (!thisEnvironment.env_start){
+        missingFunctionCount++;
+        if(shouldPrintErrors){
+            std::cout<<"\t Missing Function: env_start"<<std::endl;
+        }
+    }
+    if (!thisEnvironment.env_step){
+        missingFunctionCount++;
+        if(shouldPrintErrors){
+            std::cout<<"\t Missing Function: env_step"<<std::endl;
+        }
+    }
+    if (!thisEnvironment.env_cleanup){
+        missingFunctionCount++;
+        if(shouldPrintErrors){
+            std::cout<<"\t Missing Function: env_cleanup"<<std::endl;
+        }
+    }
+    return missingFunctionCount;
 }
 
-int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, std::string theFileLocation, jboolean verboseErrors) {
-    thisEnvironment.handle = openFile(theFileLocation);
+/**
+ * Given  the path to a dynamic library file, try to open it and dlsym
+ * the appropriate functions into thisEnvironment.
+ */
+int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, const char* c_fileLocation, jboolean verboseErrors) {
+    thisEnvironment.handle = openFile(c_fileLocation);
 
     if (!thisEnvironment.handle) {
         if (verboseErrors) {
-            std::cout << "JNI ::Failed to load file: " << theFileLocation << std::endl;
+            std::cout << "JNI ::Failed to load file: " << c_fileLocation << std::endl;
             std::cout << "JNI ::Failure getting handle from dlopen(): " << dlerror() << std::endl;
         }
         return DLSYM_HANDLE_ERROR;
     }
 
-    std::vector<std::string> symFailures = loadEnvironmentToStruct(thisEnvironment);
+    
+    unsigned int numMissingFunctions = loadEnvironmentToStruct(thisEnvironment);
 
-    if (symFailures.size() > 0) {
+    if (numMissingFunctions > 0) {
         if (verboseErrors) {
-            std::cout << "JNI ::Failed to dlsym all required functions from file: " << theFileLocation << std::endl;
+            std::cout << "JNI ::Failed to dlsym all required functions from file: " << c_fileLocation << std::endl;
             std::cout << "JNI ::Undefined required functions:" << std::endl;
-            for (unsigned int i = 0; i < symFailures.size(); i++)
-                std::cout << "\t\t" << symFailures[i] << std::endl;
+            checkEnvironmentStruct(thisEnvironment,1);
         }
-
         return DLSYM_FUNCTIONS_MISSING;
     }
 
     return DLSYM_SUCCESS;
 }
 
-std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment) {
-    std::vector<std::string> symFailures;
-
-    if (!thisEnvironment.handle) {
-        std::cout << "WTF NO HANDLE!" << std::endl;
-        exit(1);
-    }
-
+unsigned int loadEnvironmentToStruct(envStruct &thisEnvironment) {
+    assert(thisEnvironment.handle);
 
     thisEnvironment.env_start = (envstart_t) dlsym(thisEnvironment.handle, "env_start");
     thisEnvironment.env_init = (envinit_t) dlsym(thisEnvironment.handle, "env_init");
@@ -268,16 +315,15 @@ std::vector<std::string> loadEnvironmentToStruct(envStruct &thisEnvironment) {
     thisEnvironment.env_getDefaultParameters = (envgetparams_t) dlsym(thisEnvironment.handle, "env_getDefaultParameters");
 
 
-    checkEnvironmentStruct(thisEnvironment, symFailures);
-
-    return symFailures;
+    int missingFunctionCount=checkEnvironmentStruct(thisEnvironment, 0);
+    return missingFunctionCount;
 }
 
-const char* getParameterHolder(std::string theFilePath) {
-    const char* thePHString = theNullParamHolder.c_str();
+const char* getParameterHolder(const char* c_filePath) {
+    const char* thePHString = theNullParamHolder;
 
     envStruct tmpEnvironment;
-    int errorCode = loadEnvironmentToStructFromFile(tmpEnvironment, theFilePath);
+    int errorCode = loadEnvironmentToStructFromFile(tmpEnvironment, c_filePath);
 
     if (errorCode == DLSYM_SUCCESS) {
         if (tmpEnvironment.env_getDefaultParameters) {
@@ -285,18 +331,12 @@ const char* getParameterHolder(std::string theFilePath) {
         }
         closeEnvironment(tmpEnvironment);
     }
-
     return thePHString;
 }
 
 void setDefaultParams(envStruct &thisEnvironment, const char *paramString) {
-    if (thisEnvironment.env_setDefaultParameters)
+    if (thisEnvironment.env_setDefaultParameters){
         thisEnvironment.env_setDefaultParameters(paramString);
-}
-
-void printSymError(std::vector<std::string> &symnames) {
-    std::cerr << "Cannot load all required symbols" << std::endl;
-    for (unsigned int i = 0; i < symnames.size(); i++) {
-        std::cerr << symnames[i] << " was missing" << std::endl;
     }
 }
+
