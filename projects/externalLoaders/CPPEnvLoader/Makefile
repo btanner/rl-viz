@@ -52,7 +52,7 @@ endif
 
 CC=g++
 
-LIB_HEADERS=JNI_Env.h JNI_CPPEnvLoader.h DylibGrabber.h
+LIB_HEADERS=JNI_Env.h JNI_CPPEnvLoader.h JNI_JNIEnvironmentSharedLibraryContentFilter.h
 
 ifeq ("$(OSTYPE)","$(OSTYPE_MAC)")
 	SFLAGS := -dynamiclib 
@@ -70,8 +70,8 @@ JNI_Env.h:
 JNI_CPPEnvLoader.h:
 	javah -o src/JNI_CPPEnvLoader.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.LocalCPlusPlusEnvironmentLoader
 
-DylibGrabber.h:
-	javah -o src/JNI_DylibGrabber.h -classpath .:$(ENV_HEADERS)/RLVizLib.jar rlVizLib.dynamicLoading.DylibGrabber
+JNI_JNIEnvironmentSharedLibraryContentFilter.h:
+	javah -o src/JNI_JNIEnvironmentSharedLibraryContentFilter.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.JNIEnvironmentSharedLibraryContentFilter
 
 clean:
-	rm -f $(OUT_PATH)/CPPENV.dylib
+	rm -f $(OUT_PATH)/libRLVizCPPEnvLoader.dylib

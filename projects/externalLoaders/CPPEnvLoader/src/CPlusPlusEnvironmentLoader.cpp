@@ -2,7 +2,7 @@
 #include "jni.h"
 #include "JNI_Env.h"
 #include "JNI_CPPEnvLoader.h"
-#include "JNI_DylibGrabber.h"
+#include "JNI_JNIEnvironmentSharedLibraryContentFilter.h"
 
 #include <iostream>
 #include <cassert>
@@ -95,9 +95,14 @@ JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnviron
 /**
  * Pass off the call to env_step
  */
-JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvstep(JNIEnv *env, jobject obj, jint numInts, jint numChars, jint numDoubles, jintArray intArray, jdoubleArray doubleArray, jcharArray charArray) {
+JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvstep(JNIEnv *env, jobject obj, jintArray intArray, jdoubleArray doubleArray, jcharArray charArray) {
     //create a new action to pass in from the 4 parameters. This is needed because the actual Java object cannot be passed in,
     //so the data from the object is passed in, then put into the C equivalent of an action
+
+    jsize numInts,numDoubles,numChars=0;
+    numInts = env->GetArrayLength(intArray);
+    numDoubles = env->GetArrayLength(doubleArray);
+    numChars = env->GetArrayLength(charArray);
 
     action_t* theAction = allocateRLStructPointer(numInts, numDoubles, numChars);
     //    action_t a;
@@ -191,11 +196,12 @@ JNIEXPORT jint JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironmen
 /*
  * Returns whether a particular shared library is a valid environment
  */
-JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValidEnv(JNIEnv *env, jobject obj, jstring j_envFilePath, jboolean verboseErrors) {
+JNIEXPORT jint JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironmentSharedLibraryContentFilter_JNIvalidEnv(JNIEnv *env, jobject obj, jstring j_envFilePath, jboolean verboseErrors) {
     const char* c_envFilePath=env->GetStringUTFChars(j_envFilePath, 0);
 
     envStruct tmpEnvironment;
     int errorCode = loadEnvironmentToStructFromFile(tmpEnvironment, c_envFilePath, verboseErrors);
+
     closeEnvironment(tmpEnvironment);
 
     env->ReleaseStringUTFChars(j_envFilePath,c_envFilePath);
