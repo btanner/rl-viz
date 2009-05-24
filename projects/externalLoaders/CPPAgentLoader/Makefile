@@ -29,7 +29,7 @@ OUT_PATH=$(BASE_PATH)/dist
 INCLUDE_PATH=$(BASE_PATH)/includes
 #Needed?
 GLUE_PATH=../../rl-glue/RL-Glue
-ENV_HEADERS=$(BASE_PATH)/dist
+AGENT_HEADERS=$(BASE_PATH)/dist
 
 CFLAGS := -Wall -W -Wno-long-long -Wno-unused-parameter
 
@@ -52,7 +52,7 @@ endif
 
 CC=g++
 
-LIB_HEADERS=JNI_Env.h JNI_CPPEnvLoader.h DylibGrabber.h
+LIB_HEADERS=JNI_Agent.h JNI_CPPAgentLoader.h JNI_JNIAgentSharedLibraryContentFilter.h
 
 ifeq ("$(OSTYPE)","$(OSTYPE_MAC)")
 	SFLAGS := -dynamiclib 
@@ -61,17 +61,17 @@ else
 #This is for linux
 endif
 
-libRLVizCPPEnvLoader.dylib: $(LIB_HEADERS)
-	$(CC) $(CFLAGS) -o $(OUT_PATH)/libRLVizCPPEnvLoader.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusEnvironmentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp -lrlutils
+libRLVizCPPAgentLoader.dylib: $(LIB_HEADERS)
+	$(CC) $(CFLAGS) -o $(OUT_PATH)/libRLVizCPPAgentLoader.dylib $(SFLAGS) -fPIC -I $(JAVA_HOME) -I $(JAVA_HEADER) -I $(INCLUDE_PATH) -I$(GLUE_PATH) src/CPlusPlusAgentLoader.cpp $(INCLUDE_PATH)/ParameterHolder.cpp -lrlutils
 	
-JNI_Env.h:
-	javah -o src/JNI_Env.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.JNIEnvironment
+JNI_Agent.h:
+	javah -o src/JNI_Agent.h -classpath .:$(AGENT_HEADERS)/AgentShell.jar org.rlcommunity.rlviz.agentshell.JNIAgent
 	
-JNI_CPPEnvLoader.h:
-	javah -o src/JNI_CPPEnvLoader.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.LocalCPlusPlusEnvironmentLoader
+JNI_CPPAgentLoader.h:
+	javah -o src/JNI_CPPAgentLoader.h -classpath .:$(AGENT_HEADERS)/AgentShell.jar org.rlcommunity.rlviz.agentshell.LocalCPlusPlusAgentLoader
 
-DylibGrabber.h:
-	javah -o src/JNI_DylibGrabber.h -classpath .:$(ENV_HEADERS)/RLVizLib.jar rlVizLib.dynamicLoading.DylibGrabber
+JNI_JNIAgentSharedLibraryContentFilter.h:
+	javah -o src/JNI_JNIAgentSharedLibraryContentFilter.h -classpath .:$(AGENT_HEADERS)/AgentShell.jar org.rlcommunity.rlviz.agentshell.JNIAgentSharedLibraryContentFilter
 
 clean:
-	rm -f $(OUT_PATH)/CPPENV.dylib
+	rm -f $(OUT_PATH)/libRLVizCPPAgentLoader.dylib

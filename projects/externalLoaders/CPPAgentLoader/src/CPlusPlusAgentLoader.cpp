@@ -1,8 +1,8 @@
 //
 #include "jni.h"
-#include "JNI_Env.h"
-#include "JNI_CPPEnvLoader.h"
-#include "JNI_DylibGrabber.h"
+#include "JNI_Agent.h"
+#include "JNI_CPPAgentLoader.h"
+#include "JNI_JNIAgentSharedLibraryContentFilter.h"
 
 #include <iostream>
 #include <cassert>
@@ -11,7 +11,7 @@
 
 #include "ParameterHolder.h"
 #include "LoaderConstants.h"
-#include "CPlusPlusEnvironmentLoader.h"
+#include "CPlusPlusAgentLoader.h"
 
 #include <sys/types.h>
 #include <errno.h>
@@ -19,19 +19,19 @@
 
 #include <rlglue/utils/C/RLStruct_util.h>
 
-//CEL_DEBUG will be the CPP_ENV_LOADER DEBUG MODE
-#ifndef CEL_DEBUG
-#define CEL_DEBUG 0
+//CAL_DEBUG will be the CPP_AGENT_LOADER DEBUG MODE
+#ifndef CAL_DEBUG
+#define CAL_DEBUG 0
 #endif
 
 /**
- * This is the C/C++ Environment Loader for EnvironmentShell.  This code can
- * pick RL-Glue environments out of a dynamic library.  Basically, it extends
- * EnvironmentShell style runtime loading (parameters, localglue, etc) to C/C++.
+ * This is the C/C++ Agent Loader for AgentShell.  This code can
+ * pick RL-Glue agents out of a dynamic library.  Basically, it extends
+ * AgentShell style runtime loading (parameters, localglue, etc) to C/C++.
  *
  * We use dlsym to grab function pointers to all of the RL-Glue functions in the
  * dynamic library, and then Java calls us through JNI to interact with the
- * underlying environment.  We need some global variables because JNI doesn't
+ * underlying agent.  We need some global variables because JNI doesn't
  * allow us to have composite return types, so we have to keep some things
  * hanging around and retrieve them with a couple of separate method calls.
 */
@@ -47,94 +47,123 @@
 /**
  * Global Variables
  */
-static envStruct envFuncPointers = {0, 0, 0, 0, 0, 0, 0, 0};
+static agentStruct agentFuncPointers = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 //global RL_abstract_type used for C accessor methods
 static const rl_abstract_type_t *sharedReturnVariable;
-static reward_observation_terminal_t *rewardObs;
-
 static const char* theNullParamHolder="NULL";
 
 
 /**
  * This function takes a file path (presumably to a shared library)
- *  and loads an environment from it into the global variable "theEnvironment"
+ *  and loads an agent from it into the global variable "theAgent"
  *
  * It uses the string-serialized parameterHolder in theParamString to initialize
- * the environment.
+ * the agent.
  */
-JNIEXPORT jboolean JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIloadEnvironment(JNIEnv *env, jobject obj, jstring envFilePath, jstring theParamString) {
-    const char* stringPath=env->GetStringUTFChars(envFilePath,0);
+JNIEXPORT jboolean JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIloadAgent(JNIEnv *env, jobject obj, jstring agentFilePath, jstring theParamString) {
+    const char* stringPath=env->GetStringUTFChars(agentFilePath,0);
 
-    loadEnvironmentToStructFromFile(envFuncPointers, stringPath);
-    int status = loadEnvironmentToStructFromFile(envFuncPointers, stringPath);
+    loadAgentToStructFromFile(agentFuncPointers, stringPath);
+    int status = loadAgentToStructFromFile(agentFuncPointers, stringPath);
 
-    env->ReleaseStringUTFChars(envFilePath, stringPath);
+    env->ReleaseStringUTFChars(agentFilePath, stringPath);
 
     if (status != DLSYM_SUCCESS)return false;
 
-    setDefaultParams(envFuncPointers, env->GetStringUTFChars(theParamString, 0));
+    setDefaultParams(agentFuncPointers, env->GetStringUTFChars(theParamString, 0));
 
     return true;
 }
 
-/**
- * Pass off the call to env_start, store the response in a global variable
- */
-JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvstart(JNIEnv *env, jobject obj) {
-    sharedReturnVariable = envFuncPointers.env_start();
-}
 
 /**
- * Pass off the call to env_init
+ * Pass off the call to agent_init
  */
-JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvinit(JNIEnv *env, jobject obj) {
-    return env->NewStringUTF(envFuncPointers.env_init());
-}
-
-/**
- * Pass off the call to env_step
- */
-JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvstep(JNIEnv *env, jobject obj, jint numInts, jint numChars, jint numDoubles, jintArray intArray, jdoubleArray doubleArray, jcharArray charArray) {
-    //create a new action to pass in from the 4 parameters. This is needed because the actual Java object cannot be passed in,
-    //so the data from the object is passed in, then put into the C equivalent of an action
-
-    action_t* theAction = allocateRLStructPointer(numInts, numDoubles, numChars);
-    //    action_t a;
-    //    a.numInts = numInts;
-    //    a.intArray = (int*) malloc(sizeof (int) * a.numInts);
-    //    a.numDoubles = numDoubles;
-    //    a.doubleArray = (double*) malloc(sizeof (double) * a.numDoubles);
-    //    a.numChars = numChars;
-    //    a.charArray = (char*) malloc(sizeof (char) * a.numChars);
-    env->GetIntArrayRegion(intArray, 0, numInts, (jint*) theAction->intArray);
-    env->GetDoubleArrayRegion(doubleArray, 0, numDoubles, (jdouble*) theAction->doubleArray);
-    env->GetCharArrayRegion(charArray, 0, numChars, (jchar*) theAction->charArray);
-
-    // get the return from env_step and parse it into a form that java can check.
-    rewardObs = envFuncPointers.env_step(theAction);
-    freeRLStructPointer(theAction);
-    sharedReturnVariable = (observation_t *) rewardObs->observation;
-}
-
-/**
- * Pass off env_cleanup
- */
-JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvcleanup(JNIEnv *env, jobject obj) {
-    envFuncPointers.env_cleanup();
-}
-
-/**
- * Pass of env_message
- */
-JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIenvmessage(JNIEnv *env, jobject obj, jstring j_theMessage) {
+JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIagentinit(JNIEnv *env, jobject obj,jstring j_theMessage) {
     const char *c_theMessage = 0;
 
     /* Now c_messageVar points to a representation of the jstring*/
     c_theMessage = env->GetStringUTFChars(j_theMessage, 0);
 
-    /* No worries, the environment will manage the memory for the response*/
-    const char* c_messageResponse=envFuncPointers.env_message(c_theMessage);
+    agentFuncPointers.agent_init(c_theMessage);
+
+    /* Tell Java we are done with whatever c_messageVar points to  */
+    env->ReleaseStringUTFChars(j_theMessage, c_theMessage);
+}
+
+
+/**
+ * Pass off the call to agent_start
+ */
+JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIagentstart(JNIEnv *env, jobject obj, jintArray intArray, jdoubleArray doubleArray, jcharArray charArray) {
+    //create a new action to pass in from the 4 parameters. This is needed because the actual Java object cannot be passed in,
+    //so the data from the object is passed in, then put into the C equivalent of an action
+    jsize numInts,numDoubles,numChars=0;
+    numInts = env->GetArrayLength(intArray);
+    numDoubles = env->GetArrayLength(doubleArray);
+    numChars = env->GetArrayLength(charArray);
+
+    observation_t* theObservation = allocateRLStructPointer(numInts, numDoubles, numChars);
+    env->GetIntArrayRegion(intArray, 0, numInts, (jint*) theObservation->intArray);
+    env->GetDoubleArrayRegion(doubleArray, 0, numDoubles, (jdouble*) theObservation->doubleArray);
+    env->GetCharArrayRegion(charArray, 0, numChars, (jchar*) theObservation->charArray);
+
+    /* Keep track of the action */
+    sharedReturnVariable=agentFuncPointers.agent_start(theObservation);
+
+    // get the return from agent_step and parse it into a form that java can check.
+    freeRLStructPointer(theObservation);
+}
+
+/**
+ * Pass off the call to agent_step
+ */
+JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIagentstep(JNIEnv *env, jobject obj, jdouble reward, jintArray intArray, jdoubleArray doubleArray, jcharArray charArray) {
+    //create a new action to pass in from the 4 parameters. This is needed because the actual Java object cannot be passed in,
+    //so the data from the object is passed in, then put into the C equivalent of an action
+    jsize numInts,numDoubles,numChars=0;
+    numInts = env->GetArrayLength(intArray);
+    numDoubles = env->GetArrayLength(doubleArray);
+    numChars = env->GetArrayLength(charArray);
+
+    observation_t* theObservation = allocateRLStructPointer(numInts, numDoubles, numChars);
+    env->GetIntArrayRegion(intArray, 0, numInts, (jint*) theObservation->intArray);
+    env->GetDoubleArrayRegion(doubleArray, 0, numDoubles, (jdouble*) theObservation->doubleArray);
+    env->GetCharArrayRegion(charArray, 0, numChars, (jchar*) theObservation->charArray);
+
+    /* Keep track of the action */
+    sharedReturnVariable=agentFuncPointers.agent_step(reward,theObservation);
+    
+    // get the return from agent_step and parse it into a form that java can check.
+    freeRLStructPointer(theObservation);
+}
+
+/**
+ * Pass off the call to agent_end
+ */
+JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIagentend(JNIEnv *env, jobject obj, jdouble reward) {
+    agentFuncPointers.agent_end(reward);
+}
+
+/**
+ * Pass off agent_cleanup
+ */
+JNIEXPORT void JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIagentcleanup(JNIEnv *env, jobject obj) {
+    agentFuncPointers.agent_cleanup();
+}
+
+/**
+ * Pass of agent_message
+ */
+JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIagentmessage(JNIEnv *env, jobject obj, jstring j_theMessage) {
+    const char *c_theMessage = 0;
+
+    /* Now c_messageVar points to a representation of the jstring*/
+    c_theMessage = env->GetStringUTFChars(j_theMessage, 0);
+
+    /* No worries, the agent will manage the memory for the response*/
+    const char* c_messageResponse=agentFuncPointers.agent_message(c_theMessage);
 
     /* Tell Java we are done with whatever c_messageVar points to  */
     env->ReleaseStringUTFChars(j_theMessage, c_theMessage);
@@ -146,9 +175,9 @@ JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnviron
 
 
 /* Get the integer array */
-JNIEXPORT jintArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetIntArray(JNIEnv *env, jobject obj) {
+JNIEXPORT jintArray JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIgetIntArray(JNIEnv *env, jobject obj) {
     /* Create a new Java Array.  Hope that this will get cleaned up automagically*/
-    jintArray jIntArray = (env)->NewIntArray(sharedReturnVariable->numInts);
+    jintArray jIntArray = env->NewIntArray(sharedReturnVariable->numInts);
     /* Figure out how big the intarray from the last observation was */
     jsize arrSize = (jsize) (sharedReturnVariable->numInts);
     /* Copy the values from the C/C++ intArray TO the new Java array*/
@@ -157,9 +186,9 @@ JNIEXPORT jintArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvir
 }
 
 /* Get the double array */
-JNIEXPORT jdoubleArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetDoubleArray(JNIEnv *env, jobject obj) {
+JNIEXPORT jdoubleArray JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIgetDoubleArray(JNIEnv *env, jobject obj) {
     /* Create a new Java Array.  Hope that this will get cleaned up automagically*/
-    jdoubleArray jDoubleArray = (env)->NewDoubleArray(sharedReturnVariable->numDoubles);
+    jdoubleArray jDoubleArray = env->NewDoubleArray(sharedReturnVariable->numDoubles);
     jsize arrSize = (jsize) (sharedReturnVariable->numDoubles);
     /* Copy the values from the C/C++ doubleArray TO the new Java array*/
     env->SetDoubleArrayRegion(jDoubleArray, 0, arrSize, (jdouble*) sharedReturnVariable->doubleArray);
@@ -167,38 +196,26 @@ JNIEXPORT jdoubleArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEn
 }
 
 /* Get the char array */
-JNIEXPORT jcharArray JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetCharArray(JNIEnv *env, jobject obj) {
-    jcharArray jCharArray = (env)->NewCharArray(sharedReturnVariable->numChars);
+JNIEXPORT jcharArray JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIgetCharArray(JNIEnv *env, jobject obj) {
+    jcharArray jCharArray = env->NewCharArray(sharedReturnVariable->numChars);
     jsize arrSize = (jsize) (sharedReturnVariable->numChars);
     /* Copy the values from the C/C++ charArray TO the new Java array*/
     env->SetCharArrayRegion(jCharArray, 0, arrSize, (jchar*) sharedReturnVariable->charArray);
     return jCharArray;
 }
 
-/*
- *	These accessor functions are used to return the reward and terminal values for the reward-observation
- *	in env_step
- */
-JNIEXPORT jdouble JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetReward(JNIEnv *env, jobject obj) {
-    return (jdouble) rewardObs->reward;
-}
-
-JNIEXPORT jint JNICALL Java_org_rlcommunity_rlviz_environmentshell_JNIEnvironment_JNIgetTerminal(JNIEnv *env, jobject obj) {
-    return (jint) rewardObs->terminal;
-}
-
 
 /*
- * Returns whether a particular shared library is a valid environment
+ * Returns whether a particular shared library is a valid agent
  */
-JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValidEnv(JNIEnv *env, jobject obj, jstring j_envFilePath, jboolean verboseErrors) {
-    const char* c_envFilePath=env->GetStringUTFChars(j_envFilePath, 0);
+JNIEXPORT jint JNICALL  Java_org_rlcommunity_rlviz_agentshell_JNIAgentSharedLibraryContentFilter_JNIvalidAgent(JNIEnv *env, jobject obj, jstring j_agentFilePath, jboolean verboseErrors) {
+    const char* c_agentFilePath=env->GetStringUTFChars(j_agentFilePath, 0);
 
-    envStruct tmpEnvironment;
-    int errorCode = loadEnvironmentToStructFromFile(tmpEnvironment, c_envFilePath, verboseErrors);
-    closeEnvironment(tmpEnvironment);
+    agentStruct tmpAgent;
+    int errorCode = loadAgentToStructFromFile(tmpAgent, c_agentFilePath, verboseErrors);
+    closeAgent(tmpAgent);
 
-    env->ReleaseStringUTFChars(j_envFilePath,c_envFilePath);
+    env->ReleaseStringUTFChars(j_agentFilePath,c_agentFilePath);
 
     return errorCode;
 }
@@ -207,24 +224,24 @@ JNIEXPORT jint JNICALL Java_rlVizLib_dynamicLoading_DylibGrabber_jniIsThisAValid
  * Given a particular shared library, pull out the parameter holder string
  * if possible.
  */
-JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_environmentshell_LocalCPlusPlusEnvironmentLoader_JNIgetEnvParams(JNIEnv *env, jobject obj, jstring j_envFilePath) {
-    const char *c_envFilePath=env->GetStringUTFChars(j_envFilePath, 0);
-    const char* paramHolderString = getParameterHolder(c_envFilePath);
+JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_agentshell_LocalCPlusPlusAgentLoader_JNIgetAgentParams(JNIEnv *env, jobject obj, jstring j_agentFilePath) {
+    const char *c_agentFilePath=env->GetStringUTFChars(j_agentFilePath, 0);
+    const char* paramHolderString = getParameterHolder(c_agentFilePath);
 
-    env->ReleaseStringUTFChars(j_envFilePath,c_envFilePath);
+    env->ReleaseStringUTFChars(j_agentFilePath,c_agentFilePath);
     
     jstring j_paramHolderString=env->NewStringUTF(paramHolderString);
     return j_paramHolderString;
 }
 
 
-void closeEnvironment(envStruct &theEnv) {
-    closeFile(theEnv.handle);
-    theEnv.env_init=NULL;
-    theEnv.env_start=NULL;
-    theEnv.env_step=NULL;
-    theEnv.env_message=NULL;
-    theEnv.env_cleanup=NULL;
+void closeAgent(agentStruct &theAgent) {
+    closeFile(theAgent.handle);
+    theAgent.agent_init=NULL;
+    theAgent.agent_start=NULL;
+    theAgent.agent_step=NULL;
+    theAgent.agent_message=NULL;
+    theAgent.agent_cleanup=NULL;
 
 }
 
@@ -237,37 +254,44 @@ void closeFile(void *theLocalHandle) {
     dlclose(theLocalHandle);
 }
 
-unsigned int checkEnvironmentStruct(envStruct &thisEnvironment,unsigned int shouldPrintErrors) {
+unsigned int checkAgentStruct(agentStruct &thisAgent,unsigned int shouldPrintErrors) {
     unsigned int missingFunctionCount=0;
 
-    if (!thisEnvironment.env_message){
+    if (!thisAgent.agent_message){
         missingFunctionCount++;
         if(shouldPrintErrors){
-            std::cout<<"\t Missing Function: env_message"<<std::endl;
+            std::cout<<"\t Missing Function: agent_message"<<std::endl;
         }
     }
-    if (!thisEnvironment.env_init){
+    if (!thisAgent.agent_init){
         missingFunctionCount++;
         if(shouldPrintErrors){
-            std::cout<<"\t Missing Function: env_init"<<std::endl;
+            std::cout<<"\t Missing Function: agent_init"<<std::endl;
         }
     }
-    if (!thisEnvironment.env_start){
+    if (!thisAgent.agent_start){
         missingFunctionCount++;
         if(shouldPrintErrors){
-            std::cout<<"\t Missing Function: env_start"<<std::endl;
+            std::cout<<"\t Missing Function: agent_start"<<std::endl;
         }
     }
-    if (!thisEnvironment.env_step){
+    if (!thisAgent.agent_step){
         missingFunctionCount++;
         if(shouldPrintErrors){
-            std::cout<<"\t Missing Function: env_step"<<std::endl;
+            std::cout<<"\t Missing Function: agent_step"<<std::endl;
         }
     }
-    if (!thisEnvironment.env_cleanup){
+    if (!thisAgent.agent_end){
         missingFunctionCount++;
         if(shouldPrintErrors){
-            std::cout<<"\t Missing Function: env_cleanup"<<std::endl;
+            std::cout<<"\t Missing Function: agent_end"<<std::endl;
+        }
+    }
+
+    if (!thisAgent.agent_cleanup){
+        missingFunctionCount++;
+        if(shouldPrintErrors){
+            std::cout<<"\t Missing Function: agent_cleanup"<<std::endl;
         }
     }
     return missingFunctionCount;
@@ -275,27 +299,29 @@ unsigned int checkEnvironmentStruct(envStruct &thisEnvironment,unsigned int shou
 
 /**
  * Given  the path to a dynamic library file, try to open it and dlsym
- * the appropriate functions into thisEnvironment.
+ * the appropriate functions into thisAgent.
  */
-int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, const char* c_fileLocation, jboolean verboseErrors) {
-    thisEnvironment.handle = openFile(c_fileLocation);
+int loadAgentToStructFromFile(agentStruct &thisAgent, const char* c_fileLocation, jboolean verboseErrors) {
+    thisAgent.handle = openFile(c_fileLocation);
 
-    if (!thisEnvironment.handle) {
+    if (!thisAgent.handle) {
         if (verboseErrors) {
             std::cout << "JNI ::Failed to load file: " << c_fileLocation << std::endl;
             std::cout << "JNI ::Failure getting handle from dlopen(): " << dlerror() << std::endl;
+        }else{
+            std::cout << "JNI_DEBUG :: Successfully loaded from: "<<c_fileLocation<<std::endl;
         }
         return DLSYM_HANDLE_ERROR;
     }
 
     
-    unsigned int numMissingFunctions = loadEnvironmentToStruct(thisEnvironment);
+    unsigned int numMissingFunctions = loadAgentToStruct(thisAgent);
 
     if (numMissingFunctions > 0) {
         if (verboseErrors) {
             std::cout << "JNI ::Failed to dlsym all required functions from file: " << c_fileLocation << std::endl;
             std::cout << "JNI ::Undefined required functions:" << std::endl;
-            checkEnvironmentStruct(thisEnvironment,1);
+            checkAgentStruct(thisAgent,1);
         }
         return DLSYM_FUNCTIONS_MISSING;
     }
@@ -303,40 +329,41 @@ int loadEnvironmentToStructFromFile(envStruct &thisEnvironment, const char* c_fi
     return DLSYM_SUCCESS;
 }
 
-unsigned int loadEnvironmentToStruct(envStruct &thisEnvironment) {
-    assert(thisEnvironment.handle);
+unsigned int loadAgentToStruct(agentStruct &thisAgent) {
+    assert(thisAgent.handle);
 
-    thisEnvironment.env_start = (envstart_t) dlsym(thisEnvironment.handle, "env_start");
-    thisEnvironment.env_init = (envinit_t) dlsym(thisEnvironment.handle, "env_init");
-    thisEnvironment.env_cleanup = (envcleanup_t) dlsym(thisEnvironment.handle, "env_cleanup");
-    thisEnvironment.env_step = (envstep_t) dlsym(thisEnvironment.handle, "env_step");
-    thisEnvironment.env_message = (envmessage_t) dlsym(thisEnvironment.handle, "env_message");
-    thisEnvironment.env_setDefaultParameters = (envsetparams_t) dlsym(thisEnvironment.handle, "env_setDefaultParameters");
-    thisEnvironment.env_getDefaultParameters = (envgetparams_t) dlsym(thisEnvironment.handle, "env_getDefaultParameters");
+    thisAgent.agent_start = (agentstart_t) dlsym(thisAgent.handle, "agent_start");
+    thisAgent.agent_init = (agentinit_t) dlsym(thisAgent.handle, "agent_init");
+    thisAgent.agent_cleanup = (agentcleanup_t) dlsym(thisAgent.handle, "agent_cleanup");
+    thisAgent.agent_step = (agentstep_t) dlsym(thisAgent.handle, "agent_step");
+    thisAgent.agent_end = (agentend_t) dlsym(thisAgent.handle, "agent_end");
+    thisAgent.agent_message = (agentmessage_t) dlsym(thisAgent.handle, "agent_message");
+    thisAgent.agent_setDefaultParameters = (agentsetparams_t) dlsym(thisAgent.handle, "agent_setDefaultParameters");
+    thisAgent.agent_getDefaultParameters = (agentgetparams_t) dlsym(thisAgent.handle, "agent_getDefaultParameters");
 
 
-    int missingFunctionCount=checkEnvironmentStruct(thisEnvironment, 0);
+    int missingFunctionCount=checkAgentStruct(thisAgent, 0);
     return missingFunctionCount;
 }
 
 const char* getParameterHolder(const char* c_filePath) {
     const char* thePHString = theNullParamHolder;
 
-    envStruct tmpEnvironment;
-    int errorCode = loadEnvironmentToStructFromFile(tmpEnvironment, c_filePath);
+    agentStruct tmpAgent;
+    int errorCode = loadAgentToStructFromFile(tmpAgent, c_filePath);
 
     if (errorCode == DLSYM_SUCCESS) {
-        if (tmpEnvironment.env_getDefaultParameters) {
-            thePHString = tmpEnvironment.env_getDefaultParameters();
+        if (tmpAgent.agent_getDefaultParameters) {
+            thePHString = tmpAgent.agent_getDefaultParameters();
         }
-        closeEnvironment(tmpEnvironment);
+        closeAgent(tmpAgent);
     }
     return thePHString;
 }
 
-void setDefaultParams(envStruct &thisEnvironment, const char *paramString) {
-    if (thisEnvironment.env_setDefaultParameters){
-        thisEnvironment.env_setDefaultParameters(paramString);
+void setDefaultParams(agentStruct &thisAgent, const char *paramString) {
+    if (thisAgent.agent_setDefaultParameters){
+        thisAgent.agent_setDefaultParameters(paramString);
     }
 }
 
