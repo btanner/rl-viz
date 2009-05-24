@@ -36,7 +36,6 @@ ParameterHolder::ParameterHolder(const std::string theString){
 	
 	double fParamValue;
 	int iParamValue;
-	bool bParamValue;
 	std::string sParamValue;
 
 	int tempType;
@@ -86,7 +85,7 @@ ParameterHolder::ParameterHolder(const std::string theString){
 	}
 
         //Alias time
-	int numAliases;
+	unsigned int numAliases;
 	iss>>numAliases;
 	iss.ignore();
 	for(size_t i=0;i<numAliases;i++){
