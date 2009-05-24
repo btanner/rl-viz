@@ -27,11 +27,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import rlVizLib.dynamicLoading.CompositeResourceGrabber;
-import rlVizLib.dynamicLoading.DylibGrabber;
-import rlVizLib.general.ParameterHolder;
+import org.rlcommunity.rlviz.dynamicloading.CompositeResourceGrabber;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
-import rlVizLib.messaging.environmentShell.EnvShellTaskSpecResponse;
+import org.rlcommunity.rlviz.dynamicloading.SharedLibraryGrabber;
+import rlVizLib.general.ParameterHolder;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 /**
@@ -59,13 +58,13 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
 
 
     /**
-     * The CPPENV.dylib is the library that allows the c++ environments to
+     * The libRLVizCPPEnvLoader.dylib is the library that allows the c++ environments to
      * be used in java
      */
     private void loadLoader() {
-        String CPPLibDir=EnvironmentShellPreferences.getInstance().getJNILoaderLibDir() + File.separator+ "CPPENV.dylib";
-        System.out.println("Looking for CPPLib in: "+CPPLibDir+" which is: "+new File(CPPLibDir).getAbsolutePath());
+        String CPPLibDir=EnvironmentShellPreferences.getInstance().getJNILoaderLibDir() + File.separator+ "libRLVizCPPEnvLoader.dylib";
         System.load(CPPLibDir);
+
     }
 
     private String getShortEnvNameFromURI(URI theURI) {
@@ -110,7 +109,10 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
         
         CompositeResourceGrabber compGrabber=new CompositeResourceGrabber();
         for (URI uri : allPlacesToLook) {
-            compGrabber.add(new DylibGrabber(uri));
+            SharedLibraryGrabber thisGrabber=new SharedLibraryGrabber(uri);
+            //Make sure it will only find shared libraries with agents
+            thisGrabber.addContentsFilter(new JNIEnvironmentSharedLibraryContentFilter());
+            compGrabber.add(thisGrabber);
         }
         compGrabber.refreshURIList();
         allCPPEnvURIs = compGrabber.getAllResourceURIs();
@@ -124,10 +126,7 @@ public class LocalCPlusPlusEnvironmentLoader implements EnvironmentLoaderInterfa
             String ParamHolderString = JNIgetEnvParams(thisURI.getPath());//JNI call like getParamHolderInStringFormat(i)
             ParameterHolder thisParamHolder = new ParameterHolder(ParamHolderString);
             theParamHolders.add(thisParamHolder);
-
-            String sourcePath = thisURI.getPath();
         }
-        System.out.println("Added a total of "+theNames.size()+" cpp envs");
         return true;
     }
 

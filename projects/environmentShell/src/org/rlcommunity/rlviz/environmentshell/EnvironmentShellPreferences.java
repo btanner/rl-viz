@@ -35,7 +35,7 @@ import org.rlcommunity.rlviz.settings.RLVizSettings;
 public class EnvironmentShellPreferences {
 
     private static EnvironmentShellPreferences ourInstance = new EnvironmentShellPreferences();
-    private Vector<URI> envUriList = new Vector<URI>();
+    private Vector<URI> envURIList = new Vector<URI>();
     private String jniLoaderLibDir = null;
     
     public static EnvironmentShellPreferences getInstance() {
@@ -55,18 +55,18 @@ public class EnvironmentShellPreferences {
     }
     
     public void addToList(URI theURI){
-        this.envUriList.add(theURI);
+        this.envURIList.add(theURI);
     }
     public Vector<URI> getList(){
-        if(this.envUriList.isEmpty()){
+        if(this.envURIList.isEmpty()){
 //                envUriList.add(new File(jniLoaderLibDir).toURI());
   //              envUriList.add(new File("/Users/mradkie/competition/rlcomplibrary/libraries/envJars/").toURI());
 //                envUriList.add(new File("../../rlcomplibrary/libraries/envJars/").toURI());
   //              envUriList.add(new File("../../rl-library/system/dist/").toURI());
                   String envPath=RLVizSettings.getStringSetting("environment-jar-path");
-                  envUriList.add(new File(envPath).toURI());
+                  envURIList.add(new File(envPath).toURI());
         }
-        return this.envUriList;
+        return this.envURIList;
     }
     public String getJNILoaderLibDir(){
         return this.jniLoaderLibDir;

@@ -1,4 +1,4 @@
-package rlVizLib.dynamicLoading;
+package org.rlcommunity.rlviz.dynamicloading;
 
 /*
 Copyright 2007 Brian Tanner

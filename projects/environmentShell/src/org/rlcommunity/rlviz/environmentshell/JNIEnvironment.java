@@ -40,21 +40,18 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
     public native boolean JNIloadEnvironment(String theFilePath, String theParams);
     public native String JNIenvinit();
     public native void JNIenvstart();
-    public native void JNIenvstep(int numI, int numD, int numC, int[] intArray, double[] doubleArray,char[] charArray);
+    public native void JNIenvstep(int[] intArray, double[] doubleArray,char[] charArray);
     public native void JNIenvcleanup();
     public native String JNIenvmessage(String s);
-    public native int JNIgetIntCount();
     public native int[] JNIgetIntArray();
-    public native int JNIgetDoubleCount();
     public native double[] JNIgetDoubleArray();
-    public native int JNIgetCharCount();
     public native char[] JNIgetCharArray();
+
     public native double JNIgetReward();
     public native int JNIgetTerminal();
     public  boolean validEnv = false;
 
     private void load_environment(String theFullFilePath, ParameterHolder theParams) {
-        System.out.println("Loading: " + theFullFilePath + " with Param holder: " + theParams.stringSerialize());
         validEnv = JNIloadEnvironment(theFullFilePath, theParams.stringSerialize());
     }
 
@@ -71,6 +68,7 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
         double[] theDoubles = JNIgetDoubleArray();
         char[] theChars=JNIgetCharArray();
 
+        //Why are we doing all of this and not just using the arrays?
         if(theInts.length!=genericVariable.intArray.length){
             genericVariable.intArray=new int[theInts.length];
         }
@@ -96,7 +94,7 @@ public class JNIEnvironment implements EnvironmentInterface, Unloadable {
     }
 
     public Reward_observation_terminal env_step(Action a) {
-        JNIenvstep(a.intArray.length, a.doubleArray.length, a.charArray.length, a.intArray, a.doubleArray, a.charArray);
+        JNIenvstep(a.intArray, a.doubleArray, a.charArray);
 
         Observation theObservation = new Observation();
         fillTypeFromJNI(theObservation);

@@ -35,7 +35,7 @@ import org.rlcommunity.rlviz.settings.RLVizSettings;
 public class AgentShellPreferences {
 
     private static AgentShellPreferences ourInstance = new AgentShellPreferences();
-    private Vector<URI> agentLocationList = new Vector<URI>();
+    private Vector<URI> agentURIList = new Vector<URI>();
     private String jniLoaderLibDir = null;
     
     public static AgentShellPreferences getInstance() {
@@ -56,16 +56,16 @@ public class AgentShellPreferences {
     }
     
     public void addToList(URI theURI){
-        this.agentLocationList.add(theURI);
+        this.agentURIList.add(theURI);
     }
     public Vector<URI> getList(){
-        if(this.agentLocationList.isEmpty()){
+        if(this.agentURIList.isEmpty()){
 //                agentLocationList.add(new File(jniLoaderLibDir).toURI());
 //                agentLocationList.add(new File("../../rl-library/system/dist/").toURI());
                   String agentPath=RLVizSettings.getStringSetting("agent-jar-path");
-                  agentLocationList.add(new File(agentPath).toURI());
+                  agentURIList.add(new File(agentPath).toURI());
         }
-        return this.agentLocationList;
+        return this.agentURIList;
     }
     public String getJNILoaderLibDir(){
         return this.jniLoaderLibDir;

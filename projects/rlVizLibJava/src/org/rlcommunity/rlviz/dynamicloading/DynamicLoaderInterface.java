@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package rlVizLib.dynamicLoading;
+package org.rlcommunity.rlviz.dynamicloading;
 
 import java.util.Vector;
 import rlVizLib.general.ParameterHolder;

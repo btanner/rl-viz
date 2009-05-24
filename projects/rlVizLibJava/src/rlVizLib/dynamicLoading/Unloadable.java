@@ -20,9 +20,14 @@ http://brian.tannerpages.com
 
 package rlVizLib.dynamicLoading;
 
+
 /**
  * Implement this if you don't want your agent or environment to be found by the 
  * crawlers that look for agents and envs.
+ *
+ * This technically should have moved to org.rlcommunity.rlviz.dynamicloading,
+ * but... many environments and agents from the competition depend on this, so
+ * want to transition quietly.
  * @author btanner
  */
 public interface Unloadable {

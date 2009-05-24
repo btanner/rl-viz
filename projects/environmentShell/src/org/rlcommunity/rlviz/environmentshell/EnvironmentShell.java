@@ -50,7 +50,6 @@ import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
     protected String libDir;
-    
 
     static {
         RLVizVersion theLinkedLibraryVizVersion = rlVizLib.rlVizCore.getRLVizSpecVersion();
@@ -76,63 +75,40 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         this.refreshList();
     }
 
-    public void refreshList() {
-        mapFromUniqueNameToLoader = new TreeMap<String, EnvironmentLoaderInterface>();
-        mapFromUniqueNameToLocalName = new TreeMap<String, String>();
-        theEnvironmentLoaders = new Vector<EnvironmentLoaderInterface>();
-        envNameVector = new Vector<String>();
-        envParamVector = new Vector<ParameterHolder>();
+    public String env_init() {
+        return theEnvironment.env_init();
+    }
 
-        if (!theEnvironmentLoaders.isEmpty()) {
-            theEnvironmentLoaders.clear();
-        }
-        //See if the environment variable for the path to the Jars has been defined
-        theEnvironmentLoaders.add(new LocalJarEnvironmentLoader());
+    public Observation env_start() {
+        Observation o = theEnvironment.env_start();
+        return o;
+    }
 
-        if(RLVizSettings.getBooleanSetting("do-cpp-loading")){
-           try {
-                theEnvironmentLoaders.add(new LocalCPlusPlusEnvironmentLoader());
-                System.out.println("I think we can load C++ envs.");
-            } catch (UnsatisfiedLinkError failure) {
-                System.err.println("Unable to load CPPENV.dylib, unable to load C/C++ environments: " + failure);
-            }
-        }
-
-        for (EnvironmentLoaderInterface thisEnvLoader : theEnvironmentLoaders) {
-            thisEnvLoader.makeList();
-            Vector<String> thisEnvNameVector = thisEnvLoader.getNames();
-            for (String localName : thisEnvNameVector) {
-                String uniqueName = localName + " " + thisEnvLoader.getTypeSuffix();
-                envNameVector.add(uniqueName);
-                mapFromUniqueNameToLocalName.put(uniqueName, localName);
-                mapFromUniqueNameToLoader.put(uniqueName, thisEnvLoader);
-            }
-
-            Vector<ParameterHolder> thisParameterVector = thisEnvLoader.getParameters();
-            for (ParameterHolder thisParam : thisParameterVector) {
-                envParamVector.add(thisParam);
-            }
-
-        }
+    public Reward_observation_terminal env_step(Action arg0) {
+        Reward_observation_terminal RO = theEnvironment.env_step(arg0);
+        return RO;
     }
 
     public void env_cleanup() {
         theEnvironment.env_cleanup();
     }
 
-    public String env_init() {
-        return theEnvironment.env_init();
-    }
-
     public String env_message(String theMessage) {
+        /**
+         * See if we can parse this message as an RL-Viz message.  If not, pass
+         * it along to the underlying environment if there is one.
+         *
+         * If we can parse it, and it's for the Shell, handle it.  If we do parse
+         * it, and it's for the underlying environment, pass it through.
+         */
         GenericMessage theGenericMessage;
         try {
             theGenericMessage = new GenericMessage(theMessage);
         } catch (NotAnRLVizMessageException e) {
-            if(theEnvironment==null){
-            System.err.println("Someone sent EnvironmentShell a message that wasn't RL-Viz compatible");
-            return "I only respond to RL-Viz messages!";
-            }else{
+            if (theEnvironment == null) {
+                System.err.println("Someone sent EnvironmentShell a message that wasn't RL-Viz compatible");
+                return "I only respond to RL-Viz messages!";
+            } else {
                 return theEnvironment.env_message(theMessage);
             }
         }
@@ -184,7 +160,7 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
 
                 return theResponse.makeStringResponse();
             }
-            
+
             //Handle a request to get a copy of the task spec from the environment
             if (theMessageObject.getTheMessageType() == EnvShellMessageType.kEnvShellTaskspec.id()) {
                 EnvShellTaskSpecRequest theCastedRequest = (EnvShellTaskSpecRequest) theMessageObject;
@@ -192,20 +168,18 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
                 String envName = theCastedRequest.getEnvName();
                 ParameterHolder theParams = theCastedRequest.getParameterHolder();
 
-                EnvShellTaskSpecResponse theResponse = loadTaskSpec(envName,theParams);
+                EnvShellTaskSpecResponse theResponse = loadTaskSpec(envName, theParams);
 
                 return theResponse.makeStringResponse();
             }
 
-            System.err.println("Env shell doesn't know how to handle message: " + theMessage);
+            System.err.println(getClass().getName() + " doesn't know how to handle message: " + theMessage);
         }
         /**
          * This message was not for the environment shell so we pass it along to the environment.
          */
         String response = theEnvironment.env_message(theMessage);
         return response;
-
-
     }
 
     public EnvironmentInterface loadEnvironment(String uniqueEnvName, ParameterHolder theParams) {
@@ -213,29 +187,61 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
         return thisEnvLoader.loadEnvironment(localName, theParams);
     }
+
     EnvShellTaskSpecResponse loadTaskSpec(String uniqueEnvName, ParameterHolder theParams) {
         EnvironmentLoaderInterface thisEnvLoader = mapFromUniqueNameToLoader.get(uniqueEnvName);
         String localName = mapFromUniqueNameToLocalName.get(uniqueEnvName);
-        
-        TaskSpecPayload theTSP=thisEnvLoader.loadTaskSpecPayload(localName, theParams);
+
+        TaskSpecPayload theTSP = thisEnvLoader.loadTaskSpecPayload(localName, theParams);
         return new EnvShellTaskSpecResponse(theTSP);
     }
 
-    public Observation env_start() {
-        Observation o = theEnvironment.env_start();
-        return o;
-    }
+    public void refreshList() {
+        mapFromUniqueNameToLoader = new TreeMap<String, EnvironmentLoaderInterface>();
+        mapFromUniqueNameToLocalName = new TreeMap<String, String>();
+        theEnvironmentLoaders = new Vector<EnvironmentLoaderInterface>();
+        envNameVector = new Vector<String>();
+        envParamVector = new Vector<ParameterHolder>();
 
-    public Reward_observation_terminal env_step(Action arg0) {
-        Reward_observation_terminal RO = theEnvironment.env_step(arg0);
-        return RO;
+        if (!theEnvironmentLoaders.isEmpty()) {
+            theEnvironmentLoaders.clear();
+        }
+        //See if the environment variable for the path to the Jars has been defined
+        theEnvironmentLoaders.add(new LocalJarEnvironmentLoader());
+
+        if (RLVizSettings.getBooleanSetting("cpp-env-loading")) {
+            try {
+                theEnvironmentLoaders.add(new LocalCPlusPlusEnvironmentLoader());
+                System.out.println("Successfully loaded the C++ loader library.");
+            } catch (UnsatisfiedLinkError failure) {
+                System.err.println("Unable to load libRLVizCPPEnvLoader, unable to load C/C++ environments: " + failure);
+            }
+        }
+
+        for (EnvironmentLoaderInterface thisEnvLoader : theEnvironmentLoaders) {
+            thisEnvLoader.makeList();
+            Vector<String> thisEnvNameVector = thisEnvLoader.getNames();
+            for (String localName : thisEnvNameVector) {
+                String uniqueName = localName + " " + thisEnvLoader.getTypeSuffix();
+                envNameVector.add(uniqueName);
+                mapFromUniqueNameToLocalName.put(uniqueName, localName);
+                mapFromUniqueNameToLoader.put(uniqueName, thisEnvLoader);
+            }
+
+            Vector<ParameterHolder> thisParameterVector = thisEnvLoader.getParameters();
+            for (ParameterHolder thisParam : thisParameterVector) {
+                envParamVector.add(thisParam);
+            }
+
+        }
     }
 
     public static ParameterHolder getSettings() {
         ParameterHolder envShellSettings = new ParameterHolder();
         envShellSettings.addStringParam("environment-jar-path", ".");
         envShellSettings.addStringParam("agent-environment-jar-path");
-        envShellSettings.addBooleanParam("do-cpp-loading", Boolean.FALSE);
+        envShellSettings.addBooleanParam("cpp-env-loading", Boolean.FALSE);
+        envShellSettings.addBooleanParam("envshell-verbose-loading",Boolean.FALSE);
 
         if (System.getProperty("RLVIZ_LIB_PATH") != null) {
             System.err.println("Don't use the system property anymore, use the command line property environment-jar-path");
@@ -245,11 +251,12 @@ public class EnvironmentShell implements EnvironmentInterface, Unloadable {
         return envShellSettings;
     }
 
-    public Vector<String> getEnvNames(){
+    public Vector<String> getEnvNames() {
         refreshList();
         return envNameVector;
     }
-    public Vector<ParameterHolder> getEnvParams(){
+
+    public Vector<ParameterHolder> getEnvParams() {
         refreshList();
         return envParamVector;
     }

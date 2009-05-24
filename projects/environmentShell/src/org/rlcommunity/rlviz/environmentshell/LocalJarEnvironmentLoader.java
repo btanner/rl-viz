@@ -18,10 +18,10 @@ limitations under the License.
 package org.rlcommunity.rlviz.environmentshell;
 
 import java.lang.reflect.Method;
-import rlVizLib.dynamicLoading.EnvOrAgentType;
-import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
-import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+import org.rlcommunity.rlviz.dynamicloading.EnvOrAgentType;
+import org.rlcommunity.rlviz.dynamicloading.LocalJarAgentEnvironmentLoader;
+import rlVizLib.general.ParameterHolder;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
 public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader implements EnvironmentLoaderInterface {

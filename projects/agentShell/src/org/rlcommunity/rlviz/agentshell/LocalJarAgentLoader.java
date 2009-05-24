@@ -19,10 +19,10 @@ http://brian.tannerpages.com
 package org.rlcommunity.rlviz.agentshell;
 
 import java.lang.reflect.Method;
-import rlVizLib.dynamicLoading.EnvOrAgentType;
-import rlVizLib.dynamicLoading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlviz.dynamicloading.EnvOrAgentType;
+import org.rlcommunity.rlviz.dynamicloading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
 
 public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implements AgentLoaderInterface{

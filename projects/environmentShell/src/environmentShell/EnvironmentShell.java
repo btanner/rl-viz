@@ -18,8 +18,7 @@ limitations under the License.
 package environmentShell;
 
 
-
-import rlVizLib.dynamicLoading.Unloadable;
+import org.rlcommunity.rlviz.dynamicloading.Unloadable;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;

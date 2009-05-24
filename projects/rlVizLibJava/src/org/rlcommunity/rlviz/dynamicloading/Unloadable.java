@@ -18,19 +18,13 @@ http://brian.tannerpages.com
 
 
 
-package rlVizLib.dynamicLoading;
-
-import java.io.File;
-import java.io.FileFilter;
+package org.rlcommunity.rlviz.dynamicloading;
 
 /**
- *
- * @author Brian Tanner
+ * Implement this if you don't want your agent or environment to be found by the 
+ * crawlers that look for agents and envs.
+ * @author btanner
  */
-public class DylibFileFilter implements FileFilter {
+public interface Unloadable {
 
-    public boolean accept(File pathName) {
-        String stringPath=pathName.getPath();
-        return stringPath.endsWith(".dylib")||stringPath.endsWith(".so");
-    }
 }

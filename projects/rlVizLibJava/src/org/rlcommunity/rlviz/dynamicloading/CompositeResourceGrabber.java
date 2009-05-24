@@ -18,7 +18,7 @@ http://brian.tannerpages.com
 
 
 
-package rlVizLib.dynamicLoading;
+package org.rlcommunity.rlviz.dynamicloading;
 
 import java.util.Vector;
 

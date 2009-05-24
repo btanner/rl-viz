@@ -18,19 +18,19 @@ http://brian.tannerpages.com
 
 
 
-package rlVizLib.dynamicLoading;
+package org.rlcommunity.rlviz.dynamicloading;
 
 import java.io.File;
 import java.io.FileFilter;
 
 /**
- * Accepts things that end with .jar
+ *
  * @author Brian Tanner
  */
-public class JarFileFilter implements FileFilter{
+public class SharedLibraryFileFilter implements FileFilter {
 
     public boolean accept(File pathName) {
-        return pathName.toString().endsWith(".jar");
+        String stringPath=pathName.getPath();
+        return stringPath.endsWith(".dylib")||stringPath.endsWith(".so");
     }
-
 }

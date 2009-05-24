@@ -17,9 +17,9 @@ limitations under the License.
  */
 package org.rlcommunity.rlviz.agentshell;
 
-import rlVizLib.dynamicLoading.DynamicLoaderInterface;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlviz.dynamicloading.DynamicLoaderInterface;
 import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
 
 public interface AgentLoaderInterface extends DynamicLoaderInterface {

@@ -16,14 +16,21 @@ http://brian.tannerpages.com
  limitations under the License.
 */
 
-package org.rlcommunity.rlviz.environmentshell;
 
-import org.rlcommunity.rlviz.dynamicloading.DynamicLoaderInterface;
-import rlVizLib.general.ParameterHolder;
-import org.rlcommunity.rlglue.codec.EnvironmentInterface;
-import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
-public interface EnvironmentLoaderInterface extends DynamicLoaderInterface{
-    public EnvironmentInterface loadEnvironment(String envName, ParameterHolder theParams);
-    public TaskSpecPayload loadTaskSpecPayload(String localName, ParameterHolder theParams);
+package org.rlcommunity.rlviz.dynamicloading;
+
+import java.io.File;
+import java.io.FileFilter;
+
+/**
+ * Accepts things that end with .jar
+ * @author Brian Tanner
+ */
+public class JarFileFilter implements FileFilter{
+
+    public boolean accept(File pathName) {
+        return pathName.toString().endsWith(".jar");
+    }
+
 }
