@@ -74,4 +74,5 @@ JNI_JNIAgentSharedLibraryContentFilter.h:
 	javah -o src/JNI_JNIAgentSharedLibraryContentFilter.h -classpath .:$(AGENT_HEADERS)/AgentShell.jar org.rlcommunity.rlviz.agentshell.JNIAgentSharedLibraryContentFilter
 
 clean:
-	rm -f $(OUT_PATH)/libRLVizCPPAgentLoader.dylib
+	rm -f $(OUT_PATH)/libRLVizCPPAgentLoader.dylib src/JNI_*.h
+	

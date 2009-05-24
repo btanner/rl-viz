@@ -74,4 +74,4 @@ JNI_JNIEnvironmentSharedLibraryContentFilter.h:
 	javah -o src/JNI_JNIEnvironmentSharedLibraryContentFilter.h -classpath .:$(ENV_HEADERS)/EnvironmentShell.jar org.rlcommunity.rlviz.environmentshell.JNIEnvironmentSharedLibraryContentFilter
 
 clean:
-	rm -f $(OUT_PATH)/libRLVizCPPEnvLoader.dylib
+	rm -f $(OUT_PATH)/libRLVizCPPEnvLoader.dylib src/JNI_*.h
