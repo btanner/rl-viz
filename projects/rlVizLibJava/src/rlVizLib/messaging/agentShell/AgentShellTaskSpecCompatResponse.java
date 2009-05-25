@@ -20,7 +20,6 @@ http://brian.tannerpages.com
 package rlVizLib.messaging.agentShell;
 
 import java.io.DataInputStream;
-import java.util.StringTokenizer;
 
 import rlVizLib.messaging.AbstractMessage;
 import rlVizLib.messaging.AbstractResponse;

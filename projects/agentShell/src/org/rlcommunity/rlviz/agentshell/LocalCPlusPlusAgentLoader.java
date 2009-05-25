@@ -169,7 +169,6 @@ public class LocalCPlusPlusAgentLoader implements AgentLoaderInterface {
     }
 
     public TaskSpecResponsePayload loadTaskSpecCompat(String localName, ParameterHolder theParams, String TaskSpec) {
-          return null;
+         return TaskSpecResponsePayload.makeUnsupportedPayload();
     }
-
 }
