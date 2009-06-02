@@ -42,9 +42,9 @@ public class GlueStepper{
 		running=true;
 
 		//If time is the minimum we want to do something different
-		if(timeStepDelay==1)
-			theGlueRunner=new NoDelayGlueRunner(theGlueLogic);
-		else
+//		if(timeStepDelay==1)
+//			theGlueRunner=new NoDelayGlueRunner(theGlueLogic);
+//		else
 			theGlueRunner=new FixedIntervalGlueRunner(theGlueLogic,timeStepDelay);
 
 		theGlueRunner.start();

@@ -168,6 +168,7 @@ JNIEXPORT jstring JNICALL Java_org_rlcommunity_rlviz_agentshell_JNIAgent_JNIagen
     /* Tell Java we are done with whatever c_messageVar points to  */
     env->ReleaseStringUTFChars(j_theMessage, c_theMessage);
 
+
     jstring j_messageResponse=env->NewStringUTF(c_messageResponse);
     return j_messageResponse;
 }
