@@ -19,6 +19,9 @@ package rlVizLib.general;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -51,6 +54,7 @@ public class TinyGlue extends Observable {
         lastObserver = o;
     }
 
+    @Override
     public void deleteObservers() {
         super.deleteObservers();
         lastObserver = null;
@@ -65,16 +69,24 @@ public class TinyGlue extends Observable {
         super.clearChanged();
 
     }
+
+    //This makes sure that 2 people don't run through step at the same time,
+    //without locking methods that step has called from blocking on synchroinzed
+    //methods in this class.
+    private final Semaphore stepSem=new Semaphore(1);
     //returns true of the episode is over
-    public boolean step() {
+    public  boolean  step() {
+        try {
+            stepSem.acquire();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TinyGlue.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (!RLGlue.isInited()) {
             RLGlue.RL_init();
         }
 
-
         if (RLGlue.isCurrentEpisodeOver()) {
             Observation firstObservation = RLGlue.RL_env_start();
-
 
             synchronized (this) {
                 lastObservation = firstObservation;
@@ -85,10 +97,12 @@ public class TinyGlue extends Observable {
                 totalSteps++;
                 returnThisEpisode = 0.0d;
             }
+
             updateObservers(firstObservation);
+
             Action firstAction = RLGlue.RL_agent_start(firstObservation);
 
-            synchronized (this) {
+                        synchronized (this) {
                 lastAction = firstAction;
             }
             updateObservers(firstAction);
@@ -133,6 +147,7 @@ public class TinyGlue extends Observable {
             }
             updateObservers(ROAT);
         }
+        stepSem.release();
         return RLGlue.isCurrentEpisodeOver();
     }
 

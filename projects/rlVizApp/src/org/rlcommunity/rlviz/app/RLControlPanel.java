@@ -308,6 +308,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         }
 
         theGlueConnection.startVisualizers();
+        //Not sure why this is necessary but it seems to be.
         theGlueConnection.RL_init();
 
         envLoadPanel.setEnabled(false);

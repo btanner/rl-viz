@@ -27,6 +27,11 @@ import org.rlcommunity.rlglue.codec.types.Observation_action;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 
+/**
+ * This really isn't used anymore is it?
+ * @deprecated
+ * @author btanner
+ */
 public class LocalGlue implements RLGlueInterface {
 
     EnvironmentInterface E = null;
