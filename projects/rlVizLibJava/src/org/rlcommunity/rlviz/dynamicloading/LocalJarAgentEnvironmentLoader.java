@@ -5,29 +5,26 @@ Copyright 2007 Brian Tanner
 brian@tannerpages.com
 http://brian.tannerpages.com
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
 import java.io.FileFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import java.lang.reflect.Modifier;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -50,14 +47,11 @@ import org.rlcommunity.rlglue.codec.EnvironmentInterface;
  */
 public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
 
-    private Vector<String> theNames = null;
-    protected Vector<Class<?>> theClasses = null;
-    private Vector<ParameterHolder> theParamHolders = null;
-    private Map<String, String> publicNameToFullName = null;
-    private Set<String> allFullClassName = null;
+    protected Vector<String> thePublicNames = null;
+    protected Map<String, ClassSourcePair> publicNameToClassSource = null;
+    protected Map<String, ParameterHolder> publicNameToParameterHolder = null;
     private Vector<URI> theUriList = new Vector<URI>();
     private ClassExtractor theClassExtractor;
-
     //This seems like we're breaking OO rules
     private EnvOrAgentType theLoaderType;
 
@@ -82,18 +76,17 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
             thisGrabber.addFilter(theJarFileFilter);
 
             theCompJarGrabber.add(thisGrabber);
-            
+
         }
         theClassExtractor = new ClassExtractor(theCompJarGrabber);
     }
 
     public boolean makeList() {
-        theNames = new Vector<String>();
-        theClasses = new Vector<Class<?>>();
-        theParamHolders = new Vector<ParameterHolder>();
-        allFullClassName = new TreeSet<String>();
-        Vector<Class<?>> allMatching = new Vector<Class<?>>();
-        publicNameToFullName=new TreeMap<String, String>();
+        thePublicNames = new Vector<String>();
+        publicNameToClassSource = new TreeMap<String, ClassSourcePair>();
+        publicNameToParameterHolder = new TreeMap<String, ParameterHolder>();
+
+        Vector<ClassSourcePair> allMatching = new Vector<ClassSourcePair>();
 
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
             //System.out.println("-------Loading both types");
@@ -109,81 +102,79 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
             allMatching = theClassExtractor.getAllClassesThatImplement(AgentInterface.class, Unloadable.class);
         }
 
-        for (Class<?> thisClass : allMatching) {
-            if ((!allFullClassName.contains(thisClass.getName())) && !isAbstractClass(thisClass)) {
-                allFullClassName.add(thisClass.getName());
-                String shortName = addFullNameToMap(thisClass.getName());
-                theClasses.add(thisClass);
-                theNames.add(shortName);
 
-                
-                checkVersions(thisClass);
-                ParameterHolder thisP = loadParameterHolderFromFile(thisClass);
-                
-                String sourceJarPath="unknown";
-                try{
-                    sourceJarPath = thisClass.getProtectionDomain().getCodeSource().getLocation().toURI().normalize().toString();
-                }catch(URISyntaxException e){
-                    sourceJarPath+=" :: couldn't parse URI";
+        //Filter out all of the abstract classes
+        Map<String, Vector<ClassSourcePair>> shortNameCounts = new TreeMap<String, Vector<ClassSourcePair>>();
+
+        for (ClassSourcePair thisClassDetails : allMatching) {
+            if (!isAbstractClass(thisClassDetails.getTheClass())) {
+
+                String longName = thisClassDetails.getTheClass().getName();
+                String shortName = getClassName(longName);
+
+                if (!shortNameCounts.containsKey(shortName)) {
+                    Vector<ClassSourcePair> thisShortNameList = new Vector<ClassSourcePair>();
+                    shortNameCounts.put(shortName, thisShortNameList);
                 }
-                
-                UtilityShop.addSourceDetails(thisP, thisClass.getName(), sourceJarPath);
-                theParamHolders.add(thisP);
+                shortNameCounts.get(shortName).add(thisClassDetails);
             }
         }
+
+        SortedSet<String> sortedShortNames = new TreeSet<String>(shortNameCounts.keySet());
+
+
+        for (String thisShortName : sortedShortNames) {
+            Vector<ClassSourcePair> thisShortNameClasses = shortNameCounts.get(thisShortName);
+
+            for (int i = 0; i < thisShortNameClasses.size(); i++) {
+                String suffix = "";
+                if (i > 0) {
+                    suffix = " [" + i + "]";
+                }
+                String thisPublicName = thisShortName + suffix;
+                thePublicNames.add(thisPublicName);
+                ClassSourcePair thisClassDetails = thisShortNameClasses.get(i);
+                publicNameToClassSource.put(thisPublicName, thisClassDetails);
+
+                checkVersions(thisClassDetails.getTheClass());
+                ParameterHolder thisP = loadParameterHolderFromFile(thisClassDetails.getTheClass());
+
+                String sourceJarPath = "unknown";
+                sourceJarPath = thisClassDetails.getURI().normalize().toString();
+
+                UtilityShop.addSourceDetails(thisP, thisClassDetails.getTheClass().getName(), sourceJarPath);
+                publicNameToParameterHolder.put(thisPublicName, thisP);
+            }
+
+        }
+
+
         return true;
     }
 
-    protected String getFullClassNameFromShortName(String shortName) {
-        return publicNameToFullName.get(shortName);
-    }
 
     public Vector<String> getNames() {
-        if (theClasses == null) {
+        if (thePublicNames == null) {
             makeList();
         }
 
-        return theNames;
+        return thePublicNames;
     }
 
-    public Vector<ParameterHolder> getParameters() {
-        return theParamHolders;
-    }
 
     public Object load(String shortName, ParameterHolder theParams) {
-        if (theClasses == null) {
+        if (thePublicNames == null) {
             makeList();
         }
-        String fullName = getFullClassNameFromShortName(shortName);
-        //Get the file from the list
-        for (Class<?> theClass : theClasses) {
-            if (theClass.getName().equals(fullName)) {
-                //this is the right one load it
-                return loadFromClass(theClass, theParams);
-            }
-        }
-        return null;
-    }
 
-    private String addFullNameToMap(String theFullClassName) {
-        int num = 0;
-        String theEndName = getClassName(theFullClassName);
-
-        String proposedShortName = theEndName;
-
-        while (publicNameToFullName.containsKey(proposedShortName)) {
-            num++;
-            proposedShortName = theEndName + "(" + num + ")";
-        }
-        publicNameToFullName.put(proposedShortName, theFullClassName);
-        return proposedShortName;
-
+        ClassSourcePair theClassDetails = publicNameToClassSource.get(shortName);
+        assert (theClassDetails != null);
+        return loadFromClass(theClassDetails.getTheClass(), theParams);
     }
 
     private boolean isAbstractClass(Class<?> theClass) {
         int theModifiers = theClass.getModifiers();
         return Modifier.isAbstract(theModifiers);
-    //return false;
     }
 
     private ParameterHolder loadParameterHolderFromFile(Class<?> theClass) {
@@ -249,20 +240,28 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
     }
 
     private boolean checkVersions(Class<?> theClass) {
-		RLVizVersion theLinkedLibraryVizVersion=rlVizLib.rlVizCore.getRLVizSpecVersion();
-		RLVizVersion ourCompileVersion=rlVizLib.rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(theClass);
-		
-		if(!theLinkedLibraryVizVersion.equals(ourCompileVersion)){
-			System.err.println("Warning :: Possible RLVizLib Incompatibility");
-			System.err.println("Warning :: Runtime version used by "+theClass.getName()+" is:  "+theLinkedLibraryVizVersion);
-			System.err.println("Warning :: Compile version used to build "+theClass.getName()+" is:  "+ourCompileVersion);
-                        return false;
-                }
+        RLVizVersion theLinkedLibraryVizVersion = rlVizLib.rlVizCore.getRLVizSpecVersion();
+        RLVizVersion ourCompileVersion = rlVizLib.rlVizCore.getRLVizSpecVersionOfClassWhenCompiled(theClass);
+
+        if (!theLinkedLibraryVizVersion.equals(ourCompileVersion)) {
+            System.err.println("Warning :: Possible RLVizLib Incompatibility");
+            System.err.println("Warning :: Runtime version used by " + theClass.getName() + " is:  " + theLinkedLibraryVizVersion);
+            System.err.println("Warning :: Compile version used to build " + theClass.getName() + " is:  " + ourCompileVersion);
+            return false;
+        }
         return true;
     }
 
     public String getTypeSuffix() {
         return "- Java";
+    }
+
+    public Vector<ParameterHolder> getParameters() {
+        Vector<ParameterHolder> theParams = new Vector<ParameterHolder>();
+        for (String thisPublicName : thePublicNames) {
+            theParams.add(publicNameToParameterHolder.get(thisPublicName));
+        }
+        return theParams;
     }
 }
 

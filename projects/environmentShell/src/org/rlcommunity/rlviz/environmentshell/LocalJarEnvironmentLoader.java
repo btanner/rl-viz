@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 import org.rlcommunity.rlviz.dynamicloading.EnvOrAgentType;
 import org.rlcommunity.rlviz.dynamicloading.LocalJarAgentEnvironmentLoader;
+import org.rlcommunity.rlviz.dynamicloading.ClassSourcePair;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 
@@ -39,19 +40,12 @@ public class LocalJarEnvironmentLoader extends LocalJarAgentEnvironmentLoader im
     }
 
     public TaskSpecPayload loadTaskSpecPayload(String localName, ParameterHolder theParams) {
-        if (theClasses == null) {
+        if (thePublicNames == null) {
             makeList();
         }
 
-        String fullName = getFullClassNameFromShortName(localName);
-        //Get the file from the list
-        for (Class<?> theClass : theClasses) {
-            if (theClass.getName().equals(fullName)) {
-                //this is the right one load it
-                return loadTaskSpecPayloadFromClass(theClass, theParams);
-            }
-        }
-        return null;
+        ClassSourcePair thisClassDetails = publicNameToClassSource.get(localName);
+        return loadTaskSpecPayloadFromClass(thisClassDetails.getTheClass(), theParams);
 
     }
 

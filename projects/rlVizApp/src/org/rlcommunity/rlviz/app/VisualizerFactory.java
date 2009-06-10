@@ -23,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.util.Vector;
 import org.rlcommunity.rlviz.settings.RLVizSettings;
 import org.rlcommunity.rlviz.dynamicloading.ClassExtractor;
+import org.rlcommunity.rlviz.dynamicloading.ClassSourcePair;
 import org.rlcommunity.rlviz.dynamicloading.JarFileFilter;
 import org.rlcommunity.rlviz.dynamicloading.LocalDirectoryGrabber;
 import org.rlcommunity.rlviz.dynamicloading.Unloadable;
@@ -62,17 +63,17 @@ public class VisualizerFactory {
 
         ClassExtractor theClassExtractor = new ClassExtractor(theJarGrabber);
 
-        Vector<Class<?>> allViz = theClassExtractor.getAllClassesThatImplement(AbstractVisualizer.class, Unloadable.class);
+        Vector<ClassSourcePair> allViz = theClassExtractor.getAllClassesThatImplement(AbstractVisualizer.class, Unloadable.class);
 
         Class<?> GenericVisualizer = null;
         Class<?> theClass = null;
-        for (Class<?> tempClass : allViz) {
-            if (tempClass.getName().equals(theVisualizerClassName)) {
-                theClass = tempClass;
+        for (ClassSourcePair thisClassDetails : allViz) {
+            if (thisClassDetails.getTheClass().getName().equals(theVisualizerClassName)) {
+                theClass = thisClassDetails.getTheClass();
             }
             //Might as well look for this while we're looping through the vizualizers
-            if (tempClass.getName().equals(defaultClassName)) {
-                GenericVisualizer = tempClass;
+            if (thisClassDetails.getTheClass().equals(defaultClassName)) {
+                GenericVisualizer = thisClassDetails.getTheClass();
             }
         }
 

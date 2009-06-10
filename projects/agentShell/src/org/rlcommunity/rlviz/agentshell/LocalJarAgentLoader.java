@@ -21,6 +21,7 @@ package org.rlcommunity.rlviz.agentshell;
 import java.lang.reflect.Method;
 import rlVizLib.general.ParameterHolder;
 import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlviz.dynamicloading.ClassSourcePair;
 import org.rlcommunity.rlviz.dynamicloading.EnvOrAgentType;
 import org.rlcommunity.rlviz.dynamicloading.LocalJarAgentEnvironmentLoader;
 import rlVizLib.messaging.agentShell.TaskSpecResponsePayload;
@@ -39,19 +40,12 @@ public class LocalJarAgentLoader extends LocalJarAgentEnvironmentLoader implemen
     }
 
     public TaskSpecResponsePayload loadTaskSpecCompat(String localName, ParameterHolder theParams, String TaskSpec) {
-        if (theClasses == null) {
+        if (thePublicNames == null) {
             makeList();
         }
+        ClassSourcePair thisClassDetails = publicNameToClassSource.get(localName);
+        return loadTaskSpecCompatFromClass(thisClassDetails.getTheClass(), theParams,TaskSpec);
 
-        String fullName = getFullClassNameFromShortName(localName);
-        //Get the file from the list
-        for (Class<?> theClass : theClasses) {
-            if (theClass.getName().equals(fullName)) {
-                //this is the right one load it
-                return loadTaskSpecCompatFromClass(theClass, theParams,TaskSpec);
-            }
-        }
-        return null;
     }
 
     private TaskSpecResponsePayload loadTaskSpecCompatFromClass(Class<?> theClass, ParameterHolder theParams,String theTaskSpec) {

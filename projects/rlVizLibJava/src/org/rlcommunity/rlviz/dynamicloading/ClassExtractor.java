@@ -57,24 +57,24 @@ public class ClassExtractor {
      *         theJarDir
      * 
      */
-    public Vector<Class<?>> getAllClassesThatImplement(Vector<Class<?>> toMatch,Vector<Class<?>> toExclude) {
+    public Vector<ClassSourcePair> getAllClassesThatImplement(Vector<Class<?>> toMatch,Vector<Class<?>> toExclude) {
         
         
-        Vector<Class<?>> allClasses = new Vector<Class<?>>();
-        Vector<Class<?>> matchingClasses = new Vector<Class<?>>();
+        Vector<ClassSourcePair> allClasses = new Vector<ClassSourcePair>();
+        Vector<ClassSourcePair> matchingClasses = new Vector<ClassSourcePair>();
         
         for (URI thisURI : theJarURIs) {
             allClasses.addAll(getAllClassesFromJar(thisURI));
         }
-        for (Class<?> thisClass : allClasses) {
-            if (checkIfDescendantOf(thisClass, toMatch,toExclude)) {
-                matchingClasses.add(thisClass);
+        for (ClassSourcePair thisClassPair : allClasses) {
+            if (checkIfDescendantOf(thisClassPair.getTheClass(), toMatch,toExclude)) {
+                matchingClasses.add(thisClassPair);
             }
         }
         return matchingClasses;
     }
 
-    public Vector<Class<?>> getAllClassesThatImplement(Class<?> toMatch, Class<?> toFilter){
+    public Vector<ClassSourcePair> getAllClassesThatImplement(Class<?> toMatch, Class<?> toFilter){
         Vector<Class<?>> theFilterVector=new Vector<Class<?>>();
         Vector<Class<?>> theMatchVector=new Vector<Class<?>>();
         theFilterVector.add(toFilter);
@@ -82,7 +82,7 @@ public class ClassExtractor {
         return getAllClassesThatImplement(theMatchVector,theFilterVector);
     }
 
-    public Vector<Class<?>> getAllClassesThatImplement(Class<?> toMatch){
+    public Vector<ClassSourcePair> getAllClassesThatImplement(Class<?> toMatch){
         Vector<Class<?>> theMatchVector=new Vector<Class<?>>();
         theMatchVector.add(toMatch);
         return getAllClassesThatImplement(theMatchVector,new Vector<Class<?>>());
@@ -97,8 +97,8 @@ public class ClassExtractor {
      * @param theJar - the jar to get classes from
      * @return
      */
-    public static Vector<Class<?>> getAllClassesFromJar(URI theURI) {
-        Vector<Class<?>> theClasses = new Vector<Class<?>>();
+    public static Vector<ClassSourcePair> getAllClassesFromJar(URI theURI) {
+        Vector<ClassSourcePair> theClasses = new Vector<ClassSourcePair>();
         
         try {
             JarFile theJar = new JarFile(new File(theURI));
@@ -108,7 +108,7 @@ public class ClassExtractor {
                 JarEntry thisEntry = allJarEntries.nextElement();
                 Class<?> theClass = getClassFromJarEntry(thisEntry, theURI);
                 if (theClass != null) {
-                    theClasses.add(theClass);
+                    theClasses.add(new ClassSourcePair(theClass, theURI));
                 }
             }
         } catch (IOException ex) {
