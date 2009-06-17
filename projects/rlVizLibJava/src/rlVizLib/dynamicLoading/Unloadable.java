@@ -30,6 +30,6 @@ package rlVizLib.dynamicLoading;
  * want to transition quietly.
  * @author btanner
  */
-public interface Unloadable {
+public interface Unloadable extends org.rlcommunity.rlviz.dynamicloading.Unloadable{
 
 }
