@@ -87,19 +87,29 @@ public class LocalJarAgentEnvironmentLoader implements DynamicLoaderInterface {
         publicNameToParameterHolder = new TreeMap<String, ParameterHolder>();
 
         Vector<ClassSourcePair> allMatching = new Vector<ClassSourcePair>();
+        Vector<Class<?>> excludeList=new Vector<Class<?>>();
 
+        excludeList.add(rlVizLib.dynamicLoading.Unloadable.class);
+        excludeList.add(org.rlcommunity.rlviz.dynamicloading.Unloadable.class);
+
+        Vector<Class<?>> envAsList=new Vector<Class<?>>();
+        Vector<Class<?>> agentAsList=new Vector<Class<?>>();
+
+        envAsList.add(EnvironmentInterface.class);
+        agentAsList.add(AgentInterface.class);
+        
         if (theLoaderType.id() == EnvOrAgentType.kBoth.id()) {
             //System.out.println("-------Loading both types");
-            allMatching = theClassExtractor.getAllClassesThatImplement(EnvironmentInterface.class, Unloadable.class);
-            allMatching.addAll(theClassExtractor.getAllClassesThatImplement(AgentInterface.class, Unloadable.class));
+            allMatching = theClassExtractor.getAllClassesThatImplement(envAsList, excludeList);
+            allMatching.addAll(theClassExtractor.getAllClassesThatImplement(agentAsList, excludeList));
         }
         if (theLoaderType.id() == EnvOrAgentType.kEnv.id()) {
             //System.out.println("-------Loading kEnv types");
-            allMatching = theClassExtractor.getAllClassesThatImplement(EnvironmentInterface.class, Unloadable.class);
+            allMatching = theClassExtractor.getAllClassesThatImplement(envAsList, excludeList);
         }
         if (theLoaderType.id() == EnvOrAgentType.kAgent.id()) {
             //System.out.println("-------Loading kAgent types");
-            allMatching = theClassExtractor.getAllClassesThatImplement(AgentInterface.class, Unloadable.class);
+            allMatching = theClassExtractor.getAllClassesThatImplement(agentAsList, excludeList);
         }
 
 
