@@ -36,7 +36,6 @@ public class VisualizerFactory {
 
     static String defaultEnvVisualizerClassName = "org.rlcommunity.visualizers.generic.GenericEnvVisualizer";
     static String defaultAgentVisualizerClassName = "org.rlcommunity.visualizers.generic.GenericAgentVisualizer";
-
     public static AbstractVisualizer createEnvVisualizerFromClassName(String VizClassName, TinyGlue theGlueState, DynamicControlTarget theControlTarget) {
         String envJarPath=RLVizSettings.getStringSetting("environment-jar-path");
         return createVisualizerFromClassName(VizClassName, defaultEnvVisualizerClassName, theGlueState, theControlTarget,envJarPath);
@@ -67,12 +66,14 @@ public class VisualizerFactory {
 
         Class<?> GenericVisualizer = null;
         Class<?> theClass = null;
+
         for (ClassSourcePair thisClassDetails : allViz) {
             if (thisClassDetails.getTheClass().getName().equals(theVisualizerClassName)) {
                 theClass = thisClassDetails.getTheClass();
             }
+
             //Might as well look for this while we're looping through the vizualizers
-            if (thisClassDetails.getTheClass().equals(defaultClassName)) {
+            if (thisClassDetails.getTheClass().getName().equals(defaultClassName)) {
                 GenericVisualizer = thisClassDetails.getTheClass();
             }
         }

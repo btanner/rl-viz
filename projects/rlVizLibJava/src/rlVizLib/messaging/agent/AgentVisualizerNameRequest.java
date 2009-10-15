@@ -50,7 +50,7 @@ public class AgentVisualizerNameRequest extends AgentMessages{
 			theResponse = AgentVisualizerNameResponse.AgentVisualizerNameResponseFromResponseString(responseMessage);
 		} catch (NotAnRLVizMessageException e) {
 			//if we didn't get back anything good from the agent, we'll assume its supporting version 0.0 of rlViz :P
-			theResponse= new AgentVisualizerNameResponse("visualizers.Generic.GenericAgentVisualizer");
+			theResponse= new AgentVisualizerNameResponse("org.rlcommunity.visualizers.generic.GenericAgentVisualizer");
 		}
 		return theResponse;
 	}

@@ -72,12 +72,12 @@ public class SettingsLoader {
     }
 
     /**
-     * Add all of the parameters, aliases, and values from globalParams to the global parameter 
+     * Add all of the parameters, aliases, and values from dest to the global parameter
      * set.  In case a parameter already exists, it's current value will NOT be 
-     * overwritten by the values in globalParams. That way modules are encouraged to register
+     * overwritten by the values in dest. That way modules are encouraged to register
      * all the parameters they will need to use.  This merge will
      * not preserve aliases.
-     * @param globalParams
+     * @param dest
      */
     private void addNewParameters(ParameterHolder newParams, ParameterHolder dest) {
         if (newParams == null) {
@@ -92,7 +92,7 @@ public class SettingsLoader {
             //Check if this parameter already exists, if so we don't want to overwrite the value
             if (dest.isParamSet(thisPName)) {
                 int globalType = dest.getParamTypeByName(thisPName);
-                assert globalType == thisPType : "Tried to add new parameter: " + thisPName + " which didn't jive with existing parmeter in type";
+                assert globalType == thisPType : "Tried to add new parameter: " + thisPName + " which didn't jive with existing parameter in type";
             } else {
 
                 if (thisPType == ParameterHolder.boolParam) {
@@ -151,7 +151,7 @@ public class SettingsLoader {
         System.out.println(theValue + " is not a valid response");
         return getBooleanFromUser(paramName);
     }
-
+   
     String getStringFromUser(String paramName) {
         Thread.dumpStack();
         System.out.print("Please enter a value for " + paramName + ":");

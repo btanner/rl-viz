@@ -49,7 +49,7 @@ public class EnvVisualizerNameRequest extends EnvironmentMessages{
 			theResponse = EnvVisualizerNameResponse.EnvVisualizerNameResponseFromResponseString(responseMessage);
 		} catch (NotAnRLVizMessageException e) {
 			//if we didn't get back anything good from the environment, we'll assume its supporting version 0.0 of rlViz :P
-			theResponse= new EnvVisualizerNameResponse("visualizers.Generic.GenericEnvVisualizer");
+			theResponse= new EnvVisualizerNameResponse("org.rlcommunity.visualizers.generic.GenericEnvVisualizer");
 		}
 		return theResponse;
 	}
