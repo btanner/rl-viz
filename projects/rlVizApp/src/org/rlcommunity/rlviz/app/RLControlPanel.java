@@ -291,7 +291,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bStart.setEnabled(false);
         bStop.setEnabled(false);
         bStep.setEnabled(false);
-        setSpeedEnabling(false);
+        setSpeedEnabling(true);
     }
 
     void handleUnLoadClick() {
@@ -305,7 +305,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bStart.setEnabled(false);
         bStop.setEnabled(false);
         bStep.setEnabled(false);
-        setSpeedEnabling(false);
+        setSpeedEnabling(true);
 
         theGlueConnection.unloadExperiment();
     }
