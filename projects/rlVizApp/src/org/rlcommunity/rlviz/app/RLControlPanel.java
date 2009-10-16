@@ -352,7 +352,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bStart.setEnabled(true);
         bStop.setEnabled(false);
         bStep.setEnabled(true);
-        setSpeedEnabling(false);
+        setSpeedEnabling(true);
     }
 
     private void handleStartClick() {
