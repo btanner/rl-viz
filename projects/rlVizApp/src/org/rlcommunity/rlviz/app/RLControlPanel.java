@@ -305,7 +305,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bStart.setEnabled(false);
         bStop.setEnabled(false);
         bStep.setEnabled(false);
-        setSpeedEnabling(true);
+        setSpeedEnabling(false);
 
         theGlueConnection.unloadExperiment();
     }
@@ -362,7 +362,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bStart.setEnabled(false);
         bStop.setEnabled(true);
         bStep.setEnabled(false);
-        setSpeedEnabling(false);
+        setSpeedEnabling(true);
 
 
         int stepDelay = sleepTimeBetweenSteps.getValue();
@@ -380,7 +380,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bStart.setEnabled(true);
         bStop.setEnabled(false);
         bStep.setEnabled(true);
-        setSpeedEnabling(false);
+        setSpeedEnabling(true);
 
         theGlueConnection.step();
     }
@@ -396,7 +396,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bStart.setEnabled(true);
         bStop.setEnabled(false);
         bStep.setEnabled(true);
-        setSpeedEnabling(false);
+        setSpeedEnabling(true);
 
         theGlueConnection.stop();
 
