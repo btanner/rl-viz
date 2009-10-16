@@ -78,7 +78,7 @@ public class AgentOnValueFunctionVizComponent implements SelfUpdatingVizComponen
                 dataProvider.getMaxValueForDim(1));
 
 
-        Rectangle2D agentRect = new Rectangle2D.Double(transX, transY, .02, .02);
+        Rectangle2D agentRect = new Rectangle2D.Double(transX-.01, transY-.01, .02, .02);
         g.fill(agentRect);
     }
 

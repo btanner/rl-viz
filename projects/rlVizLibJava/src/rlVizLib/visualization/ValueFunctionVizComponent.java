@@ -39,7 +39,6 @@ import rlVizLib.utilities.UtilityShop;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import rlVizLib.general.TinyGlue;
-import rlVizLib.visualization.interfaces.GlueStateProvider;
 
 /**
  *
