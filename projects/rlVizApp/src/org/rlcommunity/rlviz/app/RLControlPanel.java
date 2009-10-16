@@ -31,7 +31,6 @@ import javax.swing.event.ChangeListener;
 
 import org.rlcommunity.rlviz.app.loadpanels.DynamicAgentLoadPanel;
 import org.rlcommunity.rlviz.app.loadpanels.DynamicEnvLoadPanel;
-import org.rlcommunity.rlviz.app.loadpanels.LoadPanelInterface;
 import org.rlcommunity.rlviz.app.loadpanels.RemoteStubAgentLoadPanel;
 import org.rlcommunity.rlviz.app.loadpanels.RemoteStubEnvLoadPanel;
 import javax.swing.BorderFactory;
@@ -65,6 +64,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
     EnvLoadPanelInterface envLoadPanel = null;
     AgentLoadPanelInterface agentLoadPanel = null;
 //	JPanel LoaderPanel=null;
+
     public RLControlPanel(RLGlueLogic theGlueConnection) {
         super();
         this.theGlueConnection = theGlueConnection;
@@ -119,7 +119,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
         experimentalControlsPanel.add(buttonPanel);
 
-        sleepTimeBetweenSteps = new JSlider(JSlider.HORIZONTAL, 1, 500, 50);
+        sleepTimeBetweenSteps = new JSlider(JSlider.HORIZONTAL, 1, 500, RLVizSettings.getIntSetting("default-speed"));
         sleepTimeBetweenSteps.addChangeListener(this);
 
 
@@ -147,12 +147,14 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         JPanel LoaderSuperPanel = new JPanel();
         LoaderSuperPanel.setLayout(new BoxLayout(LoaderSuperPanel, BoxLayout.Y_AXIS));
 
+        bCompatibility = new JButton("Check Compatibility");
+        bCompatibility.setEnabled(false);
+        bCompatibility.addActionListener(this);
+        bCompatibility.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        LoaderSuperPanel.add(bCompatibility);
         //Only make the compatibility button if we are dynamically loading agents and envs
         if (RLVizSettings.getBooleanSetting("list-environments") || RLVizSettings.getBooleanSetting("list-agents")) {
-            bCompatibility = new JButton("Check Compatibility");
-            bCompatibility.addActionListener(this);
-            bCompatibility.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-            LoaderSuperPanel.add(bCompatibility);
+            bCompatibility.setEnabled(true);
         }
 
         LoaderSuperPanel.add(LoaderPanel);
@@ -172,7 +174,6 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         agentLoadPanel.updateList();
 
         setDefaultEnabling();
-
     }
 
     public void actionPerformed(ActionEvent theEvent) {
@@ -198,7 +199,7 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
     private void showMessage(boolean success, String theMessage) {
         if (success) {
-            JOptionPane.showMessageDialog(null, theMessage, "Success",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, theMessage, "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, theMessage, "Failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -209,24 +210,25 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
      * was available and false.
      * @return
      */
-    private boolean checkCompatibility(){
+    private boolean checkCompatibility() {
         TaskSpecPayload theTSP = envLoadPanel.getTaskSpecPayload();
         //If its not supported, return true cause we can't tell
         if (!theTSP.getSupported()) {
             return true;
         }
         //If there is an error with env, return false
-        if(theTSP.getErrorStatus()){
+        if (theTSP.getErrorStatus()) {
             return false;
         }
-        
+
         TaskSpecResponsePayload theTSRP = agentLoadPanel.getTaskSpecPayloadResponse(theTSP);
         //if the agent is not supported, return true cause we can't tell
         if (!theTSRP.getSupported()) {
             return true;
         }
-        return(!theTSRP.getErrorStatus());
+        return (!theTSRP.getErrorStatus());
     }
+
     private void handleCompatibilityClick() {
         TaskSpecPayload theTSP = envLoadPanel.getTaskSpecPayload();
         if (!theTSP.getSupported()) {
@@ -252,41 +254,69 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         }
     }
 
+//These are a couple of API methods to let other invoke commands on the control panel
+//It's a bit hacky.
+
+
+    public void doLoad(){
+        handleLoadClick();
+    }
+    public void doUnload(){
+        handleUnLoadClick();
+    }
+
+    /**
+     *
+     * @param shouldEnable
+     */
+    private void setSpeedEnabling(boolean shouldEnable){
+        sleepTimeBetweenSteps.setEnabled(shouldEnable && !RLVizSettings.getBooleanSetting("speed-frozen"));
+        simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
+    }
+
+    private void setUnloadEnabling(boolean shouldEnable){
+        bUnLoad.setEnabled(shouldEnable && !RLVizSettings.getBooleanSetting("unload-disabled"));
+    }
+
     private void setDefaultEnabling() {
         envLoadPanel.setEnabled(true);
         agentLoadPanel.setEnabled(true);
 
         bLoad.setEnabled(envLoadPanel.canLoad() && agentLoadPanel.canLoad());
+        if (bCompatibility == null) {
+            System.out.println("bCompat is null.");
+        }
         bCompatibility.setEnabled(bLoad.isEnabled());
-        bUnLoad.setEnabled(false);
+        setUnloadEnabling(false);
         bStart.setEnabled(false);
         bStop.setEnabled(false);
         bStep.setEnabled(false);
-        sleepTimeBetweenSteps.setEnabled(false);
-        simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
+        setSpeedEnabling(false);
     }
 
-    private void handleUnLoadClick() {
+    void handleUnLoadClick() {
         envLoadPanel.setEnabled(true);
         agentLoadPanel.setEnabled(true);
 
 
         bLoad.setEnabled(true);
         bCompatibility.setEnabled(true);
-        bUnLoad.setEnabled(false);
+        setUnloadEnabling(false);
         bStart.setEnabled(false);
         bStop.setEnabled(false);
         bStep.setEnabled(false);
-        sleepTimeBetweenSteps.setEnabled(false);
-        simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
+        setSpeedEnabling(false);
 
         theGlueConnection.unloadExperiment();
     }
 
+
     private void handleLoadClick() {
-        boolean compatible=checkCompatibility();
-        if(!compatible){
+        bLoad.setEnabled(false);
+        boolean compatible = checkCompatibility();
+        if (!compatible) {
             JOptionPane.showMessageDialog(null, "This agent and environment are not compatible.\nClick \"Check Compatibility\" for more info.", "Failed", JOptionPane.ERROR_MESSAGE);
+            bLoad.setEnabled(true);
             return;
         }
         //This takes care of sending the messages to the shells to load things
@@ -318,23 +348,21 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
 
         bLoad.setEnabled(false);
-        bUnLoad.setEnabled(true);
+        setUnloadEnabling(true);
         bStart.setEnabled(true);
         bStop.setEnabled(false);
         bStep.setEnabled(true);
-        sleepTimeBetweenSteps.setEnabled(true);
-        simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
+        setSpeedEnabling(false);
     }
 
     private void handleStartClick() {
         bLoad.setEnabled(false);
         bCompatibility.setEnabled(false);
-        bUnLoad.setEnabled(false);
+        setUnloadEnabling(false);
         bStart.setEnabled(false);
         bStop.setEnabled(true);
         bStep.setEnabled(false);
-        sleepTimeBetweenSteps.setEnabled(true);
-        simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
+        setSpeedEnabling(false);
 
 
         int stepDelay = sleepTimeBetweenSteps.getValue();
@@ -348,12 +376,11 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
 
         bLoad.setEnabled(false);
         bCompatibility.setEnabled(false);
-        bUnLoad.setEnabled(true);
+        setUnloadEnabling(true);
         bStart.setEnabled(true);
         bStop.setEnabled(false);
         bStep.setEnabled(true);
-        sleepTimeBetweenSteps.setEnabled(true);
-        simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
+        setSpeedEnabling(false);
 
         theGlueConnection.step();
     }
@@ -365,12 +392,11 @@ public class RLControlPanel extends JPanel implements ActionListener, ChangeList
         bLoad.setEnabled(false);
         bCompatibility.setEnabled(false);
 
-        bUnLoad.setEnabled(true);
+        setUnloadEnabling(true);
         bStart.setEnabled(true);
         bStop.setEnabled(false);
         bStep.setEnabled(true);
-        sleepTimeBetweenSteps.setEnabled(true);
-        simSpeedLabel.setEnabled(sleepTimeBetweenSteps.isEnabled());
+        setSpeedEnabling(false);
 
         theGlueConnection.stop();
 

@@ -19,12 +19,12 @@
 
 package org.rlcommunity.rlviz.app;
 
+import org.rlcommunity.rlglue.codec.LocalGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlviz.agentshell.AgentShell;
 import org.rlcommunity.rlviz.environmentshell.EnvironmentShell;
 import org.rlcommunity.rlviz.settings.RLVizSettings;
 import rlVizLib.general.ParameterHolder;
-import rlVizLib.glueProxy.LocalGlue;
 
 /**
  *
@@ -35,12 +35,6 @@ public class AppSetup {
     static void setup(String[] args) {
          RLVizSettings.initializeSettings(args);
         RLVizSettings.addNewParameters(getSettings());
-
-//        String commandLineJarPath = RLVizSettings.getStringSetting("env-agent-jar-path");
-//        if (!commandLineJarPath.equals("")) {
-//            System.setProperty(commandLineJarPath, commandLineJarPath)
-//        }
-//
 
         if (RLVizSettings.getBooleanSetting("local-glue")) {
 //            assert RLVizSettings.getBooleanSetting("list-environments") && RLVizSettings.getBooleanSetting("list-agents") : "If using local glue, must specify list-environments and list-agents.";
@@ -70,6 +64,10 @@ public class AppSetup {
         AppSettings.addStringParam("agent-environment-jar-path");
         AppSettings.addStringParam("agent-jar-path");
         AppSettings.addStringParam("environment-jar-path");
+        AppSettings.addIntegerParam("default-speed",50);
+        AppSettings.addBooleanParam("speed-frozen",false);
+        AppSettings.addBooleanParam("autoload",false);
+        AppSettings.addBooleanParam("unload-disabled",false);
         return AppSettings;
     }
 
