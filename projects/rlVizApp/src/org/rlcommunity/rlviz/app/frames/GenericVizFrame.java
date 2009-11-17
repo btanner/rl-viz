@@ -73,7 +73,7 @@ static {
         String theMessage = RLVizFrame.programName + " was created by Brian Tanner and the RLAI group at the University of Alberta.";
         theMessage += "\nYou're probably using as part of the RL Competition.  Good luck!  http://rl-competition.org";
         theMessage += "\nCopyright 2007.";
-        theMessage += "\nhttp://brian.tannerpages.com  email: brian@tannerpages.com";
+        theMessage += "\nhttp://research.tannerpages.com  email: brian@tannerpages.com";
         JOptionPane.showMessageDialog(null, theMessage, "About " + RLVizFrame.programName, JOptionPane.INFORMATION_MESSAGE);
     }
     

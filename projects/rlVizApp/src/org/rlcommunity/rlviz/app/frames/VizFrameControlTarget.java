@@ -62,8 +62,6 @@ public class VizFrameControlTarget extends JPanel implements DynamicControlTarge
         addFiller();
         getParent().validate();
         validate();
-
-
     }
 
     public void addControls(Vector<Component> newComponents) {

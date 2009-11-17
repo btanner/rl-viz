@@ -33,52 +33,77 @@ public class RLVizFrame extends GenericVizFrame {
     RLGlueLogic theGlueConnection = null;
     static String programName = "RLVizApp";
     private static final long serialVersionUID = 1L;
-    private boolean useEnvVisualizer = false;
-    private boolean useAgentVisualizer = false;
+    private final boolean useEnvVisualizer;
+    private final boolean useAgentVisualizer;
 
     public RLVizFrame() {
         this(true, false);
     }
 
-    public RLVizFrame(boolean useEnvVisualizer, boolean useAgentVisualizer) {
-        super();
-
-        this.useEnvVisualizer = useEnvVisualizer;
-        this.useAgentVisualizer = useAgentVisualizer;
-
-
-
-        theGlueConnection = RLGlueLogic.getGlobalGlueLogic();
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
-
-
+    public void setEnvSizeAndLocation() {
         int panelWidth = 800;
         int panelHeight = 800;
-
 
         if (useEnvVisualizer && useAgentVisualizer) {
             panelHeight /= 2;
         }
 
-        final RLControlPanel controlPanel = new RLControlPanel(theGlueConnection);
-        getContentPane().add(controlPanel);
+        int startX = this.getWidth() + 30;
 
         if (useEnvVisualizer) {
-            envVizFrame = new EnvVisualizerFrame(new Dimension(panelWidth, panelHeight));
-            envVizFrame.setLocation(10, 10);
+            envVizFrame.setSize(new Dimension(panelWidth, panelHeight));
+            envVizFrame.setLocation(startX, 10);
         }
+    }
+
+    public void setAgentSizeAndLocation() {
+        int panelWidth = 800;
+        int panelHeight = 800;
+        if (useEnvVisualizer && useAgentVisualizer) {
+            panelHeight /= 2;
+        }
+
+        int startX = this.getWidth() + 30;
 
         if (useAgentVisualizer) {
-            agentVizFrame = new AgentVisualizerFrame(new Dimension(panelWidth, panelHeight));
-            agentVizFrame.setLocation(10, 10);
-
+            agentVizFrame.setSize(new Dimension(panelWidth, panelHeight));
 
             if (!useEnvVisualizer) {
-                agentVizFrame.setLocation(10, 10);
+                agentVizFrame.setLocation(startX, 10);
             } else {
-                agentVizFrame.setLocation(10, panelHeight + 30);
+                agentVizFrame.setLocation(startX, panelHeight + 30);
             }
         }
+
+    }
+
+    public RLVizFrame(boolean useEnvVisualizer, boolean useAgentVisualizer) {
+        super();
+        this.useEnvVisualizer = useEnvVisualizer;
+        this.useAgentVisualizer = useAgentVisualizer;
+
+        theGlueConnection = RLGlueLogic.getGlobalGlueLogic();
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
+
+
+
+        final RLControlPanel controlPanel = new RLControlPanel(theGlueConnection);
+        getContentPane().add(controlPanel);
+        pack();
+        int panelWidth = 800;
+        int panelHeight = 800;
+        if (useEnvVisualizer && useAgentVisualizer) {
+            panelHeight /= 2;
+        }
+        if (useEnvVisualizer) {
+            envVizFrame = new EnvVisualizerFrame(new Dimension(panelWidth, panelHeight));
+        }
+        if (useAgentVisualizer) {
+            agentVizFrame = new AgentVisualizerFrame(new Dimension(panelWidth, panelHeight));
+        }
+
+        setEnvSizeAndLocation();
+        setAgentSizeAndLocation();
 
         setFrames(this, envVizFrame, agentVizFrame);
         makeMenus();
@@ -86,19 +111,19 @@ public class RLVizFrame extends GenericVizFrame {
         if (envVizFrame != null) {
             envVizFrame.setFrames(this, envVizFrame, agentVizFrame);
             envVizFrame.makeMenus();
-            envVizFrame.setVisible(true);
+            envVizFrame.setVisible(false);
         }
         if (agentVizFrame != null) {
             agentVizFrame.setFrames(this, envVizFrame, agentVizFrame);
             agentVizFrame.makeMenus();
-            agentVizFrame.setVisible(true);
+            agentVizFrame.setVisible(false);
         }
 
-        if (!useAgentVisualizer && !useEnvVisualizer) {
-            setLocation(10, 10);
-        } else {
-            setLocation(panelWidth + 20, 10);
-        }
+//        if (!useAgentVisualizer && !useEnvVisualizer) {
+        setLocation(10, 10);
+//        } else {
+//            setLocation(panelWidth + 20, 10);
+//        }
 
 
 
@@ -112,9 +137,10 @@ public class RLVizFrame extends GenericVizFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(programName);
 
-        
+
         if (RLVizSettings.getBooleanSetting("autoload")) {
             new Thread(new Runnable() {
+
                 public void run() {
                     controlPanel.doLoad();
                 }

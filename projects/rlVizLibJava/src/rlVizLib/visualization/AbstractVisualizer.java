@@ -20,13 +20,12 @@ package rlVizLib.visualization;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractVisualizer implements ImageAggregator {
 
@@ -45,6 +44,40 @@ public abstract class AbstractVisualizer implements ImageAggregator {
 
     public void notifyPanelSizeChange() {
         resizeImages();
+    }
+
+    /**
+     * This method was added for Brad Knox on Nov 2009 so that he could make a
+     * visualizer that specified a custom size.  This is dangerous because if you
+     * override the size or location of the visualizer frame, you have to do it
+     * in both the agent and environment, otherwise they might overlap or look
+     * otherwise dumb.  You've been warned.
+     * @return
+     */
+    public Dimension getOverrideSize(){
+        return null;
+    }
+
+    /**
+     * This is also for Brad Knox, Nov 2009.  If you override this and return
+     * false then there will be no genericControlTarget for you to put your
+     * controls on.  You'll get the space back for visualization.
+     * @return
+     */
+    public boolean wantsDynamicControls(){
+        return true;
+    }
+
+    /**
+     * This method was added for Brad Knox on Nov 2009 so that he could make a
+     * visualizer that specified a custom location.  This is dangerous because if you
+     * override the size or location of the visualizer frame, you have to do it
+     * in both the agent and environment, otherwise they might overlap or look
+     * otherwise dumb.  You've been warned.
+     * @return
+     */
+    public Point getOverrideLocation(){
+        return null;
     }
 
     private synchronized void resizeImages() {

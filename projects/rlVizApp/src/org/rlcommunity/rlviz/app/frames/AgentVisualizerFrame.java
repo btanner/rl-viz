@@ -22,6 +22,7 @@ public class AgentVisualizerFrame extends VisualizerVizFrame {
 
     @Override
     protected void register() {
+       RLGlueLogic.getGlobalGlueLogic().addAgentVisualizerLoadListener(this);
        RLGlueLogic.getGlobalGlueLogic().setAgentVisualizerControlTarget(theDynamicControlTargetPanel); 
        RLGlueLogic.getGlobalGlueLogic().addAgentVisualizerLoadListener(theDynamicControlTargetPanel);
        RLGlueLogic.getGlobalGlueLogic().addAgentVisualizerLoadListener(super.theVizPanel);

@@ -57,14 +57,14 @@ public class RLGlueLogic {
         }
         return theGlobalGlueLogic;
     }
-    boolean debugLocal = false;
-    TinyGlue myGlueState = null;
-    AbstractVisualizer theEnvVisualizer = null;
-    DynamicControlTarget theEnvVisualizerControlTarget = null;
-    AbstractVisualizer theAgentVisualizer = null;
-    DynamicControlTarget theAgentVisualizerControlTarget = null;
-    Vector<visualizerLoadListener> envVisualizerLoadListeners = new Vector<visualizerLoadListener>();
-    Vector<visualizerLoadListener> agentVisualizerLoadListeners = new Vector<visualizerLoadListener>();
+    private boolean debugLocal = false;
+    private TinyGlue myGlueState = null;
+    private AbstractVisualizer theEnvVisualizer = null;
+    private DynamicControlTarget theEnvVisualizerControlTarget = null;
+    private AbstractVisualizer theAgentVisualizer = null;
+    private DynamicControlTarget theAgentVisualizerControlTarget = null;
+    private Vector<visualizerLoadListener> envVisualizerLoadListeners = new Vector<visualizerLoadListener>();
+    private Vector<visualizerLoadListener> agentVisualizerLoadListeners = new Vector<visualizerLoadListener>();
     private RLVizVersion theEnvVersion = null;
     private RLVizVersion theAgentVersion = null;
     GlueStepper theTimeKeeper = null;
@@ -73,9 +73,10 @@ public class RLGlueLogic {
         theTimeKeeper = new GlueStepper(this);
     }
 
-    public TinyGlue getGlueState(){
+    public TinyGlue getGlueState() {
         return myGlueState;
     }
+
     public RLVizVersion getEnvVersion() {
         return theEnvVersion;
     }
@@ -160,7 +161,7 @@ public class RLGlueLogic {
     }
 
     public boolean loadEnvironment(String envName, ParameterHolder currentParams) {
-        
+
         EnvShellLoadResponse theLoadResponse = EnvShellLoadRequest.Execute(envName, currentParams);
         if (!theLoadResponse.getTheResult()) {
             return false;
@@ -235,12 +236,12 @@ public class RLGlueLogic {
         }
     }
 
-    public void addEnvVisualizerLoadListener(visualizerLoadListener panel) {
-        envVisualizerLoadListeners.add(panel);
+    public void addEnvVisualizerLoadListener(visualizerLoadListener thisListener) {
+        envVisualizerLoadListeners.add(thisListener);
     }
 
-    public void addAgentVisualizerLoadListener(visualizerLoadListener panel) {
-        agentVisualizerLoadListeners.add(panel);
+    public void addAgentVisualizerLoadListener(visualizerLoadListener thisListener) {
+        agentVisualizerLoadListeners.add(thisListener);
     }
 
     public void startNewExperiment() {
@@ -310,6 +311,7 @@ public class RLGlueLogic {
     public void stop() {
         theTimeKeeper.stop();
     }
+
 }
 
 

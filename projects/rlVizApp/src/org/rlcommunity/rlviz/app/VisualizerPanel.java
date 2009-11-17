@@ -26,7 +26,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -73,22 +72,11 @@ public class VisualizerPanel extends JPanel implements ComponentListener, Visual
         double heightRatio=(double)panelHeight/(double)imageH;
         
         double theRatio=widthRatio;
-        double xOffset=0;
-        double yOffset=(double)panelHeight-(double)imageH*theRatio;
-        
-        
         
         if(heightRatio<widthRatio){
             theRatio=heightRatio;
-            xOffset=.5*(panelWidth-imageW*theRatio);
-            yOffset=0;
         }
         return defaultImage.getScaledInstance((int)(imageW*theRatio), (int)(imageH*theRatio), Image.SCALE_SMOOTH);
-//          System.out.printf("Panel %d, Image %d, yOffset %f\n",panelHeight,imageH*theRatio,yOffset);
-////        AffineTransform theTransform=AffineTransform.getTranslateInstance(xOffset, yOffset);
-////        theTransform.concatenate(AffineTransform.getScaleInstance(theRatio, theRatio));
-//
-//        return theTransform;
     }
             
     @Override
