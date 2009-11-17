@@ -85,6 +85,13 @@ public class RLGlueLogic {
         return theAgentVersion;
     }
 
+    public AbstractVisualizer getAgentVisualizer(){
+        return theAgentVisualizer;
+    }
+    public AbstractVisualizer getEnvVisualizer(){
+        return theEnvVisualizer;
+    }
+
     public void step() {
         myGlueState.step();
     }
@@ -144,9 +151,6 @@ public class RLGlueLogic {
         //Get the visualizer name if I Can
         AgentVisualizerNameResponse theNameResponse = AgentVisualizerNameRequest.Execute();
         String theVisualizerName = theNameResponse.getTheVisualizerClassName();
-
-        System.out.println("Agent viz name is: " + theVisualizerName);
-
         //Only load the agent visualizer if someone will care to draw it
         if (agentVisualizerLoadListeners.size() > 0) {
 
