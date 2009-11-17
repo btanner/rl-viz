@@ -73,12 +73,10 @@ public abstract class VisualizerVizFrame extends GenericVizFrame implements visu
         getContentPane().add(theCompositePanel);
         pack();
         this.setBackground(Color.white);
-        setVisible(true);
     }
 
     public void notifyVisualizerLoaded(AbstractVisualizer theNewVisualizer) {
         if (theNewVisualizer != null) {
-            boolean wantsControls=theNewVisualizer.wantsDynamicControls();
             theDynamicControlTargetPanel.setVisible(theNewVisualizer.wantsDynamicControls());
             theCompositePanel.revalidate();
 

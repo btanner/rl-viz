@@ -18,6 +18,7 @@ limitations under the License.
 package org.rlcommunity.rlviz.app;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,6 +31,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -112,7 +114,6 @@ public class VisualizerPanel extends JPanel implements ComponentListener, Visual
     public void componentResized(ComponentEvent arg0) {
         resizeChildrenTimer = new Timer();
         resizeChildrenTimer.schedule(new TimerTask() {
-
             public void run() {
                 tellChildrenToResize();
             }
@@ -153,10 +154,9 @@ public class VisualizerPanel extends JPanel implements ComponentListener, Visual
         if (theNewVisualizer != null) {
             this.theVisualizer = theNewVisualizer;
 
+            this.setNamedBorder();
             theVisualizer.setParentPanel(this);
             theVisualizer.notifyPanelSizeChange();
-
-            this.setNamedBorder();
             
             //Try to get an image
             if (VisualizerType == VisualizerVizFrame.AgentVisualizerType) {
@@ -168,6 +168,22 @@ public class VisualizerPanel extends JPanel implements ComponentListener, Visual
             defaultImage = graphicResponse.getImage();
             }
             vizLoaded = true;
+
+            //This is the biggest hack of them all.  Something was happening where
+            //without a resize I was getting ghosting of old visualizers that I
+            //could not get rid of.  Resizing fixed it.
+
+            Component theParent=getParent();
+            while(true){
+                if(theParent instanceof JFrame){
+                    break;
+                }
+                theParent=theParent.getParent();
+            }
+            JFrame theWindow=(JFrame)theParent;
+            Dimension currentSize=theWindow.getSize();
+            Dimension newSize=new Dimension(currentSize.width+1,currentSize.height+1);
+            theWindow.setSize(newSize);
         } else {
             System.err.println("Failed To Load a Visualizer.");
         }
@@ -183,6 +199,5 @@ public class VisualizerPanel extends JPanel implements ComponentListener, Visual
         loweredetched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
         titled = BorderFactory.createTitledBorder(loweredetched, theVisualizer.getName());
         setBorder(titled);
-
     }
 }
