@@ -38,8 +38,14 @@ public abstract class AbstractVisualizer implements ImageAggregator {
     private Vector<Point2D> sizes = new Vector<Point2D>();
     volatile boolean currentlyRunning = false;
 
+
+
     public void setParentPanel(VisualizerPanelInterface parentPanel) {
         this.parentPanel = parentPanel;
+    }
+
+    public String message(String theStringMessage){
+        return "By default: "+this.getClass().getName()+" does not respond to messages.  The concrete class below does not override the message method.";
     }
 
     public void notifyPanelSizeChange() {
