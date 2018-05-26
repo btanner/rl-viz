@@ -19,7 +19,8 @@ import java.lang.reflect.Constructor;
  * @author btanner
  */
 public class GenericVizFrame extends JFrame {
-static {
+
+    static {
         if (System.getProperty("mrj.version") != null) {
             // the Mac specific code will go here
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -76,13 +77,11 @@ static {
         theMessage += "\nhttp://research.tannerpages.com  email: brian@tannerpages.com";
         JOptionPane.showMessageDialog(null, theMessage, "About " + RLVizFrame.programName, JOptionPane.INFORMATION_MESSAGE);
     }
-    
-  
+
 }
 
 class VizMenus implements ActionListener {
 
-    
     GenericVizFrame theVizFrame = null;
 
     VizMenus(GenericVizFrame theVizFrame) {
@@ -99,16 +98,17 @@ class VizMenus implements ActionListener {
             makeLinuxProgramMenu(menuBar);
         } else {
 //          	System.loadLibrary("btViz.MacOSAboutHandler")
-			try {
-    			ClassLoader theClassLoader = ClassLoader.getSystemClassLoader();
-    			Class<?> testObjectClass=theClassLoader.loadClass("org.rlcommunity.rlviz.app.frames.MacOSAboutHandler");    
-    			Constructor<?> emptyConstructor = testObjectClass.getConstructor();
-    			Object classInstance =  (Object)emptyConstructor.newInstance();
-			} catch (Exception ex) {
-    			System.err.println("Problem loading MacOSAboutHandler using classloader... blowing up now!");
-				System.exit(1);
-			}
-		}
+            try {
+                ClassLoader theClassLoader = ClassLoader.getSystemClassLoader();
+                Class<?> testObjectClass = theClassLoader.loadClass("org.rlcommunity.rlviz.app.frames.MacOSAboutHandler");
+                Constructor<?> emptyConstructor = testObjectClass.getConstructor();
+                Object classInstance = (Object) emptyConstructor.newInstance();
+            } catch (Exception ex) {
+                System.err.println("Problem loading MacOSAboutHandler using classloader... falling back to linux one");
+                makeLinuxProgramMenu(menuBar);
+//				System.exit(1);
+            }
+        }
 
         windowMenu = new JMenu("Window");
         menuBar.add(windowMenu);
@@ -148,10 +148,12 @@ class VizMenus implements ActionListener {
         programMenu.add(quitButton);
         quitButton.addActionListener(this);
     }
-    
-    private void open(GenericVizFrame frameToOpen){
-        if(frameToOpen!=null){
-            if(!frameToOpen.isVisible())frameToOpen.setVisible(true);
+
+    private void open(GenericVizFrame frameToOpen) {
+        if (frameToOpen != null) {
+            if (!frameToOpen.isVisible()) {
+                frameToOpen.setVisible(true);
+            }
             frameToOpen.toFront();
         }
     }
