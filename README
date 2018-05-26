@@ -1,0 +1,1 @@
+This should build as long as you have ANT installed, if you make a folder in system/libs/ called RLGlueCodec and put JavaRLGlueCodec.jar from the Java Codec in rl-glue-ext in there.
