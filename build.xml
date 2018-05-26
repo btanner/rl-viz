@@ -1,5 +1,8 @@
 <project name="RLVizProject" basedir="." >
 
+    <presetdef name="javac">
+      <javac includeantruntime="true" />
+    </presetdef>
 <target name="RLVizLib" description="RLVizLib">
    <ant antfile="build.xml" dir="projects/rlVizLibJava" inheritAll="false" target="clean-build">
 	 <property name="build.debug" value="${build.debug}"/>
